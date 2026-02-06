@@ -1,0 +1,91 @@
+@{
+    ViewData["Title"] = "Audit Logs";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-journal-text"></i> Audit Logs</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="auditLogsTable" class="table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Resource</th>
+                        <th>IP Address</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let auditLogsTable;
+
+        $(document).ready(function() {
+            auditLogsTable = $('#auditLogsTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: '/SuperAdmin/GetAuditLogs',
+                    type: 'GET',
+                    dataSrc: function(json) {
+                        return json.data || [];
+                    },
+                    error: function(xhr, error, thrown) {
+                        console.error('Error loading audit logs:', error);
+                    }
+                },
+                columns: [
+                    {
+                        data: 'timestamp',
+                        render: function(data) {
+                            if (!data) return '';
+                            return new Date(data).toLocaleString();
+                        }
+                    },
+                    { data: 'userEmail', render: function(data) { return escapeHtml(data || 'System'); } },
+                    {
+                        data: 'action',
+                        render: function(data) {
+                            const action = (data || 'UNKNOWN').toUpperCase();
+                            let badgeClass = 'bg-secondary';
+                            if (action === 'CREATE' || action === 'INSERT') badgeClass = 'bg-info';
+                            else if (action === 'UPDATE' || action === 'EDIT') badgeClass = 'bg-warning';
+                            else if (action === 'DELETE' || action === 'REMOVE') badgeClass = 'bg-danger';
+                            else if (action === 'LOGIN' || action === 'LOGOUT') badgeClass = 'bg-primary';
+                            return `<span class="badge ${badgeClass}">${escapeHtml(action)}</span>`;
+                        }
+                    },
+                    { data: 'resource', render: function(data) { return escapeHtml(data || ''); } },
+                    { data: 'ipAddress', render: function(data) { return escapeHtml(data || ''); } },
+                    {
+                        data: 'status',
+                        render: function(data) {
+                            const status = data || 'Success';
+                            const isSuccess = status.toLowerCase() === 'success';
+                            return `<span class="badge bg-${isSuccess ? 'success' : 'danger'}">${escapeHtml(status)}</span>`;
+                        }
+                    }
+                ],
+                order: [[0, 'desc']],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]]
+            });
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+}

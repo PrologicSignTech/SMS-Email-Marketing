@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Campaign Analytics"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-graph-up-arrow"></i> Campaign Analytics</h2>
+        <button class="btn btn-outline-primary" data-action="export-report">
+            <i class="bi bi-download"></i> Export Report
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Date Range</label>
+                    <select class="form-select" id="dateRange">
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                        <option>Last 90 days</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Campaign Type</label>
+                    <select class="form-select">
+                        <option>All Types</option>
+                        <option>Email</option>
+                        <option>SMS</option>
+                        <option>MMS</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option>All Status</option>
+                        <option>Completed</option>
+                        <option>Running</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Comparison -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Campaign Comparison</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Campaign Name</th>
+                            <th>Type</th>
+                            <th>Send Date</th>
+                            <th>Recipients</th>
+                            <th>Delivered %</th>
+                            <th>Open %</th>
+                            <th>Click %</th>
+                            <th>ROI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Summer Sale 2024</strong></td>
+                            <td><span class="badge bg-primary">Email</span></td>
+                            <td>2024-07-15</td>
+                            <td>12,456</td>
+                            <td><span class="text-success">98.2%</span></td>
+                            <td><span class="text-success">44.4%</span></td>
+                            <td><span class="text-success">19.2%</span></td>
+                            <td><span class="text-success">+$45,230</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Newsletter July</strong></td>
+                            <td><span class="badge bg-primary">Email</span></td>
+                            <td>2024-07-01</td>
+                            <td>25,678</td>
+                            <td><span class="text-success">98.7%</span></td>
+                            <td><span class="text-warning">40.4%</span></td>
+                            <td><span class="text-warning">18.0%</span></td>
+                            <td><span class="text-success">+$23,450</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/analytics-campaigns.js" asp-append-version="true"></script>
+}

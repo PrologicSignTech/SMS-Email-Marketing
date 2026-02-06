@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Roles & Permissions";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shield-lock"></i> Roles & Permissions</h2>
+        <a href="@Url.Action("Create", "Roles")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Role
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="rolesTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Users</th>
+                                    <th>Permissions</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.rolesConfig = { apiBaseUrl: '@ViewBag.ApiBaseUrl' };
+    </script>
+    <script src="~/js/roles-index.js" asp-append-version="true" nonce="@Context.GetCspNonce()"></script>
+}

@@ -1,0 +1,379 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section with Animated Background -->
+<section class="hero-section position-relative overflow-hidden text-white py-5">
+    <!-- Animated Background Pattern -->
+    <div class="hero-bg-pattern"></div>
+    
+    <div class="container py-5 position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="badge bg-white bg-opacity-25 text-white px-3 py-2 mb-3">
+                    <i class="bi bi-stars"></i> #1 Marketing Platform
+                </div>
+                <h1 class="display-2 fw-bold mb-4 hero-title">
+                    Transform Your Marketing with 
+                    <span class="text-gradient text-gradient-custom">SMS, MMS & Email</span>
+                </h1>
+                <p class="lead mb-4 fs-5">
+                    A powerful, enterprise-grade marketing platform to reach your customers where they are. 
+                    Send targeted campaigns, track performance, and grow your business exponentially.
+                </p>
+                <div class="d-flex gap-3 flex-wrap mb-4">
+                    <a href="@Url.Action("Register", "Auth")" class="btn btn-light btn-lg px-5 py-3 rounded-pill shadow-lg hover-scale">
+                        <i class="bi bi-rocket-takeoff"></i> Get Started Free
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill hover-scale">
+                        <i class="bi bi-play-circle"></i> Watch Demo
+                    </a>
+                </div>
+                <div class="d-flex gap-4 text-white-50">
+                    <div>
+                        <i class="bi bi-check-circle-fill text-success"></i> No credit card required
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill text-success"></i> 14-day free trial
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="hero-image-wrapper position-relative">
+                    <!-- Phone Mockup with Chat Interface -->
+                    <div class="phone-mockup-container">
+                        <!-- Phone Frame -->
+                        <div class="phone-frame">
+                            <!-- Phone Notch -->
+                            <div class="phone-notch"></div>
+                            <!-- Phone Screen -->
+                            <div class="phone-screen">
+                                <!-- Chat Header -->
+                                <div class="chat-header">
+                                    <div class="d-flex align-items-center">
+                                        <div class="chat-avatar">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+                                        <div class="ms-2">
+                                            <div class="chat-name">Your Brand</div>
+                                            <div class="chat-status"><span class="status-dot"></span> Online</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Chat Messages -->
+                                <div class="chat-messages">
+                                    <div class="message message-received animate-message" style="animation-delay: 0.3s;">
+                                        <div class="message-bubble">
+                                            <p class="mb-1">Hey! 🎉 Flash Sale Alert!</p>
+                                            <p class="mb-0 small">Get 30% OFF everything today only. Use code: FLASH30</p>
+                                        </div>
+                                        <div class="message-time">10:30 AM</div>
+                                    </div>
+                                    <div class="message message-sent animate-message" style="animation-delay: 0.8s;">
+                                        <div class="message-bubble">
+                                            <p class="mb-0">Awesome! I'll check it out 👀</p>
+                                        </div>
+                                        <div class="message-time">10:31 AM</div>
+                                    </div>
+                                    <div class="message message-received animate-message" style="animation-delay: 1.3s;">
+                                        <div class="message-bubble">
+                                            <p class="mb-0">Great! Here's your personalized link: shop.link/save30</p>
+                                        </div>
+                                        <div class="message-time">10:31 AM</div>
+                                    </div>
+                                    <!-- Typing Indicator -->
+                                    <div class="typing-indicator animate-message" style="animation-delay: 1.8s;">
+                                        <span></span><span></span><span></span>
+                                    </div>
+                                </div>
+                                <!-- Chat Input -->
+                                <div class="chat-input">
+                                    <input type="text" placeholder="Type a message..." disabled>
+                                    <button class="send-btn"><i class="bi bi-send-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Campaign Stats Card (floating) -->
+                        <div class="campaign-stats-card animate-slide-in">
+                            <div class="stats-header">
+                                <i class="bi bi-lightning-charge-fill text-warning"></i>
+                                <span>Campaign Live</span>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stat-item">
+                                    <span class="stat-value">2.4K</span>
+                                    <span class="stat-label">Sent</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">89%</span>
+                                    <span class="stat-label">Open</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">42%</span>
+                                    <span class="stat-label">Click</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quick Stats Below -->
+                    <div class="hero-stats-bar">
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-value">10M+</div>
+                            <div class="hero-stat-label">Messages Sent</div>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-value">98%</div>
+                            <div class="hero-stat-label">Delivery Rate</div>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat-item">
+                            <div class="hero-stat-value">5K+</div>
+                            <div class="hero-stat-label">Happy Users</div>
+                        </div>
+                    </div>
+                    <!-- Floating Elements -->
+                    <div class="floating-element floating-1">
+                        <i class="bi bi-envelope-fill text-primary"></i>
+                    </div>
+                    <div class="floating-element floating-2">
+                        <i class="bi bi-chat-dots-fill text-success"></i>
+                    </div>
+                    <div class="floating-element floating-3">
+                        <i class="bi bi-bell-fill text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trusted By Section with Real Logos -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center text-muted mb-4">
+            <small class="text-uppercase fw-semibold letter-spacing-1">Trusted by 5,000+ leading companies worldwide</small>
+        </div>
+        <div id="trusted-companies-container" class="row align-items-center justify-content-center g-4">
+            <!-- Companies will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border spinner-border-sm text-muted" role="status">
+                    <span class="visually-hidden">Loading companies...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section with Enhanced Design -->
+<section id="features" class="features-section py-5 my-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge px-4 py-2 mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 0.875rem; font-weight: 600; letter-spacing: 1px;">
+                <i class="bi bi-stars me-2"></i>FEATURES
+            </span>
+            <h2 class="display-4 fw-bold mb-3" style="color: #1f2937; line-height: 1.2;">Powerful Features for Modern Marketing</h2>
+            <p class="lead text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">Everything you need to create, manage, and optimize your campaigns</p>
+        </div>
+
+        <div id="features-cards" class="row g-4">
+            <!-- Features will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading features...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section with Enhanced Animation - Dynamic Loading -->
+<section class="stats-section py-5 position-relative overflow-hidden">
+    <div class="stats-bg-pattern"></div>
+    <div class="container position-relative">
+        <div id="stats-container" class="row text-center g-4">
+            <!-- Stats will be loaded dynamically from database -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading stats...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary bg-opacity-10  px-3 py-2 mb-3">
+                <i class="bi bi-chat-quote"></i> Testimonials
+            </span>
+            <h2 class="display-4 fw-bold mb-3">What Our Customers Say</h2>
+            <p class="lead text-muted">Join thousands of satisfied businesses worldwide</p>
+        </div>
+
+        <div id="testimonials-container" class="row g-4">
+            <!-- Testimonials will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading testimonials...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Badges Section -->
+<section class="trust-badges-section py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge px-4 py-2 mb-3" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.875rem; font-weight: 600; letter-spacing: 1px;">
+                <i class="bi bi-shield-check me-2"></i>SECURITY & COMPLIANCE
+            </span>
+            <h2 class="display-4 fw-bold mb-3" style="color: #1f2937; line-height: 1.2;">Enterprise-Grade Security You Can Trust</h2>
+            <p class="lead text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">We take security and compliance seriously with industry-leading certifications</p>
+        </div>
+
+        <div class="row g-4 justify-content-center align-items-center" id="security-badges-container">
+            <!-- Security badges will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading security badges...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Use Cases by Industry Section -->
+<section class="use-cases-section py-5 my-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge px-4 py-2 mb-3" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; font-size: 0.875rem; font-weight: 600; letter-spacing: 1px;">
+                <i class="bi bi-briefcase me-2"></i>USE CASES
+            </span>
+            <h2 class="display-4 fw-bold mb-3" style="color: #1f2937; line-height: 1.2;">Built for Every Industry</h2>
+            <p class="lead text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">See how businesses like yours use our platform to grow</p>
+        </div>
+
+        <!-- Industry Tabs -->
+        <ul class="nav nav-pills justify-content-center mb-5 industry-tabs" id="industryTabs" role="tablist">
+            <!-- Tabs will be loaded dynamically -->
+            <li class="nav-item">
+                <span class="nav-link disabled">
+                    <span class="spinner-border spinner-border-sm" role="status"></span>
+                    Loading...
+                </span>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="industryTabContent">
+            <!-- Content will be loaded dynamically -->
+            <div class="text-center py-5">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading use cases...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section id="pricing" class="pricing-section py-5 my-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge px-4 py-2 mb-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 0.875rem; font-weight: 600; letter-spacing: 1px;">
+                <i class="bi bi-tag-fill me-2"></i>PRICING PLANS
+            </span>
+            <h2 class="display-4 fw-bold mb-3" style="color: #1f2937; line-height: 1.2;">Choose Your Perfect Plan</h2>
+            <p class="lead text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">Flexible pricing to match your business needs. Start free, scale as you grow.</p>
+        </div>
+        
+        <div id="pricing-plans" class="row g-4 justify-content-center">
+            <!-- Pricing plans will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading pricing plans...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Accordion Section -->
+<section class="faq-section py-5 my-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge px-4 py-2 mb-3" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; font-size: 0.875rem; font-weight: 600; letter-spacing: 1px;">
+                <i class="bi bi-question-circle-fill me-2"></i>FAQ
+            </span>
+            <h2 class="display-4 fw-bold mb-3" style="color: #1f2937; line-height: 1.2;">Frequently Asked Questions</h2>
+            <p class="lead text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">Everything you need to know about our platform</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="accordion" id="faqAccordion">
+                    <div id="faq-accordion">
+                        <!-- FAQs will be loaded dynamically -->
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading FAQs...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section with Enhanced Design -->
+<section class="cta-section position-relative overflow-hidden text-white py-5">
+    <div class="cta-bg-pattern"></div>
+    <div class="container text-center py-5 position-relative">
+        <div data-aos="zoom-in">
+            <span class="badge bg-white bg-opacity-25 text-white px-3 py-2 mb-4">
+                <i class="bi bi-lightning-charge"></i> Limited Time Offer
+            </span>
+            <h2 class="display-3 fw-bold mb-4">Ready to Transform Your Marketing?</h2>
+            <p class="lead mb-5 fs-4">Join thousands of businesses using our platform to grow their reach and revenue</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap mb-4">
+                <a href="@Url.Action("Register", "Auth")" class="btn btn-light btn-lg px-5 py-3 rounded-pill shadow-lg hover-scale">
+                    <i class="bi bi-rocket-takeoff"></i> Start Free Trial
+                </a>
+                <a href="#pricing" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill hover-scale">
+                    <i class="bi bi-currency-dollar"></i> View Pricing
+                </a>
+            </div>
+            <p class="text-white-50">
+                <i class="bi bi-check-circle-fill"></i> No credit card required
+                <span class="mx-2">•</span>
+                <i class="bi bi-check-circle-fill"></i> 14-day free trial
+                <span class="mx-2">•</span>
+                <i class="bi bi-check-circle-fill"></i> Cancel anytime
+            </p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/landing-page.js" asp-append-version="true"></script>
+    <script src="~/js/landing-features.js" asp-append-version="true"></script>
+    <script src="~/js/landing-faqs.js" asp-append-version="true"></script>
+    <script src="~/js/landing-testimonials.js" asp-append-version="true"></script>
+    <script src="~/js/landing-companies.js" asp-append-version="true"></script>
+    <script src="~/js/landing-security.js" asp-append-version="true"></script>
+    <script src="~/js/landing-usecases.js" asp-append-version="true"></script>
+    <script src="~/js/landing-stats.js" asp-append-version="true"></script>
+
+    <!-- Chat Widget Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/chat-widget.js" asp-append-version="true"></script>
+}
+

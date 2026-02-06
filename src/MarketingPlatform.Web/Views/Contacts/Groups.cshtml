@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Contact Groups"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-collection"></i> Contact Groups</h2>
+        <button class="btn btn-primary" data-action="create-group">
+            <i class="bi bi-plus-circle"></i> Create New Group
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div id="groups-list">
+                        <div class="text-center py-5">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.contactsGroupsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/contacts-groups.js" asp-append-version="true"></script>
+}

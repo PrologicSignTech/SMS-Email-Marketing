@@ -1,0 +1,112 @@
+@{
+    ViewData["Title"] = "Create Contact";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-person-plus"></i> Create New Contact</h2>
+        <a href="@Url.Action("Index", "Contacts")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Contacts
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Contact Information</h5>
+        </div>
+        <div class="card-body">
+            <form id="contactForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="firstName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" placeholder="+1 (555) 000-0000">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="company" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company">
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" id="state">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country">
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="groups" class="form-label">Groups</label>
+                    <select class="form-select" id="groups" multiple size="5">
+                        <option>Customers</option>
+                        <option>Newsletter</option>
+                        <option>VIP</option>
+                        <option>Prospects</option>
+                    </select>
+                    <div class="form-text">Hold Ctrl/Cmd to select multiple groups</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" id="notes" rows="3"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="emailOptIn" checked>
+                        <label class="form-check-label" for="emailOptIn">
+                            Email Opt-in
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="smsOptIn">
+                        <label class="form-check-label" for="smsOptIn">
+                            SMS Opt-in
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("Index", "Contacts")" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Contact
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.contactsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl',
+            contactId: null
+        };
+    </script>
+    <script src="~/js/contacts-create.js" asp-append-version="true"></script>
+}

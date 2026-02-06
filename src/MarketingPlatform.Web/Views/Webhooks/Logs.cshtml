@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Webhook Logs"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-journal-text"></i> Webhook Logs</h2>
+        <a href="@Url.Action("Index", "Webhooks")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Webhooks
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 id="webhookName">Loading...</h5>
+            <p class="text-muted mb-0" id="webhookUrl"></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <select class="form-select form-select-sm w-auto d-inline-block" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="success">Success</option>
+                        <option value="failed">Failed</option>
+                        <option value="retrying">Retrying</option>
+                    </select>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-sm btn-outline-primary" onclick="refreshLogs()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Event</th><th>Status</th><th>Response</th><th>Attempts</th><th>Timestamp</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="logsTable">
+                        <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        const webhookId = window.location.pathname.split('/').pop();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLogs();
+            document.getElementById('statusFilter').addEventListener('change', loadLogs);
+        });
+
+        async function loadLogs() {
+            const mockLogs = [
+                { id: 1, event: 'MessageDelivered', status: 'success', responseCode: 200, attempts: 1, timestamp: '2024-03-20 10:30:15' },
+                { id: 2, event: 'CampaignCompleted', status: 'success', responseCode: 200, attempts: 1, timestamp: '2024-03-20 09:15:23' },
+                { id: 3, event: 'MessageFailed', status: 'failed', responseCode: 500, attempts: 3, timestamp: '2024-03-20 08:45:10' },
+                { id: 4, event: 'ContactOptedOut', status: 'retrying', responseCode: 503, attempts: 1, timestamp: '2024-03-20 08:30:05' }
+            ];
+            
+            document.getElementById('webhookName').textContent = 'Campaign Status Updates';
+            document.getElementById('webhookUrl').textContent = 'https://api.example.com/webhooks/campaign';
+            
+            let html = '';
+            mockLogs.forEach(log => {
+                const statusColors = { success: 'success', failed: 'danger', retrying: 'warning' };
+                html += `<tr>
+                    <td><span class="badge bg-secondary">${log.event}</span></td>
+                    <td><span class="badge bg-${statusColors[log.status]}">${log.status.toUpperCase()}</span></td>
+                    <td>${log.responseCode}</td>
+                    <td>${log.attempts}</td>
+                    <td><small>${log.timestamp}</small></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails(${log.id})"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="retryWebhook(${log.id})"><i class="bi bi-arrow-repeat"></i></button>
+                    </td>
+                </tr>`;
+            });
+            
+            document.getElementById('logsTable').innerHTML = html;
+        }
+
+        function refreshLogs() {
+            loadLogs();
+        }
+
+        function viewDetails(id) {
+            alert('View log details (Demo)');
+        }
+
+        function retryWebhook(id) {
+            if (confirm('Retry this webhook delivery?')) {
+                alert('Webhook retried! (Demo)');
+            }
+        }
+    </script>
+}

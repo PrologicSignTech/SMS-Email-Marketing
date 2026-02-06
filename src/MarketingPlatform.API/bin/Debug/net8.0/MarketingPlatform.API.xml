@@ -1,0 +1,1315 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MarketingPlatform.API</name>
+    </assembly>
+    <members>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetDashboard(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get dashboard summary with overall statistics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetCampaignPerformance(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get campaign performance analytics with filters
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetCampaignPerformanceById(System.Int32)">
+            <summary>
+            Get specific campaign performance by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetContactEngagement(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get contact engagement history with filters
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetContactEngagementById(System.Int32,MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get specific contact engagement history by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetConversionTracking(System.Int32,MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get conversion tracking for a specific campaign
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.GetConversionsForCampaigns(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Get conversion tracking for multiple campaigns with filters
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportCampaignPerformanceToCsv(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export campaign performance report to CSV
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportCampaignPerformanceToExcel(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export campaign performance report to Excel
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportContactEngagementToCsv(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export contact engagement report to CSV
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportContactEngagementToExcel(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export contact engagement report to Excel
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportConversionsToCsv(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export conversion tracking report to CSV
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.AnalyticsController.ExportConversionsToExcel(MarketingPlatform.Application.DTOs.Analytics.ReportFilterDto)">
+            <summary>
+            Export conversion tracking report to Excel
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetActiveChatRooms">
+            <summary>
+            Get all active chat rooms (for admin/employees)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetUnassignedChatRooms">
+            <summary>
+            Get unassigned chat rooms (for admin/employees to pick up)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetChatRoomsByEmployeeId(System.String)">
+            <summary>
+            Get chat rooms assigned to a specific employee
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetChatRoomById(System.Int32)">
+            <summary>
+            Get a specific chat room by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetChatHistory(System.Int32)">
+            <summary>
+            Get chat history/messages for a specific chat room
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.CreateChatRoom(MarketingPlatform.Application.DTOs.Chat.CreateChatRoomDto)">
+            <summary>
+            Create a new chat room (for customers/guests)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.AssignChatRoom(System.Int32,MarketingPlatform.Application.DTOs.Chat.AssignChatRoomDto)">
+            <summary>
+            Assign a chat room to an employee (admin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.CloseChatRoom(System.Int32)">
+            <summary>
+            Close a chat session
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.SendMessage(MarketingPlatform.Application.DTOs.Chat.SendMessageDto)">
+            <summary>
+            Send a message (fallback for non-SignalR clients)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.SendChatTranscript(System.Int32)">
+            <summary>
+            Send chat transcript to user's email
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.GetUnreadMessageCount(System.String)">
+            <summary>
+            Get unread message count for an employee
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ChatController.MarkMessagesAsRead(System.Int32)">
+            <summary>
+            Mark messages as read
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.GetContactConsentStatus(System.Int32)">
+            <summary>
+            Get consent status for a specific contact
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.RecordConsent(MarketingPlatform.Application.DTOs.Compliance.ConsentRequestDto)">
+            <summary>
+            Record consent (opt-in or opt-out) for a contact
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.BulkRecordConsent(MarketingPlatform.Application.DTOs.Compliance.BulkConsentRequestDto)">
+            <summary>
+            Record consent for multiple contacts in bulk
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.RevokeConsent(System.Int32,MarketingPlatform.Core.Enums.ConsentChannel,System.String)">
+            <summary>
+            Revoke consent (opt-out) for a contact on a specific channel
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.GetContactConsents(System.Int32,MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all consent records for a contact
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.GetConsentHistory(System.Int32,MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get consent history for a contact
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.GetComplianceSettings">
+            <summary>
+            Get compliance settings for the current user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.UpdateComplianceSettings(MarketingPlatform.Application.DTOs.Compliance.UpdateComplianceSettingsDto)">
+            <summary>
+            Update compliance settings
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.CheckCompliance(System.Int32,MarketingPlatform.Core.Enums.ConsentChannel,System.Nullable{System.Int32})">
+            <summary>
+            Check if a contact is compliant for messaging on a specific channel
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.CheckQuietHours(System.Nullable{System.DateTime})">
+            <summary>
+            Check if current time is within quiet hours
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.CheckSuppression(System.String,System.Nullable{MarketingPlatform.Core.Enums.ConsentChannel})">
+            <summary>
+            Check if a contact is suppressed
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.FilterCompliantContacts(System.Collections.Generic.List{System.Int32},MarketingPlatform.Core.Enums.ConsentChannel,System.Nullable{System.Int32})">
+            <summary>
+            Filter a list of contact IDs to only include compliant contacts
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.GetAuditLogs(MarketingPlatform.Application.DTOs.Common.PagedRequest,System.Nullable{MarketingPlatform.Core.Enums.ComplianceActionType},System.Nullable{MarketingPlatform.Core.Enums.ConsentChannel},System.Nullable{System.Int32})">
+            <summary>
+            Get compliance audit logs
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.ProcessOptOutKeyword(System.Int32,System.String,MarketingPlatform.Core.Enums.ConsentChannel)">
+            <summary>
+            Process an opt-out keyword
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceController.ProcessOptInKeyword(System.Int32,System.String,MarketingPlatform.Core.Enums.ConsentChannel)">
+            <summary>
+            Process an opt-in keyword
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetClientIpAddress">
+            <summary>
+            Get client IP address handling proxy scenarios
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetComplianceRules(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all compliance rules with pagination
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetComplianceRuleById(System.Int32)">
+            <summary>
+            Get compliance rule by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetActiveComplianceRules">
+            <summary>
+            Get all active compliance rules
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetComplianceRulesByType(MarketingPlatform.Core.Enums.ComplianceRuleType)">
+            <summary>
+            Get compliance rules by type
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetApplicableRules(System.String,System.String)">
+            <summary>
+            Get applicable rules for a region and/or service
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.GetComplianceRuleAuditTrail(System.Int32)">
+            <summary>
+            Get audit trail for a compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.CreateComplianceRule(MarketingPlatform.Application.DTOs.Configuration.CreateComplianceRuleDto)">
+            <summary>
+            Create a new compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.UpdateComplianceRule(System.Int32,MarketingPlatform.Application.DTOs.Configuration.UpdateComplianceRuleDto)">
+            <summary>
+            Update an existing compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.ActivateComplianceRule(System.Int32)">
+            <summary>
+            Activate a compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.DeactivateComplianceRule(System.Int32,System.String)">
+            <summary>
+            Deactivate a compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.ComplianceRulesController.DeleteComplianceRule(System.Int32,System.String)">
+            <summary>
+            Delete a compliance rule
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.GetFeatureToggles(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all feature toggles with pagination
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.GetFeatureToggleById(System.Int32)">
+            <summary>
+            Get feature toggle by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.GetFeatureToggleByName(System.String)">
+            <summary>
+            Get feature toggle by name
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.GetFeatureTogglesByCategory(System.String)">
+            <summary>
+            Get feature toggles by category
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.IsFeatureEnabled(System.String)">
+            <summary>
+            Check if a feature is enabled globally
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.IsFeatureEnabledForCurrentUser(System.String)">
+            <summary>
+            Check if a feature is enabled for current user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.IsFeatureEnabledForRole(System.String,System.String)">
+            <summary>
+            Check if a feature is enabled for a specific role
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.CreateFeatureToggle(MarketingPlatform.Application.DTOs.Configuration.CreateFeatureToggleDto)">
+            <summary>
+            Create a new feature toggle
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.UpdateFeatureToggle(System.Int32,MarketingPlatform.Application.DTOs.Configuration.UpdateFeatureToggleDto)">
+            <summary>
+            Update an existing feature toggle
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.ToggleFeature(System.Int32,MarketingPlatform.Application.DTOs.Configuration.ToggleFeatureDto)">
+            <summary>
+            Toggle a feature on/off with role-based access
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FeatureTogglesController.DeleteFeatureToggle(System.Int32)">
+            <summary>
+            Delete a feature toggle
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FooterSettingsController.GetFooterSettings">
+            <summary>
+            Get active footer settings for landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FooterSettingsController.GetById(System.Int32)">
+            <summary>
+            Get footer settings by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FooterSettingsController.Create(MarketingPlatform.Core.Entities.FooterSettings)">
+            <summary>
+            Create footer settings (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.FooterSettingsController.Update(System.Int32,MarketingPlatform.Core.Entities.FooterSettings)">
+            <summary>
+            Update footer settings (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.IntegrationController.TestCRMConnection(MarketingPlatform.Application.DTOs.Integration.CRMSyncConfigDto)">
+            <summary>
+            Test CRM connection with provided configuration
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.IntegrationController.GetCRMFields(MarketingPlatform.Application.DTOs.Integration.CRMSyncConfigDto)">
+            <summary>
+            Get available CRM fields for mapping
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.IntegrationController.SyncContactsFromCRM(MarketingPlatform.Application.DTOs.Integration.CRMSyncConfigDto)">
+            <summary>
+            Sync contacts from CRM to platform
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.IntegrationController.SyncContactsToCRM(MarketingPlatform.API.Controllers.SyncToCRMRequestDto)">
+            <summary>
+            Sync contacts from platform to CRM
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.IntegrationController.SyncCampaignResultsToCRM(System.Int32,MarketingPlatform.Application.DTOs.Integration.CRMSyncConfigDto)">
+            <summary>
+            Sync campaign results to CRM
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Controllers.JourneysController">
+            <summary>
+            Contact Journey Mapping / Workflow Designer API
+            Enables visual workflow/journey creation, editing, and monitoring
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.GetJourneys(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all journeys/workflows for the current user (paginated)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.GetJourney(System.Int32)">
+            <summary>
+            Get a specific journey/workflow by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.CreateJourney(MarketingPlatform.Application.DTOs.Journey.CreateJourneyDto)">
+            <summary>
+            Create a new journey/workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.UpdateJourney(System.Int32,MarketingPlatform.Application.DTOs.Journey.UpdateJourneyDto)">
+            <summary>
+            Update an existing journey/workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.DeleteJourney(System.Int32)">
+            <summary>
+            Delete a journey/workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.DuplicateJourney(System.Int32)">
+            <summary>
+            Duplicate an existing journey/workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.GetJourneyStats(System.Int32)">
+            <summary>
+            Get journey statistics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.GetJourneyExecutions(System.Int32,MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get journey executions (paginated)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.ExecuteJourney(System.Int32,System.Int32)">
+            <summary>
+            Execute a journey for a specific contact
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.PauseExecution(System.Int32)">
+            <summary>
+            Pause a running journey execution
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.ResumeExecution(System.Int32)">
+            <summary>
+            Resume a paused journey execution
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.JourneysController.CancelExecution(System.Int32)">
+            <summary>
+            Cancel a journey execution
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFaqsController.GetLandingFaqs">
+            <summary>
+            Get all active landing FAQs for display on landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFaqsController.GetById(System.Int32)">
+            <summary>
+            Get a specific landing FAQ by ID (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFaqsController.Create(MarketingPlatform.Core.Entities.LandingFaq)">
+            <summary>
+            Create a new landing FAQ (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFaqsController.Update(System.Int32,MarketingPlatform.Core.Entities.LandingFaq)">
+            <summary>
+            Update a landing FAQ (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFaqsController.Delete(System.Int32)">
+            <summary>
+            Delete a landing FAQ (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFeaturesController.GetLandingFeatures">
+            <summary>
+            Get all active landing features for display on landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFeaturesController.GetById(System.Int32)">
+            <summary>
+            Get a specific landing feature by ID (Public access for detail page)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFeaturesController.Create(MarketingPlatform.Core.Entities.LandingFeature)">
+            <summary>
+            Create a new landing feature (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFeaturesController.Update(System.Int32,MarketingPlatform.Core.Entities.LandingFeature)">
+            <summary>
+            Update a landing feature (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingFeaturesController.Delete(System.Int32)">
+            <summary>
+            Delete a landing feature (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingStatsController.GetLandingStats">
+            <summary>
+            Get all active landing stats for display on landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingStatsController.GetById(System.Int32)">
+            <summary>
+            Get a specific landing stat by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingStatsController.Create(MarketingPlatform.Core.Entities.LandingStat)">
+            <summary>
+            Create a new landing stat (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingStatsController.Update(System.Int32,MarketingPlatform.Core.Entities.LandingStat)">
+            <summary>
+            Update a landing stat (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.LandingStatsController.Delete(System.Int32)">
+            <summary>
+            Delete a landing stat (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.MessagesController.PreviewMessage(MarketingPlatform.Application.DTOs.Message.MessagePreviewRequestDto)">
+            <summary>
+            Preview message content with variable substitution and device-specific rendering
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.MessagesController.SendTestMessage(MarketingPlatform.Application.DTOs.Message.TestSendRequestDto)">
+            <summary>
+            Send test message to specified recipients
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Controllers.OAuth2Controller">
+            <summary>
+            Manages OAuth2/SSO authentication flows and provider configurations
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.GetProviders">
+            <summary>
+            Get list of enabled OAuth2/SSO providers
+            </summary>
+            <returns>List of enabled authentication providers</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.GetAuthorizationUrl(System.String,System.String)">
+            <summary>
+            Get authorization URL to initiate OAuth2 flow
+            </summary>
+            <param name="providerName">The OAuth2 provider name (e.g., "AzureAD", "Google")</param>
+            <param name="redirectUri">Optional redirect URI after authentication</param>
+            <returns>Authorization URL to redirect user to</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.HandleCallback(System.String,MarketingPlatform.Application.DTOs.Auth.OAuth2CallbackDto)">
+            <summary>
+            Handle OAuth2 callback and complete authentication
+            </summary>
+            <param name="providerName">The OAuth2 provider name</param>
+            <param name="callback">OAuth2 callback data including authorization code</param>
+            <returns>Authentication response with JWT tokens</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.LinkExternalAccount(System.String,MarketingPlatform.Application.DTOs.Auth.OAuth2CallbackDto)">
+            <summary>
+            Link external OAuth2 account to current user
+            </summary>
+            <param name="providerName">The OAuth2 provider name</param>
+            <param name="callback">OAuth2 callback data</param>
+            <returns>Success response if account is linked</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.UnlinkExternalAccount(System.String)">
+            <summary>
+            Unlink an external account from the current user
+            </summary>
+            <param name="providerName">The OAuth2 provider name to unlink</param>
+            <returns>Success response if account is unlinked</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.GetAllProviders">
+            <summary>
+            Get all OAuth2 providers (Admin only)
+            </summary>
+            <returns>List of all OAuth2 provider configurations</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.GetProvider(System.Int32)">
+            <summary>
+            Get OAuth2 provider by ID (Admin only)
+            </summary>
+            <param name="id">The provider ID</param>
+            <returns>OAuth2 provider configuration details</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.CreateProvider(MarketingPlatform.Application.DTOs.Auth.CreateExternalAuthProviderDto)">
+            <summary>
+            Create a new OAuth2 provider configuration (Admin only)
+            </summary>
+            <param name="dto">The provider configuration data</param>
+            <returns>The created provider configuration</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.UpdateProvider(System.Int32,MarketingPlatform.Application.DTOs.Auth.UpdateExternalAuthProviderDto)">
+            <summary>
+            Update an OAuth2 provider configuration (Admin only)
+            </summary>
+            <param name="id">The provider ID to update</param>
+            <param name="dto">The updated provider configuration data</param>
+            <returns>Success response if provider is updated</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.DeleteProvider(System.Int32)">
+            <summary>
+            Delete an OAuth2 provider (Admin only)
+            </summary>
+            <param name="id">The provider ID to delete</param>
+            <returns>Success response if provider is deleted</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.OAuth2Controller.ToggleProviderStatus(System.Int32,System.Boolean)">
+            <summary>
+            Enable or disable an OAuth2 provider (Admin only)
+            </summary>
+            <param name="id">The provider ID</param>
+            <param name="isEnabled">True to enable, false to disable</param>
+            <returns>Success response if provider status is toggled</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.GetSettings(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all platform settings with pagination
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.GetSettingById(System.Int32)">
+            <summary>
+            Get platform setting by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.GetSettingByKey(System.String)">
+            <summary>
+            Get platform setting by key
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.GetSettingsByCategory(System.String)">
+            <summary>
+            Get platform settings by category
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.CreateSetting(MarketingPlatform.Application.DTOs.Configuration.CreatePlatformSettingDto)">
+            <summary>
+            Create a new platform setting
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.UpdateSetting(System.Int32,MarketingPlatform.Application.DTOs.Configuration.UpdatePlatformSettingDto)">
+            <summary>
+            Update an existing platform setting
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PlatformSettingsController.DeleteSetting(System.Int32)">
+            <summary>
+            Delete a platform setting
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Controllers.PricingController">
+            <summary>
+            Manages pricing models, channel pricing, region pricing, usage pricing, and tax configurations
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetPricingModels(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all pricing models
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetPricingModel(System.Int32)">
+            <summary>
+            Get pricing model by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.CreatePricingModel(MarketingPlatform.Application.DTOs.Pricing.CreatePricingModelDto)">
+            <summary>
+            Create a new pricing model
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.UpdatePricingModel(System.Int32,MarketingPlatform.Application.DTOs.Pricing.UpdatePricingModelDto)">
+            <summary>
+            Update pricing model
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.DeletePricingModel(System.Int32)">
+            <summary>
+            Delete pricing model
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetChannelPricings(System.Int32)">
+            <summary>
+            Get channel pricing by model ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetChannelPricing(System.Int32)">
+            <summary>
+            Get channel pricing by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.CreateChannelPricing(MarketingPlatform.Application.DTOs.Pricing.CreateChannelPricingDto)">
+            <summary>
+            Create channel pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.UpdateChannelPricing(System.Int32,MarketingPlatform.Application.DTOs.Pricing.UpdateChannelPricingDto)">
+            <summary>
+            Update channel pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.DeleteChannelPricing(System.Int32)">
+            <summary>
+            Delete channel pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetRegionPricings(System.Int32)">
+            <summary>
+            Get region pricing by model ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetRegionPricing(System.Int32)">
+            <summary>
+            Get region pricing by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.CreateRegionPricing(MarketingPlatform.Application.DTOs.Pricing.CreateRegionPricingDto)">
+            <summary>
+            Create region pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.UpdateRegionPricing(System.Int32,MarketingPlatform.Application.DTOs.Pricing.UpdateRegionPricingDto)">
+            <summary>
+            Update region pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.DeleteRegionPricing(System.Int32)">
+            <summary>
+            Delete region pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetUsagePricings(System.Int32)">
+            <summary>
+            Get usage pricing by model ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetUsagePricing(System.Int32)">
+            <summary>
+            Get usage pricing by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.CreateUsagePricing(MarketingPlatform.Application.DTOs.Pricing.CreateUsagePricingDto)">
+            <summary>
+            Create usage pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.UpdateUsagePricing(System.Int32,MarketingPlatform.Application.DTOs.Pricing.UpdateUsagePricingDto)">
+            <summary>
+            Update usage pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.DeleteUsagePricing(System.Int32)">
+            <summary>
+            Delete usage pricing
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetTaxConfigurations(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all tax configurations
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.GetTaxConfiguration(System.Int32)">
+            <summary>
+            Get tax configuration by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.CreateTaxConfiguration(MarketingPlatform.Application.DTOs.Pricing.CreateTaxConfigurationDto)">
+            <summary>
+            Create tax configuration
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.UpdateTaxConfiguration(System.Int32,MarketingPlatform.Application.DTOs.Pricing.UpdateTaxConfigurationDto)">
+            <summary>
+            Update tax configuration
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.PricingController.DeleteTaxConfiguration(System.Int32)">
+            <summary>
+            Delete tax configuration
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.GetRateLimitStatus(System.String)">
+            <summary>
+            Get rate limit status for current user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.GetApiRateLimits(System.String,System.String)">
+            <summary>
+            Get all API rate limits (admin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.CreateApiRateLimit(MarketingPlatform.Application.DTOs.RateLimit.CreateApiRateLimitDto)">
+            <summary>
+            Create a new API rate limit rule (admin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.UpdateApiRateLimit(System.Int32,MarketingPlatform.Application.DTOs.RateLimit.UpdateApiRateLimitDto)">
+            <summary>
+            Update an existing API rate limit rule (admin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.DeleteApiRateLimit(System.Int32)">
+            <summary>
+            Delete an API rate limit rule (admin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RateLimitsController.GetRateLimitLogs(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32)">
+            <summary>
+            Get rate limit violation logs (admin only)
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Controllers.RoutingConfigController">
+            <summary>
+            Manages channel routing configurations for message delivery
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetAllConfigs">
+            <summary>
+            Get all routing configurations
+            </summary>
+            <returns>List of all routing configurations ordered by channel and priority</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetConfigById(System.Int32)">
+            <summary>
+            Get routing configuration by ID
+            </summary>
+            <param name="id">The routing configuration ID</param>
+            <returns>The routing configuration details</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetConfigByChannel(MarketingPlatform.Core.Enums.ChannelType)">
+            <summary>
+            Get routing configuration by channel
+            </summary>
+            <param name="channel">The channel type (SMS, MMS, Email)</param>
+            <returns>The active routing configuration for the specified channel</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.CreateConfig(MarketingPlatform.Core.Entities.ChannelRoutingConfig)">
+            <summary>
+            Create a new routing configuration
+            </summary>
+            <param name="config">The routing configuration to create</param>
+            <returns>The created routing configuration</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.UpdateConfig(System.Int32,MarketingPlatform.Core.Entities.ChannelRoutingConfig)">
+            <summary>
+            Update an existing routing configuration
+            </summary>
+            <param name="id">The routing configuration ID to update</param>
+            <param name="updatedConfig">The updated routing configuration data</param>
+            <returns>The updated routing configuration</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.DeleteConfig(System.Int32)">
+            <summary>
+            Delete a routing configuration
+            </summary>
+            <param name="id">The routing configuration ID to delete</param>
+            <returns>Success status</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetDeliveryAttempts(System.Int32)">
+            <summary>
+            Get delivery attempts for a message
+            </summary>
+            <param name="messageId">The campaign message ID</param>
+            <returns>List of delivery attempts for the specified message</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetChannelStats(MarketingPlatform.Core.Enums.ChannelType,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get delivery statistics by channel
+            </summary>
+            <param name="channel">The channel type</param>
+            <param name="startDate">Optional start date for statistics (defaults to 30 days ago)</param>
+            <param name="endDate">Optional end date for statistics (defaults to now)</param>
+            <returns>Delivery statistics for the specified channel and date range</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.RoutingConfigController.GetOverallStats(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get overall delivery statistics
+            </summary>
+            <param name="startDate">Optional start date for statistics (defaults to 30 days ago)</param>
+            <param name="endDate">Optional end date for statistics (defaults to now)</param>
+            <returns>Overall delivery statistics including breakdown by channel</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SecurityBadgesController.GetSecurityBadges">
+            <summary>
+            Get all active security badges for landing page (Public endpoint)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SecurityBadgesController.GetById(System.Int32)">
+            <summary>
+            Get a specific security badge by ID (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SecurityBadgesController.Create(MarketingPlatform.Core.Entities.SecurityBadge)">
+            <summary>
+            Create a new security badge (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SecurityBadgesController.Update(System.Int32,MarketingPlatform.Core.Entities.SecurityBadge)">
+            <summary>
+            Update a security badge (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SecurityBadgesController.Delete(System.Int32)">
+            <summary>
+            Delete a security badge (SuperAdmin only - soft delete)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetActiveSuperAdmins">
+            <summary>
+            Get all active super admin assignments
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetSuperAdminByUserId(System.String)">
+            <summary>
+            Get super admin assignment for a specific user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.AssignSuperAdmin(MarketingPlatform.Application.DTOs.SuperAdmin.AssignSuperAdminDto)">
+            <summary>
+            Assign super admin role to a user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.RevokeSuperAdmin(MarketingPlatform.Application.DTOs.SuperAdmin.RevokeSuperAdminDto)">
+            <summary>
+            Revoke super admin role from a user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.IsSuperAdmin(System.String)">
+            <summary>
+            Check if a user is a super admin
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetPrivilegedActionLogs(MarketingPlatform.Application.DTOs.SuperAdmin.PrivilegedActionFilterDto)">
+            <summary>
+            Get paginated privileged action logs with filtering
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetLogsByEntity(System.String,System.String)">
+            <summary>
+            Get logs for a specific entity
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetLogsByUser(System.String,System.Int32)">
+            <summary>
+            Get logs for a specific user
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetCriticalActions(System.DateTime,System.DateTime)">
+            <summary>
+            Get critical actions within a time range
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetActiveConfigurations">
+            <summary>
+            Get all active platform configurations
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetConfigurationByKey(System.String)">
+            <summary>
+            Get configuration by key
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetConfigurationsByCategory(MarketingPlatform.Core.Enums.ConfigurationCategory)">
+            <summary>
+            Get configurations by category
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.UpdateConfiguration(MarketingPlatform.Application.DTOs.SuperAdmin.UpdateConfigurationDto)">
+            <summary>
+            Update a platform configuration
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.ToggleFeature(MarketingPlatform.Core.Enums.PlatformFeature,System.Boolean)">
+            <summary>
+            Toggle a platform feature
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetPlatformAnalytics">
+            <summary>
+            Get platform-wide analytics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetBillingAnalytics(System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Get billing analytics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetMonthlyRevenue(System.Int32)">
+            <summary>
+            Get monthly revenue trends
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetSystemHealth">
+            <summary>
+            Get system health status
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.SuperAdminController.GetProviderHealth">
+            <summary>
+            Get provider health metrics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.GetTemplates(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all templates (paginated)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.GetTemplate(System.Int32)">
+            <summary>
+            Get single template by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.GetTemplatesByChannel(MarketingPlatform.Core.Enums.ChannelType)">
+            <summary>
+            Get templates by channel (SMS, MMS, Email)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.GetTemplatesByCategory(MarketingPlatform.Core.Enums.TemplateCategory)">
+            <summary>
+            Get templates by category
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.CreateTemplate(MarketingPlatform.Application.DTOs.Template.CreateTemplateDto)">
+            <summary>
+            Create new template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.UpdateTemplate(System.Int32,MarketingPlatform.Application.DTOs.Template.UpdateTemplateDto)">
+            <summary>
+            Update existing template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.DeleteTemplate(System.Int32)">
+            <summary>
+            Delete template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.DuplicateTemplate(System.Int32)">
+            <summary>
+            Duplicate template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.SetDefaultTemplate(System.Int32)">
+            <summary>
+            Set template as default for its channel and category
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.ActivateTemplate(System.Int32)">
+            <summary>
+            Activate template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.DeactivateTemplate(System.Int32)">
+            <summary>
+            Deactivate template
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.PreviewTemplate(MarketingPlatform.Application.DTOs.Template.TemplatePreviewRequestDto)">
+            <summary>
+            Preview template with variable substitution
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.ExtractVariables(System.String)">
+            <summary>
+            Extract variables from content
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.GetTemplateStats(System.Int32)">
+            <summary>
+            Get template usage statistics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TemplatesController.CalculateCharacterCount(MarketingPlatform.Application.DTOs.Template.CalculateCharacterCountRequestDto)">
+            <summary>
+            Calculate character count for content
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TestimonialsController.GetTestimonials">
+            <summary>
+            Get all active testimonials for landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TestimonialsController.GetById(System.Int32)">
+            <summary>
+            Get a specific testimonial by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TestimonialsController.Create(MarketingPlatform.Core.Entities.Testimonial)">
+            <summary>
+            Create a new testimonial (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TestimonialsController.Update(System.Int32,MarketingPlatform.Core.Entities.Testimonial)">
+            <summary>
+            Update a testimonial (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TestimonialsController.Delete(System.Int32)">
+            <summary>
+            Delete a testimonial (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TrustedCompaniesController.GetTrustedCompanies">
+            <summary>
+            Get all active trusted companies for landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TrustedCompaniesController.GetById(System.Int32)">
+            <summary>
+            Get a specific trusted company by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TrustedCompaniesController.Create(MarketingPlatform.Core.Entities.TrustedCompany)">
+            <summary>
+            Create a new trusted company (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TrustedCompaniesController.Update(System.Int32,MarketingPlatform.Core.Entities.TrustedCompany)">
+            <summary>
+            Update a trusted company (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.TrustedCompaniesController.Delete(System.Int32)">
+            <summary>
+            Delete a trusted company (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.CreateShortenedUrl(MarketingPlatform.Application.DTOs.URL.CreateShortenedUrlDto)">
+            <summary>
+            Create a shortened URL for a campaign
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.GetUrls(MarketingPlatform.Application.DTOs.Common.PagedRequest)">
+            <summary>
+            Get all shortened URLs (paginated)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.GetUrl(System.Int32)">
+            <summary>
+            Get shortened URL by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.GetUrlsByCampaign(System.Int32)">
+            <summary>
+            Get all shortened URLs for a campaign
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.GetClickStats(System.Int32)">
+            <summary>
+            Get click statistics for a shortened URL
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.GetCampaignUrlStats(System.Int32)">
+            <summary>
+            Get URL statistics for a campaign
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.DeleteUrl(System.Int32)">
+            <summary>
+            Delete a shortened URL
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UrlsController.RedirectToUrl(System.String)">
+            <summary>
+            Redirect to original URL and track click (public endpoint)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.GetUseCases">
+            <summary>
+            Get all active use cases for landing page
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.GetById(System.Int32)">
+            <summary>
+            Get a specific use case by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.GetByIndustry(System.String)">
+            <summary>
+            Get use cases by industry
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.Create(MarketingPlatform.Core.Entities.UseCase)">
+            <summary>
+            Create a new use case (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.Update(System.Int32,MarketingPlatform.Core.Entities.UseCase)">
+            <summary>
+            Update a use case (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.UseCasesController.Delete(System.Int32)">
+            <summary>
+            Delete a use case (SuperAdmin only)
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Controllers.WorkflowsController">
+            <summary>
+            Workflows API Controller
+            Provides endpoints for managing automated workflows
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.GetWorkflows(System.Object)">
+            <summary>
+            Get all workflows (paginated) - Using POST for complex query parameters
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.GetWorkflow(System.Int32)">
+            <summary>
+            Get workflow by ID
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.CreateWorkflow(System.Object)">
+            <summary>
+            Create new workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.UpdateWorkflow(System.Int32,System.Object)">
+            <summary>
+            Update workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.DeleteWorkflow(System.Int32)">
+            <summary>
+            Delete workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.ActivateWorkflow(System.Int32)">
+            <summary>
+            Activate workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.PauseWorkflow(System.Int32)">
+            <summary>
+            Pause workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.ExecuteWorkflow(System.Int32)">
+            <summary>
+            Execute workflow
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.GetWorkflowStats(System.Int32)">
+            <summary>
+            Get workflow statistics
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Controllers.WorkflowsController.DuplicateWorkflow(System.Int32)">
+            <summary>
+            Duplicate workflow
+            </summary>
+        </member>
+        <member name="T:MarketingPlatform.API.Extensions.CspExtensions">
+            <summary>
+            Extension methods for Content Security Policy (CSP) nonce access in views and controllers.
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Extensions.CspExtensions.GetCspNonce(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Retrieves the CSP nonce for the current request.
+            This nonce should be used in inline script and style tags to comply with CSP.
+            </summary>
+            <param name="context">The HttpContext for the current request</param>
+            <returns>The CSP nonce string, or empty string if not available</returns>
+            <example>
+            Usage in Razor views:
+            <code>
+            &lt;script nonce="@Context.GetCspNonce()"&gt;
+                // Your inline JavaScript code
+            &lt;/script&gt;
+            
+            &lt;style nonce="@Context.GetCspNonce()"&gt;
+                /* Your inline CSS */
+            &lt;/style&gt;
+            </code>
+            
+            Or access directly via Items:
+            <code>
+            &lt;script nonce="@Context.Items["csp-nonce"]"&gt;
+                // Your inline JavaScript code
+            &lt;/script&gt;
+            </code>
+            </example>
+        </member>
+        <member name="M:MarketingPlatform.API.Extensions.CspExtensions.HasCspNonce(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Checks if a CSP nonce is available for the current request.
+            </summary>
+            <param name="context">The HttpContext for the current request</param>
+            <returns>True if a nonce is available, false otherwise</returns>
+        </member>
+        <member name="T:MarketingPlatform.API.Middleware.CspMiddleware">
+            <summary>
+            Middleware for implementing Content Security Policy (CSP) with nonce-based inline script/style execution.
+            Generates a unique cryptographically secure nonce per request and sets appropriate CSP headers
+            based on the environment (Development vs Production).
+            </summary>
+        </member>
+        <member name="M:MarketingPlatform.API.Middleware.CspMiddleware.GenerateNonce">
+            <summary>
+            Generates a cryptographically secure random nonce.
+            </summary>
+            <returns>Base64-encoded nonce string</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Middleware.CspMiddleware.BuildDevelopmentCsp(System.String)">
+            <summary>
+            Builds a CSP header for development environment.
+            More permissive to allow hot reload, browser-link, and WebSocket connections.
+            Uses specific port ranges for common development tools to maintain security.
+            </summary>
+            <param name="nonce">The nonce to include in the CSP</param>
+            <returns>CSP header value</returns>
+        </member>
+        <member name="M:MarketingPlatform.API.Middleware.CspMiddleware.BuildProductionCsp(System.String)">
+            <summary>
+            Builds a strict CSP header for production environment.
+            Uses nonces for inline scripts/styles without allowing unsafe-inline or unsafe-eval.
+            </summary>
+            <param name="nonce">The nonce to include in the CSP</param>
+            <returns>CSP header value</returns>
+        </member>
+        <member name="T:MarketingPlatform.API.Middleware.RateLimitingMiddleware">
+            <summary>
+            Middleware for API rate limiting and throttling
+            </summary>
+        </member>
+    </members>
+</doc>

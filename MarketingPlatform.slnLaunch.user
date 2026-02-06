@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\MarketingPlatform.API\\MarketingPlatform.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\MarketingPlatform.Web\\MarketingPlatform.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Integrations"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-plug"></i> Integrations</h2>
+        <a href="@Url.Action("Index", "Settings")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Settings
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-facebook"></i> Facebook</h5>
+                        <span class="badge bg-success">Connected</span>
+                    </div>
+                    <p class="text-muted small">Sync contacts and run social campaigns</p>
+                    <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-google"></i> Google Analytics</h5>
+                        <span class="badge bg-secondary">Not Connected</span>
+                    </div>
+                    <p class="text-muted small">Track campaign performance in GA</p>
+                    <button class="btn btn-sm btn-primary">Connect</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0"><i class="bi bi-stripe"></i> Stripe</h5>
+                        <span class="badge bg-success">Connected</span>
+                    </div>
+                    <p class="text-muted small">Process payments and subscriptions</p>
+                    <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

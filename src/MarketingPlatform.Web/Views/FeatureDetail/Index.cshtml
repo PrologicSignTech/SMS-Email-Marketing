@@ -1,0 +1,326 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = ViewBag.Feature?.Title ?? "Feature Details"; Layout = "_LayoutAuthenticated";
+    var feature = ViewBag.Feature;
+    var galleryImages = new List<string>();
+
+    if (!string.IsNullOrEmpty(feature?.GalleryImages))
+    {
+        try
+        {
+            galleryImages = JsonSerializer.Deserialize<List<string>>(feature.GalleryImages) ?? new List<string>();
+        }
+        catch { }
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/feature-detail.css" asp-append-version="true" />
+}
+
+<!-- Feature Detail Hero Section -->
+<section class="feature-detail-hero position-relative overflow-hidden">
+    @if (!string.IsNullOrEmpty(feature.HeaderImageUrl))
+    {
+        <div class="hero-bg" style="background-image: url('@feature.HeaderImageUrl');"></div>
+        <div class="hero-overlay"></div>
+    }
+    else
+    {
+        <div class="hero-bg bg-gradient-@feature.ColorClass"></div>
+    }
+
+    <div class="container position-relative py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-8 mx-auto text-center text-white">
+                <a href="/" class="btn btn-outline-light btn-sm mb-3">
+                    <i class="bi bi-arrow-left"></i> Back to Home
+                </a>
+                <div class="feature-icon-hero mb-4">
+                    <i class="bi @feature.IconClass"></i>
+                </div>
+                <h1 class="display-3 fw-bold mb-4">@feature.Title</h1>
+                <p class="lead fs-4 mb-4">@feature.ShortDescription</p>
+
+                @if (feature.StatTitle1 != null || feature.StatTitle2 != null || feature.StatTitle3 != null)
+                {
+                    <div class="row g-3 justify-content-center">
+                        @if (feature.StatTitle1 != null)
+                        {
+                            <div class="col-md-4">
+                                <div class="stat-box-hero">
+                                    <div class="h2 fw-bold mb-0">@feature.StatValue1</div>
+                                    <small class="text-white-50">@feature.StatTitle1</small>
+                                </div>
+                            </div>
+                        }
+                        @if (feature.StatTitle2 != null)
+                        {
+                            <div class="col-md-4">
+                                <div class="stat-box-hero">
+                                    <div class="h2 fw-bold mb-0">@feature.StatValue2</div>
+                                    <small class="text-white-50">@feature.StatTitle2</small>
+                                </div>
+                            </div>
+                        }
+                        @if (feature.StatTitle3 != null)
+                        {
+                            <div class="col-md-4">
+                                <div class="stat-box-hero">
+                                    <div class="h2 fw-bold mb-0">@feature.StatValue3</div>
+                                    <small class="text-white-50">@feature.StatTitle3</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Content Section -->
+<section class="feature-content py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Description -->
+                <div class="content-card mb-5" data-aos="fade-up">
+                    <h2 class="h3 fw-bold mb-4">
+                        <i class="bi bi-info-circle text-@feature.ColorClass me-2"></i>
+                        About This Feature
+                    </h2>
+                    <p class="lead text-muted">@feature.DetailedDescription</p>
+                </div>
+
+                <!-- Video Section -->
+                @if (!string.IsNullOrEmpty(feature.VideoUrl))
+                {
+                    <div class="content-card mb-5" data-aos="fade-up" data-aos-delay="100">
+                        <h2 class="h3 fw-bold mb-4">
+                            <i class="bi bi-play-circle text-@feature.ColorClass me-2"></i>
+                            Watch Demo
+                        </h2>
+                        <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-lg">
+                            <iframe src="@feature.VideoUrl"
+                                    title="@feature.Title Demo"
+                                    allowfullscreen
+                                    class="border-0"></iframe>
+                        </div>
+                    </div>
+                }
+
+                <!-- Gallery Section -->
+                @if (galleryImages.Any())
+                {
+                    <div class="content-card mb-5" data-aos="fade-up" data-aos-delay="200">
+                        <h2 class="h3 fw-bold mb-4">
+                            <i class="bi bi-images text-@feature.ColorClass me-2"></i>
+                            Gallery
+                        </h2>
+                        <div class="row g-3">
+                            @for (int i = 0; i < galleryImages.Count; i++)
+                            {
+                                <div class="col-md-6">
+                                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="@((i + 1) * 50)">
+                                        <img src="@galleryImages[i]"
+                                             alt="@feature.Title - Image @(i + 1)"
+                                             class="img-fluid rounded-4 shadow-sm hover-zoom"
+                                             onerror="this.src='/images/placeholder.jpg'">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Contact Card -->
+                <div class="sticky-sidebar">
+                    <div class="contact-card bg-@feature.ColorClass text-white rounded-4 p-4 shadow-lg mb-4" data-aos="fade-left">
+                        <div class="text-center mb-4">
+                            <div class="contact-icon-circle mx-auto mb-3">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <h3 class="h4 fw-bold mb-2">Get in Touch</h3>
+                            <p class="small opacity-90 mb-0">@(feature.ContactMessage ?? "Have questions? Our team is here to help!")</p>
+                        </div>
+
+                        <div class="contact-info">
+                            @if (!string.IsNullOrEmpty(feature.ContactName))
+                            {
+                                <div class="contact-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="contact-icon-sm me-3">
+                                            <i class="bi bi-person-circle"></i>
+                                        </div>
+                                        <div>
+                                            <small class="d-block opacity-75">Contact Person</small>
+                                            <strong>@feature.ContactName</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(feature.ContactEmail))
+                            {
+                                <div class="contact-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="contact-icon-sm me-3">
+                                            <i class="bi bi-envelope-fill"></i>
+                                        </div>
+                                        <div class="flex-grow-1" style="min-width: 0;">
+                                            <small class="d-block opacity-75">Email</small>
+                                            <a href="mailto:@feature.ContactEmail" class="text-white text-decoration-none">
+                                                <strong class="text-truncate d-block">@feature.ContactEmail</strong>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(feature.ContactPhone))
+                            {
+                                <div class="contact-item mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="contact-icon-sm me-3">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </div>
+                                        <div>
+                                            <small class="d-block opacity-75">Phone</small>
+                                            <a href="tel:@feature.ContactPhone" class="text-white text-decoration-none">
+                                                <strong>@feature.ContactPhone</strong>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            @if (!string.IsNullOrEmpty(feature.ContactEmail))
+                            {
+                                <a href="mailto:@feature.ContactEmail?subject=Inquiry about @feature.Title"
+                                   class="btn btn-light btn-lg">
+                                    <i class="bi bi-envelope-fill me-2"></i>Send Email
+                                </a>
+                            }
+                            <a href="@Url.Action("Register", "Auth")"
+                               class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Feature Highlights -->
+                    <div class="highlights-card" data-aos="fade-left" data-aos-delay="100">
+                        <h4 class="h5 fw-bold mb-3">
+                            <i class="bi bi-star-fill text-warning me-2"></i>
+                            Key Highlights
+                        </h4>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Easy to use and implement
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                24/7 customer support
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Scalable for any business size
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Regular updates and improvements
+                            </li>
+                            <li class="mb-0">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Secure and compliant
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Features Section -->
+<section class="related-features py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="h3 fw-bold mb-3">Explore More Features</h2>
+            <p class="text-muted">Discover other powerful capabilities of our platform</p>
+        </div>
+        <div id="related-features-container" class="row g-4">
+            <!-- Will be loaded dynamically -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading related features...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Load related features
+        document.addEventListener('DOMContentLoaded', async function () {
+            const currentFeatureId = @feature.Id;
+            const container = document.getElementById('related-features-container');
+
+            try {
+                const apiUrl = window.AppUrls ?
+                    window.AppUrls.buildApiUrl(window.AppUrls.api.landingFeatures.list) :
+                    '/api/landingfeatures';
+
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    // Filter out current feature and get random 3
+                    const otherFeatures = result.data.filter(f => f.id !== currentFeatureId);
+                    const randomFeatures = otherFeatures.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+                    if (randomFeatures.length > 0) {
+                        container.innerHTML = randomFeatures.map(feature => `
+                            <div class="col-md-4" data-aos="fade-up">
+                                <a href="/features/${feature.id}" class="text-decoration-none smooth-link">
+                                    <div class="content-card text-center hover-zoom h-100" style="transition: all 0.3s ease; cursor: pointer;">
+                                        <div class="text-${feature.colorClass} mb-3" style="font-size: 3rem;">
+                                            <i class="bi ${feature.iconClass}"></i>
+                                        </div>
+                                        <h4 class="fw-bold mb-2">${escapeHtml(feature.title)}</h4>
+                                        <p class="text-muted small mb-0">${escapeHtml(feature.shortDescription)}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        `).join('');
+
+                        // Reinitialize AOS for related features
+                        if (typeof AOS !== 'undefined') {
+                            AOS.refresh();
+                        }
+                    } else {
+                        container.innerHTML = '<div class="col-12"><p class="text-center text-muted">No other features available</p></div>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading related features:', error);
+                container.innerHTML = '<div class="col-12"><p class="text-center text-muted">Unable to load related features</p></div>';
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+}

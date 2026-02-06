@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Edit Provider"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil"></i> Edit Provider</h2>
+        <a href="@Url.Action("Index", "Providers")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Providers
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div id="loading" class="text-center py-5"><div class="spinner-border"></div></div>
+            <form id="providerForm" style="display: none;">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="type" class="form-label">Type</label>
+                        <input type="text" class="form-control" id="type" disabled>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="apiKey" class="form-label">API Key</label>
+                    <input type="password" class="form-control" id="apiKey">
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive">
+                        <label class="form-check-label" for="isActive">Active</label>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" onclick="deleteProvider()"><i class="bi bi-trash"></i> Delete</button>
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("Index", "Providers")" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        const providerId = window.location.pathname.split('/').pop();
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                document.getElementById('name').value = 'Twilio SMS';
+                document.getElementById('type').value = 'SMS';
+                document.getElementById('isActive').checked = true;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('providerForm').style.display = 'block';
+            }, 500);
+        });
+
+        document.getElementById('providerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Provider updated! (Demo)');
+            window.location.href = '/Providers/Index';
+        });
+
+        function deleteProvider() {
+            if (confirm('Delete this provider?')) {
+                alert('Provider deleted! (Demo)');
+                window.location.href = '/Providers/Index';
+            }
+        }
+    </script>
+}

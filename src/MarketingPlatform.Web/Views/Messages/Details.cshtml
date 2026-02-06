@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Message Details"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-envelope-open"></i> Message Details</h2>
+        <a href="@Url.Action("Index", "Messages")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Messages
+        </a>
+    </div>
+
+    <div id="loading" class="text-center py-5">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div id="messageDetails" style="display: none;">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 id="statRecipients" class="text-primary">-</h3>
+                        <p class="text-muted mb-0">Recipients</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 id="statDelivered" class="text-success">-</h3>
+                        <p class="text-muted mb-0">Delivered</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 id="statOpened" class="text-info">-</h3>
+                        <p class="text-muted mb-0">Opened</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 id="statClicked" class="text-warning">-</h3>
+                        <p class="text-muted mb-0">Clicked</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Message Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="text-muted small">Subject</label>
+                                <p id="messageSubject" class="fw-bold">-</p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-muted small">Channel</label>
+                                <p id="messageChannel">-</p>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-muted small">Status</label>
+                                <p id="messageStatus">-</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="text-muted small">Campaign</label>
+                                <p id="messageCampaign">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small">Sent At</label>
+                                <p id="messageSentAt">-</p>
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="text-muted small">Message Content</label>
+                            <div class="border rounded p-3 bg-light" id="messageContent">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Delivery Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="deliveryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Recipient</th>
+                                        <th>Status</th>
+                                        <th>Delivered At</th>
+                                        <th>Opened At</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" data-action="resend-message">
+                                <i class="bi bi-arrow-repeat"></i> Resend to Failed
+                            </button>
+                            <button class="btn btn-outline-secondary" data-action="duplicate-message">
+                                <i class="bi bi-files"></i> Duplicate Message
+                            </button>
+                            <button class="btn btn-outline-info" data-action="export-report">
+                                <i class="bi bi-download"></i> Export Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script nonce="@Context.GetCspNonce()">
+        window.messagesDetailsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/messages-details.js" asp-append-version="true"></script>
+}

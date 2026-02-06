@@ -1,0 +1,423 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = MarketingPlatform.Web
+build_property.RootNamespace = MarketingPlatform.Web
+build_property.ProjectDir = E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Web\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Web
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/AdminDashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5EYXNoYm9hcmRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Analytics/Campaigns.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hbHl0aWNzXENhbXBhaWducy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Analytics/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hbHl0aWNzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Analytics/Reports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW5hbHl0aWNzXFJlcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/ApiManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBpTWFuYWdlbWVudFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Auth/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxBY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Auth/ForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Auth/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Auth/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Billing/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Billing/Subscribe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlsbGluZ1xTdWJzY3JpYmUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Campaigns/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FtcGFpZ25zXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Campaigns/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FtcGFpZ25zXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Campaigns/Variants.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FtcGFpZ25zXFZhcmlhbnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Contacts/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Contacts/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Contacts/Groups.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdHNcR3JvdXBzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Contacts/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udGFjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/FeatureDetail/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmVhdHVyZURldGFpbFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/FooterSettings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9vdGVyU2V0dGluZ3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Home/Terms.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUZXJtcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Journeys/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm91cm5leXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Journeys/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm91cm5leXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Journeys/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm91cm5leXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Keywords/Analytics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2V5d29yZHNcQW5hbHl0aWNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Keywords/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2V5d29yZHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Keywords/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2V5d29yZHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Keywords/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2V5d29yZHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingFaqs/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ0ZhcXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingFeatures/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ0ZlYXR1cmVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/Features.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcRmVhdHVyZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/Footer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcRm9vdGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/HeroSection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcSGVyb1NlY3Rpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/MenuConfig.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcTWVudUNvbmZpZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/Preview.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcUHJldmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingPageConfig/PricingDisplay.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1BhZ2VDb25maWdcUHJpY2luZ0Rpc3BsYXkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/LandingStats/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGFuZGluZ1N0YXRzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Messages/Compose.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcQ29tcG9zZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Messages/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Messages/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Messages/Preview.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcUHJldmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/PageContent/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnZUNvbnRlbnRcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/PageContent/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnZUNvbnRlbnRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Pricing/Channels.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJpY2luZ1xDaGFubmVscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Pricing/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJpY2luZ1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Pricing/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJpY2luZ1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Pricing/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJpY2luZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Providers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmlkZXJzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Providers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmlkZXJzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Providers/Health.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmlkZXJzXEhlYWx0aC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Providers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmlkZXJzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Providers/Routing.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvdmlkZXJzXFJvdXRpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Roles/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Roles/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Roles/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/SecurityBadges/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlCYWRnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Settings/Compliance.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcQ29tcGxpYW5jZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Settings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Settings/Integrations.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2V0dGluZ3NcSW50ZWdyYXRpb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/Chat/_ChatWidget.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENoYXRcX0NoYXRXaWRnZXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/_LayoutAuth.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRBdXRoLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/_LayoutAuthenticated.backup.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRBdXRoZW50aWNhdGVkLmJhY2t1cC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/_LayoutAuthenticated.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRBdXRoZW50aWNhdGVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/SuperAdmin/AuditLogs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJBZG1pblxBdWRpdExvZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/SuperAdmin/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJBZG1pblxEYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/SuperAdmin/PlatformConfig.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJBZG1pblxQbGF0Zm9ybUNvbmZpZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/SuperAdmin/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwZXJBZG1pblxVc2Vycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Suppression/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcHJlc3Npb25cQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Suppression/Entries.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcHJlc3Npb25cRW50cmllcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Suppression/Import.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcHJlc3Npb25cSW1wb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Suppression/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3VwcHJlc3Npb25cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Templates/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVtcGxhdGVzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Templates/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVtcGxhdGVzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Templates/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVtcGxhdGVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Testimonials/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVzdGltb25pYWxzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/TrustedCompanies/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJ1c3RlZENvbXBhbmllc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Urls/Analytics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXJsc1xBbmFseXRpY3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Urls/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXJsc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Urls/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXJsc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/UseCases/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlQ2FzZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/UserDashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlckRhc2hib2FyZFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Users/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Users/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcUHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Users/Settings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcU2V0dGluZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Webhooks/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2ViaG9va3NcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Webhooks/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2ViaG9va3NcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Webhooks/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2ViaG9va3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Webhooks/Logs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV2ViaG9va3NcTG9ncy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Workflows/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV29ya2Zsb3dzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Workflows/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV29ya2Zsb3dzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Workflows/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV29ya2Zsb3dzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/pLOGIC/Projects/TextingPro/src/MarketingPlatform.Web/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-4sg5yf3x31

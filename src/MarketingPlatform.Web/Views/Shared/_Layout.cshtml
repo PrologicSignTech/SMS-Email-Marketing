@@ -1,0 +1,429 @@
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Marketing Platform</title>
+    <script nonce="@Context.GetCspNonce()">
+        window.appConfig = {
+            apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
+            recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
+            stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+
+        };
+         window.authConfig = {
+            apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
+            recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
+            stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+        };
+    </script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/landing-enhancements.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <!-- AOS - Animate On Scroll -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <!-- jQuery DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="~/css/datatables-custom.css" asp-append-version="true" />
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header class="landing-header">
+        <nav class="navbar navbar-expand-lg navbar-dark landing-navbar">
+            <div class="container">
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <div class="brand-icon-wrapper me-2">
+                        <i class="bi bi-chat-dots-fill"></i>
+                    </div>
+                    <span class="brand-text">Marketing Platform</span>
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <!-- Dashboards -->
+                        <li class="nav-item dropdown" require-permission="ViewProfile">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="UserDashboard" asp-action="Index"><i class="bi bi-grid"></i> My Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="Index" require-permission="ViewUsers"><i class="bi bi-speedometer"></i> Admin Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Profile"><i class="bi bi-person"></i> My Profile</a></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Settings"><i class="bi bi-gear"></i> My Settings</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Campaigns -->
+                        <li class="nav-item dropdown" require-permission="ViewCampaigns">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-megaphone"></i> Campaigns
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Index"><i class="bi bi-list-ul"></i> All Campaigns</a></li>
+                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Campaign</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Contacts -->
+                        <li class="nav-item dropdown" require-permission="ViewContacts">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-people"></i> Contacts
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Contacts" asp-action="Index"><i class="bi bi-list-ul"></i> All Contacts</a></li>
+                                <li><a class="dropdown-item" asp-controller="Contacts" asp-action="Create"><i class="bi bi-person-plus"></i> Add Contact</a></li>
+                                <li><a class="dropdown-item" asp-controller="Contacts" asp-action="Groups"><i class="bi bi-collection"></i> Contact Groups</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Templates -->
+                        <li class="nav-item dropdown" require-permission="ViewTemplates">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-file-earmark-text"></i> Templates
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Templates" asp-action="Index"><i class="bi bi-list-ul"></i> All Templates</a></li>
+                                <li><a class="dropdown-item" asp-controller="Templates" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Template</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Workflows -->
+                        <li class="nav-item dropdown" require-permission="ViewWorkflows">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-diagram-3"></i> Workflows
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Workflows" asp-action="Index"><i class="bi bi-list-ul"></i> All Workflows</a></li>
+                                <li><a class="dropdown-item" asp-controller="Workflows" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Workflow</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Analytics -->
+                        <li class="nav-item dropdown" require-permission="ViewAnalytics">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-graph-up-arrow"></i> Analytics
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Analytics" asp-action="Index"><i class="bi bi-speedometer"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-controller="Analytics" asp-action="Campaigns"><i class="bi bi-bar-chart"></i> Campaign Performance</a></li>
+                                <li><a class="dropdown-item" asp-controller="Analytics" asp-action="Reports"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Administration -->
+                        <li class="nav-item dropdown" require-permission="ViewUsers">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-shield-lock"></i> Administration
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index"><i class="bi bi-people"></i> Manage Users</a></li>
+                                <li><a class="dropdown-item" asp-controller="Roles" asp-action="Index"><i class="bi bi-key"></i> Roles & Permissions</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pricing" asp-action="Index"><i class="bi bi-currency-dollar"></i> Pricing Plans</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Settings" asp-action="Index"><i class="bi bi-gear"></i> Settings</a></li>
+                                <li><a class="dropdown-item" asp-controller="Settings" asp-action="Integrations"><i class="bi bi-plug"></i> Integrations</a></li>
+                                <li><a class="dropdown-item" asp-controller="Settings" asp-action="Compliance"><i class="bi bi-shield-check"></i> Compliance</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Super Admin -->
+                        <li class="nav-item dropdown" require-permission="ManageSuperAdmins">
+                            <a class="nav-link dropdown-toggle text-danger" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-lightning-fill"></i> Super Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="SuperAdmin" asp-action="Dashboard"><i class="bi bi-speedometer"></i> Admin Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-controller="SuperAdmin" asp-action="Users"><i class="bi bi-people-fill"></i> System Users</a></li>
+                                <li><a class="dropdown-item" asp-controller="SuperAdmin" asp-action="PlatformConfig"><i class="bi bi-sliders"></i> Platform Config</a></li>
+                                <li><a class="dropdown-item" asp-controller="SuperAdmin" asp-action="AuditLogs"><i class="bi bi-journal-text"></i> Audit Logs</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="LandingPageConfig" asp-action="Index"><i class="bi bi-layout-text-window"></i> Landing Page Config</a></li>
+                                <li><a class="dropdown-item" asp-controller="PageContent" asp-action="Index"><i class="bi bi-file-text"></i> Privacy & Terms Pages</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <!-- Right side menu -->
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <!-- Authenticated User Menu -->
+                        <li class="nav-item dropdown d-none" id="user-menu">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> <span id="user-name">User</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Profile"><i class="bi bi-person"></i> Profile</a></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Settings"><i class="bi bi-gear"></i> Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Guest Menu -->
+                        <li class="nav-item" id="login-link">
+                            <a class="nav-link nav-link-login" asp-controller="Auth" asp-action="Login">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item" id="register-link">
+                            <a class="btn btn-signup ms-3" asp-controller="Auth" asp-action="Register">
+                                <i class="bi bi-person-plus me-1"></i> Sign Up
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="main-wrapper">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Modern Footer -->
+    <footer class="site-footer">
+        <!-- Main Footer Content -->
+        <div class="footer-main">
+            <div class="container">
+                <div class="row g-4 g-lg-5">
+                    <!-- Company Info -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-brand mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="footer-logo-icon">
+                                    <i class="bi bi-chat-dots-fill"></i>
+                                </div>
+                                <span class="footer-logo-text ms-2">Marketing Platform</span>
+                            </div>
+                            <p class="footer-description">
+                                Enterprise-grade SMS, MMS & Email marketing platform. Reach your customers where they are and grow your business exponentially.
+                            </p>
+                        </div>
+                        <!-- Social Links -->
+                        <div class="footer-social">
+                            <a href="#" class="social-link" title="Facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-link" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+                            <a href="#" class="social-link" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-link" title="Instagram"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-link" title="YouTube"><i class="bi bi-youtube"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-lg-2 col-md-6 col-6">
+                        <h5 class="footer-title">Product</h5>
+                        <ul class="footer-links">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                            <li><a href="#">API Docs</a></li>
+                            <li><a href="#">Integrations</a></li>
+                            <li><a href="#">Changelog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Company Links -->
+                    <div class="col-lg-2 col-md-6 col-6">
+                        <h5 class="footer-title">Company</h5>
+                        <ul class="footer-links">
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Careers</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+                            <li><a asp-controller="Home" asp-action="Terms">Terms of Service</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact Info & Map -->
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="footer-title">Contact Us</h5>
+                        <ul class="footer-contact">
+                            <li>
+                                <div class="contact-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                                <div class="contact-text">
+                                    <strong>Office Address</strong>
+                                    <span>123 Business Avenue, Suite 100<br>New York, NY 10001, USA</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="contact-icon"><i class="bi bi-telephone-fill"></i></div>
+                                <div class="contact-text">
+                                    <strong>Phone</strong>
+                                    <span><a href="tel:+1234567890">+1 (234) 567-890</a></span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+                                <div class="contact-text">
+                                    <strong>Email</strong>
+                                    <span><a href="mailto:support@marketingplatform.com">support@marketingplatform.com</a></span>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="contact-icon"><i class="bi bi-clock-fill"></i></div>
+                                <div class="contact-text">
+                                    <strong>Business Hours</strong>
+                                    <span>Mon - Fri: 9:00 AM - 6:00 PM EST</span>
+                                </div>
+                            </li>
+                        </ul>
+                        <!-- Mini Map -->
+                        <div class="footer-map">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.9663095343008!2d-74.00425878428698!3d40.74076794379132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259bf5c1654f3%3A0xc80f9cfce5383d5d!2sGoogle!5e0!3m2!1sen!2sus!4v1234567890"
+                                width="100%"
+                                height="120"
+                                style="border:0; border-radius: 12px;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsletter Section -->
+        <div class="footer-newsletter">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-3 mb-lg-0">
+                        <h5 class="newsletter-title">Subscribe to Our Newsletter</h5>
+                        <p class="newsletter-text mb-0">Get the latest updates, tips and exclusive offers delivered to your inbox.</p>
+                    </div>
+                    <div class="col-lg-6">
+                        <form class="newsletter-form">
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email address" required>
+                                <button class="btn btn-newsletter" type="submit">
+                                    <i class="bi bi-send-fill me-2"></i>Subscribe
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0">&copy; 2024 Marketing Platform. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="footer-badges">
+                            <span class="badge-item"><i class="bi bi-shield-check"></i> SSL Secured</span>
+                            <span class="badge-item"><i class="bi bi-patch-check"></i> GDPR Compliant</span>
+                            <span class="badge-item"><i class="bi bi-credit-card"></i> PCI DSS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget - Only show on landing page (Home/Index) -->
+    @if (ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && 
+         ViewContext.RouteData.Values["Action"]?.ToString() == "Index")
+    {
+        @await Html.PartialAsync("Chat/_ChatWidget")
+    }
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <!-- DataTables Buttons for Export -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="~/js/app-urls.js" asp-append-version="true"></script>
+    <script src="~/js/api-client.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/custom.js" asp-append-version="true"></script>
+    <script src="~/js/csp-handlers.js" asp-append-version="true"></script>
+    <script src="~/js/landing-animations.js" asp-append-version="true"></script>
+    <script src="~/js/landing-footer.js" asp-append-version="true"></script>
+    <!-- AOS - Animate On Scroll -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        if (typeof AOS !== 'undefined') {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        }
+
+        // Check authentication state and update header menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiBaseUrl = window.appConfig?.apiBaseUrl || window.authConfig?.apiBaseUrl || '';
+            const fetchUrl = apiBaseUrl ? `${apiBaseUrl}/api/auth/me` : '/api/auth/me';
+
+            fetch(fetchUrl, { credentials: 'include' })
+                .then(response => response.json())
+                .then(data => {
+                    const userMenu = document.getElementById('user-menu');
+                    const loginLink = document.getElementById('login-link');
+                    const registerLink = document.getElementById('register-link');
+                    const userNameSpan = document.getElementById('user-name');
+
+                    if (data.success && data.data) {
+                        // User is logged in - show user menu, hide login/register
+                        if (userMenu) userMenu.classList.remove('d-none');
+                        if (loginLink) loginLink.classList.add('d-none');
+                        if (registerLink) registerLink.classList.add('d-none');
+
+                        // Set user name
+                        const firstName = data.data.firstName || '';
+                        const lastName = data.data.lastName || '';
+                        const displayName = `${firstName} ${lastName}`.trim() || data.data.name || data.data.email || 'User';
+                        if (userNameSpan) userNameSpan.textContent = displayName;
+                    } else {
+                        // User is not logged in - show login/register, hide user menu
+                        if (userMenu) userMenu.classList.add('d-none');
+                        if (loginLink) loginLink.classList.remove('d-none');
+                        if (registerLink) registerLink.classList.remove('d-none');
+                    }
+                })
+                .catch(error => {
+                    console.warn('Auth check failed:', error);
+                    // On error, show login/register (assume not logged in)
+                    const userMenu = document.getElementById('user-menu');
+                    const loginLink = document.getElementById('login-link');
+                    const registerLink = document.getElementById('register-link');
+
+                    if (userMenu) userMenu.classList.add('d-none');
+                    if (loginLink) loginLink.classList.remove('d-none');
+                    if (registerLink) registerLink.classList.remove('d-none');
+                });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

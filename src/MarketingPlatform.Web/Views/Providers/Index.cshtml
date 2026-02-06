@@ -1,0 +1,111 @@
+@{
+    Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Providers";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold"><i class="bi bi-hdd-network-fill text-primary me-2"></i>Communication Providers</h2>
+            <p class="text-muted mb-0">Manage SMS, MMS, and Email service providers</p>
+        </div>
+        <a href="@Url.Action("Create", "Providers")" class="btn btn-primary btn-lg shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>Add Provider
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-primary">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Total Providers</div>
+                    </div>
+                    <div class="text-primary fs-2"><i class="bi bi-hdd-network"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-success">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="text-success fs-2"><i class="bi bi-check-circle-fill"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-info">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value">0%</div>
+                        <div class="stat-label">Avg Health</div>
+                    </div>
+                    <div class="text-info fs-2"><i class="bi bi-activity"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-warning">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Messages Sent</div>
+                    </div>
+                    <div class="text-warning fs-2"><i class="bi bi-send-fill"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white border-bottom-0">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#all"><i class="bi bi-list-ul me-1"></i>All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#sms"><i class="bi bi-phone me-1"></i>SMS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#mms"><i class="bi bi-image me-1"></i>MMS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#email"><i class="bi bi-envelope me-1"></i>Email</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="providersTable" class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Health</th>
+                            <th>Messages</th>
+                            <th class="no-export text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.providersConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/providers-index.js" asp-append-version="true"></script>
+}

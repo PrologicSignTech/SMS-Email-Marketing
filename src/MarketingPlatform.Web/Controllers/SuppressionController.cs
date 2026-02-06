@@ -1,0 +1,162 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MarketingPlatform.Web.Services;
+using MarketingPlatform.Application.DTOs.Common;
+using MarketingPlatform.Web.Models;
+
+namespace MarketingPlatform.Web.Controllers;
+
+/// <summary>
+/// Controller for suppression list and opt-out management
+/// SERVER-SIDE API INTEGRATION - Uses ApiClient for secure, reliable API calls
+/// </summary>
+[Authorize]
+public class SuppressionController : Controller
+{
+    private readonly IApiClient _apiClient;
+    private readonly ILogger<SuppressionController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public SuppressionController(
+        IApiClient apiClient,
+        ILogger<SuppressionController> logger,
+        IHttpContextAccessor httpContextAccessor)
+    {
+        _apiClient = apiClient;
+        _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
+
+        // Set authorization token from user's access_token claim
+        var token = _httpContextAccessor.HttpContext?.User?.FindFirst("access_token")?.Value;
+        if (!string.IsNullOrEmpty(token))
+        {
+            _apiClient.SetAuthorizationToken(token);
+        }
+    }
+
+    /// <summary>
+    /// Display suppression lists
+    /// </summary>
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// Get suppression lists data for DataTables (SERVER-SIDE AJAX)
+    /// Web server calls API, not browser - more secure
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> GetSuppressionList([FromBody] DataTablesRequest request)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                "/api/suppression",
+                new
+                {
+                    pageNumber = (request.Start / request.Length) + 1,
+                    pageSize = request.Length,
+                    searchTerm = request.Search?.Value,
+                    sortColumn = "name",
+                    sortDirection = "asc",
+                    type = request.Type
+                }
+            );
+
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                var items = dataObj?.GetProperty("items");
+                var totalCount = dataObj?.GetProperty("totalCount").GetInt32() ?? 0;
+
+                return Json(new
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalCount,
+                    recordsFiltered = totalCount,
+                    data = items
+                });
+            }
+
+            return Json(new
+            {
+                draw = request.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = new object[] { }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching suppression lists data");
+            return Json(new
+            {
+                draw = request.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = new object[] { },
+                error = "Failed to load suppression lists"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Delete suppression list (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var result = await _apiClient.DeleteAsync<ApiResponse<bool>>(
+                $"/api/suppression/{id}"
+            );
+
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting suppression list {ListId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Create suppression list
+    /// </summary>
+    public async Task<IActionResult> Create()
+    {
+        try
+        {
+            // Load suppression list types (Global, Campaign-specific, etc.)
+            var listTypes = await _apiClient.GetAsync<ApiResponse<object>>("/api/suppression/types");
+            ViewBag.ListTypes = listTypes?.Data;
+
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading suppression list creation data");
+            TempData["Error"] = "Failed to load required data for suppression list creation";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    /// <summary>
+    /// Manage suppression list entries
+    /// </summary>
+    public IActionResult Entries(int id)
+    {
+        ViewBag.ListId = id;
+        return View();
+    }
+
+    /// <summary>
+    /// Import suppression list
+    /// </summary>
+    public IActionResult Import()
+    {
+        return View();
+    }
+}

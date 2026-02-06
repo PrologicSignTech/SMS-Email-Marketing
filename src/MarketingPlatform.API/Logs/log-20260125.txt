@@ -1,0 +1,250 @@
+2026-01-25 22:24:56.756 +05:30 [INF] Initializing encryption with provider: Configuration
+2026-01-25 22:24:56.785 +05:30 [INF] Using Configuration-based key management. For production, consider Azure Key Vault or AWS KMS.
+2026-01-25 22:24:59.039 +05:30 [INF] Start installing Hangfire SQL objects...
+2026-01-25 22:24:59.929 +05:30 [INF] Hangfire SQL objects installed.
+2026-01-25 22:25:01.655 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'CampaignAnalytics'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.656 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'CampaignAudience'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.656 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'CampaignContent'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.657 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'CampaignMessage'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.658 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'CampaignSchedule'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.658 +05:30 [WRN] Entity 'CampaignVariant' has a global query filter defined and is the required end of a relationship with the entity 'CampaignVariantAnalytics'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.659 +05:30 [WRN] Entity 'ComplianceRule' has a global query filter defined and is the required end of a relationship with the entity 'ComplianceRuleAudit'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.659 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'ConsentHistory'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.660 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'ContactConsent'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.661 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'ContactEngagement'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.662 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'ContactGroupMember'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.663 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'ContactTagAssignment'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.664 +05:30 [WRN] Entity 'Contact' has a global query filter defined and is the required end of a relationship with the entity 'FrequencyControl'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.665 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'KeywordAssignment'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.666 +05:30 [WRN] Entity 'Campaign' has a global query filter defined and is the required end of a relationship with the entity 'URLShortener'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.666 +05:30 [WRN] Entity 'Workflow' has a global query filter defined and is the required end of a relationship with the entity 'WorkflowExecution'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.667 +05:30 [WRN] Entity 'Workflow' has a global query filter defined and is the required end of a relationship with the entity 'WorkflowStep'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-01-25 22:25:01.747 +05:30 [WRN] No store type was specified for the decimal property 'Amount' on entity type 'BillingHistory'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-01-25 22:25:01.748 +05:30 [WRN] No store type was specified for the decimal property 'ClickRate' on entity type 'CampaignAnalytics'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-01-25 22:25:01.749 +05:30 [WRN] No store type was specified for the decimal property 'DeliveryRate' on entity type 'CampaignAnalytics'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-01-25 22:25:01.750 +05:30 [WRN] No store type was specified for the decimal property 'OptOutRate' on entity type 'CampaignAnalytics'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-01-25 22:25:01.751 +05:30 [WRN] No store type was specified for the decimal property 'CostAmount' on entity type 'CampaignMessage'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-01-25 22:25:02.938 +05:30 [INF] Starting database initialization...
+2026-01-25 22:25:02.939 +05:30 [INF] Testing database connection...
+2026-01-25 22:25:03.002 +05:30 [INF] Database connection successful.
+2026-01-25 22:25:03.003 +05:30 [INF] Applying database migrations...
+2026-01-25 22:25:03.042 +05:30 [INF] Found 1 pending migrations: 20260123160343_InitialCreate
+2026-01-25 22:25:03.354 +05:30 [ERR] Failed executing DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [AspNetRoles] (
+    [Id] nvarchar(450) NOT NULL,
+    [Name] nvarchar(256) NULL,
+    [NormalizedName] nvarchar(256) NULL,
+    [ConcurrencyStamp] nvarchar(max) NULL,
+    CONSTRAINT [PK_AspNetRoles] PRIMARY KEY ([Id])
+);
+2026-01-25 22:25:03.381 +05:30 [FTL] A critical error occurred during database initialization. Application startup may fail.
+Microsoft.Data.SqlClient.SqlException (0x80131904): There is already an object named 'AspNetRoles' in the database.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__208_1(IAsyncResult result)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteNonQueryAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQueryAsync(IEnumerable`1 migrationCommands, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQueryAsync(IEnumerable`1 migrationCommands, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQueryAsync(IEnumerable`1 migrationCommands, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.MigrationCommandExecutor.ExecuteNonQueryAsync(IEnumerable`1 migrationCommands, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.MigrateAsync(String targetMigration, CancellationToken cancellationToken)
+   at Program.<Main>$(String[] args) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.API\Program.cs:line 455
+ClientConnectionId:20f342b2-e0ef-4a0c-93ef-8d4790201865
+Error Number:2714,State:6,Class:16
+2026-01-25 22:25:03.420 +05:30 [INF] Message Queue Processor started
+2026-01-25 22:25:03.538 +05:30 [WRN] The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+2026-01-25 22:25:03.619 +05:30 [INF] Dynamic Group Update Processor started. Update interval: "00:15:00"
+2026-01-25 22:25:03.843 +05:30 [INF] Starting Hangfire Server using job storage: 'SQL Server: DESKTOP-5OB7VRJ@MarketingPlatformDb'
+2026-01-25 22:25:03.843 +05:30 [INF] Using the following options for SQL Server job storage: Queue poll interval: 00:00:15.
+2026-01-25 22:25:03.844 +05:30 [INF] Using the following options for Hangfire Server:
+    Worker count: 5
+    Listening queues: 'default', 'campaigns', 'workflows', 'rate-limits'
+    Shutdown timeout: 00:00:15
+    Schedule polling interval: 00:00:15
+2026-01-25 22:25:04.210 +05:30 [INF] Server desktop-5ob7vrj:29328:02ffd008 successfully announced in 133.1101 ms
+2026-01-25 22:25:04.247 +05:30 [INF] Server desktop-5ob7vrj:29328:02ffd008 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, SqlServerHeartbeatProcess, Worker, DelayedJobScheduler, RecurringJobScheduler...
+2026-01-25 22:25:04.268 +05:30 [INF] Server desktop-5ob7vrj:29328:02ffd008 all the dispatchers started
+2026-01-25 22:25:04.379 +05:30 [INF] 1 servers were removed due to timeout
+2026-01-25 22:25:05.611 +05:30 [ERR] Failed executing DbCommand (319ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [l].[Id], [l].[ColorClass], [l].[CounterPrefix], [l].[CounterSuffix], [l].[CounterTarget], [l].[CreatedAt], [l].[Description], [l].[DisplayOrder], [l].[IconClass], [l].[IsActive], [l].[IsDeleted], [l].[Label], [l].[ShowOnLanding], [l].[UpdatedAt], [l].[Value]
+FROM [LandingStats] AS [l]
+WHERE [l].[IsActive] = CAST(1 AS bit) AND [l].[ShowOnLanding] = CAST(1 AS bit) AND [l].[IsDeleted] = CAST(0 AS bit)
+2026-01-25 22:25:05.611 +05:30 [ERR] Failed executing DbCommand (318ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [f].[Id], [f].[AddressLine1], [f].[AddressLine2], [f].[BusinessHours], [f].[CompanyDescription], [f].[CompanyName], [f].[CopyrightText], [f].[CreatedAt], [f].[Email], [f].[FacebookUrl], [f].[InstagramUrl], [f].[IsActive], [f].[IsDeleted], [f].[LinkedInUrl], [f].[MapEmbedUrl], [f].[NewsletterDescription], [f].[NewsletterTitle], [f].[Phone], [f].[ShowMap], [f].[ShowNewsletter], [f].[TwitterUrl], [f].[UpdatedAt], [f].[YouTubeUrl]
+FROM [FooterSettings] AS [f]
+WHERE [f].[IsActive] = CAST(1 AS bit) AND [f].[IsDeleted] = CAST(0 AS bit)
+2026-01-25 22:25:05.620 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MarketingPlatform.Infrastructure.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'FooterSettings'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:20f342b2-e0ef-4a0c-93ef-8d4790201865
+Error Number:208,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'FooterSettings'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:20f342b2-e0ef-4a0c-93ef-8d4790201865
+Error Number:208,State:1,Class:16
+2026-01-25 22:25:05.620 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MarketingPlatform.Infrastructure.Data.ApplicationDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'LandingStats'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:a4716483-0165-484a-a770-d2c205e3fe0e
+Error Number:208,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'LandingStats'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:a4716483-0165-484a-a770-d2c205e3fe0e
+Error Number:208,State:1,Class:16
+2026-01-25 22:25:05.841 +05:30 [ERR] Error retrieving footer settings
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'FooterSettings'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+   at MarketingPlatform.Infrastructure.Repositories.Repository`1.FirstOrDefaultAsync(Expression`1 predicate) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Infrastructure\Repositories\Repository.cs:line 36
+   at MarketingPlatform.Application.Services.FooterSettingsService.GetActiveAsync() in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Application\Services\FooterSettingsService.cs:line 26
+   at MarketingPlatform.API.Controllers.FooterSettingsController.GetFooterSettings() in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.API\Controllers\FooterSettingsController.cs:line 33
+ClientConnectionId:20f342b2-e0ef-4a0c-93ef-8d4790201865
+Error Number:208,State:1,Class:16
+2026-01-25 22:25:05.901 +05:30 [INF] Retrieved 5 security badges for landing page
+2026-01-25 22:25:05.901 +05:30 [INF] Retrieved 12 trusted companies
+2026-01-25 22:25:05.901 +05:30 [INF] Retrieved 6 testimonials
+2026-01-25 22:25:05.901 +05:30 [INF] Retrieved 4 use cases
+2026-01-25 22:25:05.899 +05:30 [ERR] Error retrieving landing stats
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid object name 'LandingStats'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at MarketingPlatform.Infrastructure.Repositories.Repository`1.FindAsync(Expression`1 predicate) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Infrastructure\Repositories\Repository.cs:line 31
+   at MarketingPlatform.Application.Services.LandingStatService.GetAllActiveAsync() in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Application\Services\LandingStatService.cs:line 26
+   at MarketingPlatform.API.Controllers.LandingStatsController.GetLandingStats() in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.API\Controllers\LandingStatsController.cs:line 33
+ClientConnectionId:a4716483-0165-484a-a770-d2c205e3fe0e
+Error Number:208,State:1,Class:16
+2026-01-25 22:25:05.903 +05:30 [INF] Retrieved 8 landing FAQs
+2026-01-25 22:25:05.915 +05:30 [INF] Retrieved 6 landing features
+2026-01-25 22:25:05.945 +05:30 [INF] Connection b5maMaZ6tUsbJCvpfvM9CQ joined chat room 1
+2026-01-25 22:25:06.070 +05:30 [ERR] Failed to deserialize JSON: ["Basic campaign management", "Basic analytics", "Email support"]
+Newtonsoft.Json.JsonSerializationException: Cannot deserialize the current JSON array (e.g. [1,2,3]) into type 'System.Collections.Generic.Dictionary`2[System.String,System.Object]' because the type requires a JSON object (e.g. {"name":"value"}) to deserialize correctly.
+To fix this error either change the JSON to a JSON object (e.g. {"name":"value"}) or change the deserialized type to an array or a type that implements a collection interface (e.g. ICollection, IList) like List<T> that can be deserialized from a JSON array. JsonArrayAttribute can also be added to the type to force it to deserialize from a JSON array.
+Path '', line 1, position 1.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureArrayContract(JsonReader reader, Type objectType, JsonContract contract)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at MarketingPlatform.Application.Services.SubscriptionPlanService.DeserializeJson[T](String json) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Application\Services\SubscriptionPlanService.cs:line 321
+2026-01-25 22:25:06.086 +05:30 [ERR] Failed to deserialize JSON: ["Advanced campaign management", "Workflows & automation", "Advanced analytics", "Priority support", "Custom templates"]
+Newtonsoft.Json.JsonSerializationException: Cannot deserialize the current JSON array (e.g. [1,2,3]) into type 'System.Collections.Generic.Dictionary`2[System.String,System.Object]' because the type requires a JSON object (e.g. {"name":"value"}) to deserialize correctly.
+To fix this error either change the JSON to a JSON object (e.g. {"name":"value"}) or change the deserialized type to an array or a type that implements a collection interface (e.g. ICollection, IList) like List<T> that can be deserialized from a JSON array. JsonArrayAttribute can also be added to the type to force it to deserialize from a JSON array.
+Path '', line 1, position 1.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureArrayContract(JsonReader reader, Type objectType, JsonContract contract)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at MarketingPlatform.Application.Services.SubscriptionPlanService.DeserializeJson[T](String json) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Application\Services\SubscriptionPlanService.cs:line 321
+2026-01-25 22:25:06.099 +05:30 [ERR] Failed to deserialize JSON: ["Unlimited campaigns", "Advanced workflows", "Premium analytics", "24/7 support", "Dedicated account manager", "API access", "White-label options"]
+Newtonsoft.Json.JsonSerializationException: Cannot deserialize the current JSON array (e.g. [1,2,3]) into type 'System.Collections.Generic.Dictionary`2[System.String,System.Object]' because the type requires a JSON object (e.g. {"name":"value"}) to deserialize correctly.
+To fix this error either change the JSON to a JSON object (e.g. {"name":"value"}) or change the deserialized type to an array or a type that implements a collection interface (e.g. ICollection, IList) like List<T> that can be deserialized from a JSON array. JsonArrayAttribute can also be added to the type to force it to deserialize from a JSON array.
+Path '', line 1, position 1.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureArrayContract(JsonReader reader, Type objectType, JsonContract contract)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateValueInternal(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
+   at MarketingPlatform.Application.Services.SubscriptionPlanService.DeserializeJson[T](String json) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Application\Services\SubscriptionPlanService.cs:line 321
+2026-01-25 22:25:06.694 +05:30 [INF] Reset daily counters for 0 frequency controls
+2026-01-25 22:25:06.791 +05:30 [INF] Checking inactivity triggers
+2026-01-25 22:27:30.230 +05:30 [INF] Connection TItOUuD34zJFMu4W_IQqRA joined chat room 1
+2026-01-25 22:28:46.894 +05:30 [ERR] Login failed
+System.Exception: Invalid email or password
+   at MarketingPlatform.Infrastructure.Services.AuthService.LoginAsync(LoginRequestDto request) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Infrastructure\Services\AuthService.cs:line 111
+   at MarketingPlatform.API.Controllers.AuthController.Login(LoginRequestDto request) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.API\Controllers\AuthController.cs:line 43
+2026-01-25 22:29:05.356 +05:30 [ERR] Login failed
+System.Exception: Invalid email or password
+   at MarketingPlatform.Infrastructure.Services.AuthService.LoginAsync(LoginRequestDto request) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Infrastructure\Services\AuthService.cs:line 111
+   at MarketingPlatform.API.Controllers.AuthController.Login(LoginRequestDto request) in E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.API\Controllers\AuthController.cs:line 43
+2026-01-25 22:30:08.513 +05:30 [INF] User logged in: manager@marketingplatform.com
+2026-01-25 22:30:58.594 +05:30 [INF] User logged in: admin@marketingplatform.com

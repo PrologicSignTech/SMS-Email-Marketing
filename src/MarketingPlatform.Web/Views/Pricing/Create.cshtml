@@ -1,0 +1,95 @@
+@{
+    ViewData["Title"] = "Create Pricing Plan"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-tag-fill"></i> Create Pricing Plan</h2>
+        <a href="@Url.Action("Index", "Pricing")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="pricingForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="planName" class="form-label">Plan Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="planName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="planPrice" class="form-label">Price <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="planPrice" step="0.01" required>
+                            <span class="input-group-text">/month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" rows="2"></textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="maxContacts" class="form-label">Max Contacts</label>
+                        <input type="number" class="form-control" id="maxContacts">
+                        <small class="text-muted">Leave empty for unlimited</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="maxEmails" class="form-label">Max Emails/Month</label>
+                        <input type="number" class="form-control" id="maxEmails">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="maxSMS" class="form-label">Max SMS/Month</label>
+                        <input type="number" class="form-control" id="maxSMS">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Features</label>
+                    <div id="features">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" placeholder="Feature description">
+                            <button class="btn btn-outline-danger" type="button" data-action="remove-feature">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-action="add-feature">
+                        <i class="bi bi-plus"></i> Add Feature
+                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            Active Plan
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPopular">
+                        <label class="form-check-label" for="isPopular">
+                            Mark as Popular
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("Index", "Pricing")" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Plan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/pricing-create.js" asp-append-version="true"></script>
+}

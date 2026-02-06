@@ -1,0 +1,139 @@
+@{
+    ViewData["Title"] = "Create Short URL"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-link-45deg"></i> Create Short URL</h2>
+        <a href="@Url.Action("Index", "Urls")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to URLs
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>URL Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="urlForm">
+                        <div class="mb-3">
+                            <label for="originalUrl" class="form-label">Original URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" id="originalUrl" placeholder="https://example.com/your-page" required>
+                            <div class="form-text">Enter the full URL you want to shorten and track</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="customCode" class="form-label">Custom Short Code (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">/s/</span>
+                                <input type="text" class="form-control" id="customCode" placeholder="my-link" pattern="[a-zA-Z0-9-_]+">
+                            </div>
+                            <div class="form-text">Leave blank for auto-generated code. Only letters, numbers, hyphens, and underscores.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="campaignId" class="form-label">Associated Campaign</label>
+                            <select class="form-select" id="campaignId">
+                                <option value="">None</option>
+                                <option value="1">Summer Sale 2024</option>
+                                <option value="2">Product Launch</option>
+                                <option value="3">Newsletter</option>
+                                <option value="4">Flash Deals</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags (Optional)</label>
+                            <input type="text" class="form-control" id="tags" placeholder="e.g., promotion, email, social">
+                            <div class="form-text">Separate multiple tags with commas</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="expiresAt" class="form-label">Expiration Date (Optional)</label>
+                            <input type="date" class="form-control" id="expiresAt">
+                            <div class="form-text">Leave blank for no expiration</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="trackClicks" checked>
+                                <label class="form-check-label" for="trackClicks">
+                                    <strong>Enable Click Tracking</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Urls")" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Create Short URL
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-info-circle"></i> URL Shortening</h6>
+                    <p class="small">Short URLs are perfect for:</p>
+                    <ul class="small">
+                        <li>SMS and MMS messages (character limit)</li>
+                        <li>Social media posts</li>
+                        <li>Printed materials (QR codes, flyers)</li>
+                        <li>Click tracking and analytics</li>
+                    </ul>
+                    <hr>
+                    <h6 class="card-subtitle mb-2"><i class="bi bi-bar-chart"></i> Analytics</h6>
+                    <p class="small mb-0">Track clicks, locations, devices, and more with detailed analytics for each short URL.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        const apiBaseUrl = '@ViewBag.ApiBaseUrl';
+        
+        document.getElementById('customCode').addEventListener('input', function() {
+            this.value = this.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
+        });
+
+        document.getElementById('urlForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const originalUrl = document.getElementById('originalUrl').value;
+            if (!originalUrl.startsWith('http://') && !originalUrl.startsWith('https://')) {
+                alert('Please enter a valid URL starting with http:// or https://');
+                return;
+            }
+            
+            const customCode = document.getElementById('customCode').value;
+            if (customCode && customCode.length < 3) {
+                alert('Custom code must be at least 3 characters long.');
+                return;
+            }
+            
+            try {
+                const data = {
+                    originalUrl: originalUrl,
+                    customCode: customCode || null,
+                    campaignId: document.getElementById('campaignId').value || null,
+                    tags: document.getElementById('tags').value,
+                    expiresAt: document.getElementById('expiresAt').value || null,
+                    trackClicks: document.getElementById('trackClicks').checked
+                };
+                
+                alert('Short URL created successfully! (Demo)');
+                window.location.href = '/Urls/Index';
+            } catch (error) {
+                alert('Failed to create short URL: ' + error.message);
+            }
+        });
+    </script>
+}

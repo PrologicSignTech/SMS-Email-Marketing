@@ -1,0 +1,275 @@
+@{
+    ViewData["Title"] = "Create Workflow";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-diagram-3-fill"></i> Create Workflow</h2>
+        <a href="@Url.Action("Index", "Workflows")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Workflows
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Workflow Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="workflowForm">
+                        <div class="mb-3">
+                            <label for="workflowName" class="form-label">Workflow Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="workflowName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="triggerType" class="form-label">Trigger Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="triggerType" required>
+                                <option value="">Select Trigger</option>
+                                <option value="ContactCreated">Contact Created</option>
+                                <option value="EmailOpened">Email Opened</option>
+                                <option value="LinkClicked">Link Clicked</option>
+                                <option value="Manual">Manual Trigger</option>
+                                <option value="Scheduled">Scheduled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isActive" checked>
+                                <label class="form-check-label" for="isActive">
+                                    Active Workflow
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Workflow Builder</h5>
+                </div>
+                <div class="card-body">
+                    <div id="workflowCanvas" style="min-height: 400px; border: 2px dashed #dee2e6; border-radius: 8px; padding: 20px;">
+                        <div id="workflowSteps">
+                            <div class="text-center text-muted" id="emptyState">
+                                <i class="bi bi-diagram-2" style="font-size: 3rem;"></i>
+                                <p class="mt-2">Click on elements from the sidebar to add steps to your workflow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Workflow Elements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="elementsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#actionsAccordion">
+                                    <i class="bi bi-gear me-2"></i> Actions
+                                </button>
+                            </h2>
+                            <div id="actionsAccordion" class="accordion-collapse collapse show" data-bs-parent="#elementsAccordion">
+                                <div class="accordion-body">
+                                    <div class="list-group">
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="SendEmail">
+                                            <i class="bi bi-envelope me-2"></i> Send Email
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="SendSMS">
+                                            <i class="bi bi-phone me-2"></i> Send SMS
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="Wait">
+                                            <i class="bi bi-clock me-2"></i> Wait/Delay
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="AddTag">
+                                            <i class="bi bi-tag me-2"></i> Add Tag
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="RemoveTag">
+                                            <i class="bi bi-tag-fill me-2"></i> Remove Tag
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#conditionsAccordion">
+                                    <i class="bi bi-signpost-split me-2"></i> Conditions
+                                </button>
+                            </h2>
+                            <div id="conditionsAccordion" class="accordion-collapse collapse" data-bs-parent="#elementsAccordion">
+                                <div class="accordion-body">
+                                    <div class="list-group">
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="IfElse">
+                                            <i class="bi bi-diagram-2 me-2"></i> If/Else Branch
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action" data-action="CheckTag">
+                                            <i class="bi bi-check2-square me-2"></i> Check Tag
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <button class="btn btn-primary w-100 mb-2" id="saveWorkflowBtn">
+                        <i class="bi bi-check-circle"></i> Save Workflow
+                    </button>
+                    <button class="btn btn-outline-secondary w-100" id="previewWorkflowBtn">
+                        <i class="bi bi-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let workflowSteps = [];
+        let stepCounter = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add step buttons
+            document.querySelectorAll('[data-action]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    addStep(this.dataset.action, this.textContent.trim());
+                });
+            });
+
+            // Save workflow
+            document.getElementById('saveWorkflowBtn').addEventListener('click', saveWorkflow);
+
+            // Preview workflow
+            document.getElementById('previewWorkflowBtn').addEventListener('click', previewWorkflow);
+        });
+
+        function addStep(actionType, label) {
+            stepCounter++;
+            const stepId = `step-${stepCounter}`;
+
+            workflowSteps.push({
+                id: stepId,
+                actionType: actionType,
+                label: label,
+                order: stepCounter
+            });
+
+            // Hide empty state
+            document.getElementById('emptyState').style.display = 'none';
+
+            // Add step to canvas
+            const stepHtml = `
+                <div class="card mb-2" id="${stepId}">
+                    <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="badge bg-primary me-2">${stepCounter}</span>
+                            <span>${escapeHtml(label)}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep('${stepId}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('workflowSteps').insertAdjacentHTML('beforeend', stepHtml);
+        }
+
+        function removeStep(stepId) {
+            workflowSteps = workflowSteps.filter(s => s.id !== stepId);
+            document.getElementById(stepId).remove();
+
+            if (workflowSteps.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function saveWorkflow() {
+            const name = document.getElementById('workflowName').value;
+            const description = document.getElementById('description').value;
+            const triggerType = document.getElementById('triggerType').value;
+            const isActive = document.getElementById('isActive').checked;
+
+            if (!name) {
+                showNotification('Please enter a workflow name', 'warning');
+                return;
+            }
+
+            if (!triggerType) {
+                showNotification('Please select a trigger type', 'warning');
+                return;
+            }
+
+            const workflowData = {
+                name: name,
+                description: description,
+                triggerType: triggerType,
+                isActive: isActive,
+                steps: workflowSteps.map((s, index) => ({
+                    actionType: s.actionType,
+                    order: index + 1,
+                    configuration: {}
+                }))
+            };
+
+            try {
+                const response = await fetch('/Workflows/Create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(workflowData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Workflow created successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/Workflows/Index';
+                    }, 1000);
+                } else {
+                    showNotification(result.message || 'Failed to create workflow', 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating workflow:', error);
+                showNotification('An error occurred while creating the workflow', 'danger');
+            }
+        }
+
+        function previewWorkflow() {
+            const name = document.getElementById('workflowName').value || 'Untitled';
+            let preview = `Workflow: ${name}\n\nSteps:\n`;
+
+            if (workflowSteps.length === 0) {
+                preview += '(No steps added)';
+            } else {
+                workflowSteps.forEach((step, index) => {
+                    preview += `${index + 1}. ${step.label}\n`;
+                });
+            }
+
+            alert(preview);
+        }
+    </script>
+}

@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-gear-fill"></i> Platform Settings</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#general" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                    <i class="bi bi-gear"></i> General
+                </a>
+                <a href="#email" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-envelope"></i> Email
+                </a>
+                <a href="#sms" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-phone"></i> SMS
+                </a>
+                <a href="#integrations" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-plug"></i> Integrations
+                </a>
+                <a href="#compliance" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-shield-check"></i> Compliance
+                </a>
+                <a href="#api" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                    <i class="bi bi-code-slash"></i> API
+                </a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="general">
+                    <div class="card">
+                        <div class="card-header"><h5>General Settings</h5></div>
+                        <div class="card-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" value="Marketing Platform">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Time Zone</label>
+                                    <select class="form-select">
+                                        <option>UTC</option>
+                                        <option selected>America/New_York</option>
+                                        <option>America/Los_Angeles</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Default Language</label>
+                                    <select class="form-select">
+                                        <option selected>English</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="email">
+                    <div class="card">
+                        <div class="card-header"><h5>Email Settings</h5></div>
+                        <div class="card-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">SMTP Server</label>
+                                    <input type="text" class="form-control" value="smtp.example.com">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Port</label>
+                                        <input type="number" class="form-control" value="587">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Encryption</label>
+                                        <select class="form-select">
+                                            <option>None</option>
+                                            <option selected>TLS</option>
+                                            <option>SSL</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">From Name</label>
+                                    <input type="text" class="form-control" value="Marketing Platform">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">From Email</label>
+                                    <input type="email" class="form-control" value="no-reply@platform.com">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="sms">
+                    <div class="card">
+                        <div class="card-header"><h5>SMS Settings</h5></div>
+                        <div class="card-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">SMS Provider</label>
+                                    <select class="form-select">
+                                        <option selected>Twilio</option>
+                                        <option>Nexmo</option>
+                                        <option>AWS SNS</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Account SID</label>
+                                    <input type="text" class="form-control" value="AC************************">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Auth Token</label>
+                                    <input type="password" class="form-control" value="********">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">From Number</label>
+                                    <input type="tel" class="form-control" value="+1 555-0100">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="integrations">
+                    <div class="card">
+                        <div class="card-header"><h5>Integrations</h5></div>
+                        <div class="card-body">
+                            <a href="@Url.Action("Integrations", "Settings")" class="btn btn-primary">
+                                <i class="bi bi-plug"></i> Manage Integrations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="compliance">
+                    <div class="card">
+                        <div class="card-header"><h5>Compliance Settings</h5></div>
+                        <div class="card-body">
+                            <a href="@Url.Action("Compliance", "Settings")" class="btn btn-primary">
+                                <i class="bi bi-shield-check"></i> Manage Compliance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="api">
+                    <div class="card">
+                        <div class="card-header"><h5>API Settings</h5></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">API Key</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="pk_live_************************" readonly>
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-warning">Regenerate API Key</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,166 @@
+@{
+    ViewData["Title"] = "Create Template";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-plus"></i> Create Template</h2>
+        <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Templates
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Template Information</h5>
+        </div>
+        <div class="card-body">
+            <form id="templateForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="templateName" class="form-label">Template Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="templateName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="templateType" class="form-label">Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="templateType" required>
+                            <option value="">Select Type</option>
+                            <option value="0">SMS</option>
+                            <option value="1">MMS</option>
+                            <option value="2">Email</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3" id="subjectGroup" style="display: none;">
+                    <label for="subject" class="form-label">Email Subject <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="subject">
+                    <div class="form-text">Use tokens like {FirstName}, {LastName}, etc.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bodyText" class="form-label">Message Body <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="bodyText" rows="6" required></textarea>
+                    <div class="form-text" id="charCount">0 characters</div>
+                </div>
+
+                <div class="mb-3" id="htmlGroup" style="display: none;">
+                    <label for="htmlContent" class="form-label">HTML Content</label>
+                    <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                    <div class="form-text">Rich HTML email content</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Available Tokens</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Email}">{Email}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
+                    </div>
+                    <small class="text-muted">Click to insert token</small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            Active Template
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="button" class="btn btn-outline-primary me-2" id="previewBtn">
+                        <i class="bi bi-eye"></i> Preview
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle email-specific fields
+            document.getElementById('templateType').addEventListener('change', function() {
+                const isEmail = this.value === '2';
+                document.getElementById('subjectGroup').style.display = isEmail ? 'block' : 'none';
+                document.getElementById('htmlGroup').style.display = isEmail ? 'block' : 'none';
+            });
+
+            // Character counter
+            document.getElementById('bodyText').addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length + ' characters';
+            });
+
+            // Token insertion
+            document.querySelectorAll('.token-badge').forEach(function(badge) {
+                badge.addEventListener('click', function() {
+                    insertToken(this.dataset.token);
+                });
+            });
+
+            // Form submission
+            document.getElementById('templateForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await createTemplate();
+            });
+        });
+
+        function insertToken(token) {
+            const textarea = document.getElementById('bodyText');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, start) + token + text.substring(end);
+            textarea.focus();
+            document.getElementById('charCount').textContent = textarea.value.length + ' characters';
+        }
+
+        async function createTemplate() {
+            const templateData = {
+                name: document.getElementById('templateName').value,
+                type: parseInt(document.getElementById('templateType').value),
+                subject: document.getElementById('subject').value || null,
+                bodyText: document.getElementById('bodyText').value,
+                htmlContent: document.getElementById('htmlContent').value || null,
+                isActive: document.getElementById('isActive').checked
+            };
+
+            if (!templateData.name || templateData.type === null || !templateData.bodyText) {
+                showNotification('Please fill in all required fields', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/Templates/Create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(templateData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Template created successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/Templates/Index';
+                    }, 1000);
+                } else {
+                    showNotification(result.message || 'Failed to create template', 'danger');
+                }
+            } catch (error) {
+                console.error('Error creating template:', error);
+                showNotification('An error occurred while creating the template', 'danger');
+            }
+        }
+    </script>
+}

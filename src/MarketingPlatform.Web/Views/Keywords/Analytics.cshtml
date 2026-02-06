@@ -1,0 +1,148 @@
+@{
+    ViewData["Title"] = "Keyword Analytics"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-graph-up"></i> Keyword Analytics: <span id="keywordName" class="text-primary">-</span></h2>
+        <a href="@Url.Action("Index", "Keywords")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Keywords
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="totalMessages" class="text-primary">-</h3>
+                    <p class="text-muted mb-0">Total Messages</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="optIns" class="text-success">-</h3>
+                    <p class="text-muted mb-0">Opt-Ins</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="optOuts" class="text-danger">-</h3>
+                    <p class="text-muted mb-0">Opt-Outs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="conversionRate" class="text-info">-</h3>
+                    <p class="text-muted mb-0">Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Message Volume Over Time</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary active" data-period="7d">7 Days</button>
+                        <button type="button" class="btn btn-outline-secondary" data-period="30d">30 Days</button>
+                        <button type="button" class="btn btn-outline-secondary" data-period="90d">90 Days</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="messageChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Opt-In vs Opt-Out</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="conversionChart"></canvas>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-circle-fill text-success"></i> Opt-Ins</span>
+                            <strong id="optInPercent">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><i class="bi bi-circle-fill text-danger"></i> Opt-Outs</span>
+                            <strong id="optOutPercent">-</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Hours for Engagement</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="hourlyChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Day of Week Analysis</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="dayChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Recent Subscribers</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="subscribersTable">
+                    <thead>
+                        <tr>
+                            <th>Phone Number</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script nonce="@Context.GetCspNonce()">
+        window.keywordsAnalyticsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/keywords-analytics.js" asp-append-version="true"></script>
+}

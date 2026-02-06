@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Provider Health"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-activity"></i> Provider Health Monitor</h2>
+        <a href="@Url.Action("Index", "Providers")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Providers
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">99.8%</h3>
+                    <p class="text-muted mb-0">Uptime</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">125K</h3>
+                    <p class="text-muted mb-0">Messages Sent</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-info">98.5%</h3>
+                    <p class="text-muted mb-0">Delivery Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-warning">250ms</h3>
+                    <p class="text-muted mb-0">Avg Response</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Health Status Over Time</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="healthChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script nonce="@Context.GetCspNonce()">
+        const ctx = document.getElementById('healthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                datasets: [{
+                    label: 'Uptime %',
+                    data: [99.8, 99.9, 99.7, 99.8, 99.9, 99.8, 99.8],
+                    borderColor: 'rgb(25, 135, 84)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { min: 95, max: 100 }
+                }
+            }
+        });
+    </script>
+}

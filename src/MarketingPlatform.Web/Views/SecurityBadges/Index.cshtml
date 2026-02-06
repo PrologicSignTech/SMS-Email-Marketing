@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Security Badges";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shield-check"></i> Security Badges</h2>
+        <a href="@Url.Action("Create", "SecurityBadges")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Badge
+        </a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Manage security and compliance badges displayed on the landing page (e.g., GDPR, SOC2, ISO).
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="badgesTable" class="table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Icon</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let badgesTable;
+
+        $(document).ready(function() {
+            badgesTable = $('#badgesTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: '/SecurityBadges/GetBadges',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function(d) {
+                        return JSON.stringify({ draw: d.draw });
+                    },
+                    dataSrc: function(json) { return json.data || []; }
+                },
+                columns: [
+                    { data: 'displayOrder' },
+                    { data: 'iconClass', render: function(data) { return data ? `<i class="bi ${data} fs-4"></i>` : ''; } },
+                    { data: 'title', render: function(data) { return `<strong>${escapeHtml(data || '')}</strong>`; } },
+                    { data: 'description', render: function(data) { return data ? escapeHtml(data).substring(0, 50) + '...' : '-'; } },
+                    { data: 'isActive', render: function(data) { return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; } },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<div class="btn-group btn-group-sm">
+                                <a href="/SecurityBadges/Edit/${data}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                <button class="btn btn-outline-danger" onclick="deleteBadge(${data})"><i class="bi bi-trash"></i></button>
+                            </div>`;
+                        }
+                    }
+                ],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+        });
+
+        function deleteBadge(id) {
+            if (confirm('Delete this badge?')) {
+                $.ajax({
+                    url: `/SecurityBadges/Delete?id=${id}`,
+                    method: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('Badge deleted successfully!', 'success');
+                            badgesTable.ajax.reload(null, false);
+                        } else {
+                            showNotification(response.message || 'Failed to delete badge', 'danger');
+                        }
+                    },
+                    error: function() {
+                        showNotification('An error occurred while deleting', 'danger');
+                    }
+                });
+            }
+        }
+    </script>
+}

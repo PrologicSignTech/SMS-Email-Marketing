@@ -1,0 +1,196 @@
+@{
+    ViewData["Title"] = "Compose Message";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil-square"></i> Compose Message</h2>
+        <a href="@Url.Action("Index", "Messages")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Messages
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Message Composition</h5>
+                </div>
+                <div class="card-body">
+                    <form id="messageForm">
+                        <div class="mb-3">
+                            <label class="form-label">Channel <span class="text-danger">*</span></label>
+                            <div class="btn-group w-100" role="group" id="channelSelector">
+                                <input type="radio" class="btn-check" name="channel" id="channelSMS" value="SMS" autocomplete="off">
+                                <label class="btn btn-outline-success" for="channelSMS"><i class="bi bi-chat-dots"></i> SMS</label>
+                                
+                                <input type="radio" class="btn-check" name="channel" id="channelMMS" value="MMS" autocomplete="off">
+                                <label class="btn btn-outline-info" for="channelMMS"><i class="bi bi-image"></i> MMS</label>
+                                
+                                <input type="radio" class="btn-check" name="channel" id="channelEmail" value="Email" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="channelEmail"><i class="bi bi-envelope"></i> Email</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="recipients" class="form-label">Recipients <span class="text-danger">*</span></label>
+                            <select class="form-select" id="recipients" required multiple size="3">
+                                <option value="all">All Contacts (12,450)</option>
+                                <option value="group1">VIP Customers (1,245)</option>
+                                <option value="group2">Newsletter Subscribers (8,920)</option>
+                                <option value="group3">Recent Purchasers (543)</option>
+                            </select>
+                            <div class="form-text">Select one or more recipient groups</div>
+                        </div>
+
+                        <div id="emailFields">
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="subject" placeholder="Enter email subject">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fromName" class="form-label">From Name</label>
+                                <input type="text" class="form-control" id="fromName" value="Your Company">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="fromEmail" class="form-label">From Email</label>
+                                <input type="email" class="form-control" id="fromEmail" value="noreply@yourcompany.com">
+                            </div>
+                        </div>
+
+                        <div id="smsFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="fromPhone" class="form-label">From Number</label>
+                                <select class="form-select" id="fromPhone">
+                                    <option value="+1234567890">+1 (234) 567-890</option>
+                                    <option value="+1987654321">+1 (987) 654-321</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label for="messageBody" class="form-label mb-0">Message Content <span class="text-danger">*</span></label>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary" data-action="load-template">
+                                        <i class="bi bi-file-earmark-text"></i> Load Template
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-action="insert-token">
+                                        <i class="bi bi-code-square"></i> Insert Token
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="messageBody" rows="10" required></textarea>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted" id="bodyHelp">Compose your message here</small>
+                                <small class="text-muted" id="charCounter">0 characters</small>
+                            </div>
+                        </div>
+
+                        <div id="htmlEditor" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">HTML Content (Optional)</label>
+                                <div class="btn-group btn-group-sm mb-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" data-editor-mode="text">
+                                        <i class="bi bi-type"></i> Text
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary active" data-editor-mode="html">
+                                        <i class="bi bi-code-slash"></i> HTML
+                                    </button>
+                                </div>
+                                <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                            </div>
+                        </div>
+
+                        <div id="mmsFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="mediaFile" class="form-label">Media File</label>
+                                <input type="file" class="form-control" id="mediaFile" accept="image/*,video/*">
+                                <div class="form-text">Supported: JPG, PNG, GIF, MP4 (Max 5MB)</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Scheduling</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="scheduling" id="sendNow" value="now" checked>
+                                <label class="form-check-label" for="sendNow">
+                                    Send Immediately
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="scheduling" id="sendLater" value="later">
+                                <label class="form-check-label" for="sendLater">
+                                    Schedule for Later
+                                </label>
+                            </div>
+                            <div id="schedulingFields" style="display: none; margin-top: 10px;">
+                                <input type="datetime-local" class="form-control" id="scheduledTime">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-action="save-draft">
+                                <i class="bi bi-save"></i> Save Draft
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-action="preview-message">
+                                <i class="bi bi-eye"></i> Preview
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-info-circle"></i> Message Tokens</h6>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{Email}">{Email}</span>
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{Phone}">{Phone}</span>
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
+                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
+                    </div>
+                    <small class="text-muted">Click to insert into message</small>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-bar-chart"></i> Estimated Reach</h6>
+                    <div id="estimatedReach">
+                        <h3 class="text-primary mb-0">-</h3>
+                        <p class="text-muted small mb-0">Recipients selected</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-shield-check"></i> Compliance Check</h6>
+                    <div id="complianceCheck">
+                        <p class="text-muted small mb-0">Select recipients to check compliance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.messagesComposeConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/messages-compose.js" asp-append-version="true"></script>
+}

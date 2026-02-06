@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Create Suppression List"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shield-plus"></i> Create Suppression List</h2>
+        <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Lists
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>List Configuration</h5>
+        </div>
+        <div class="card-body">
+            <form id="listForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="listName" class="form-label">List Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="listName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="listType" class="form-label">Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="listType" required>
+                            <option value="">Select Type</option>
+                            <option value="OptOut">Opt-Out</option>
+                            <option value="Bounced">Bounced</option>
+                            <option value="Complained">Complained</option>
+                            <option value="Invalid">Invalid</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            <strong>Active List</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create List
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        document.getElementById('listForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Suppression list created! (Demo)');
+            window.location.href = '/Suppression/Index';
+        });
+    </script>
+}

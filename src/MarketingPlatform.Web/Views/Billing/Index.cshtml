@@ -1,0 +1,108 @@
+@{
+    Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Billing & Subscription";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-credit-card"></i> Billing & Subscription</h2>
+            <p class="text-muted">Manage your subscription and billing information</p>
+        </div>
+    </div>
+
+    <!-- Current Subscription Card -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-box-seam"></i> Current Subscription</h5>
+                </div>
+                <div class="card-body" id="currentSubscription">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading subscription details...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Usage This Month</h6>
+                    <h3 id="usageStats" class="mb-0">-</h3>
+                    <small class="text-muted">Messages sent</small>
+                </div>
+            </div>
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Next Billing Date</h6>
+                    <h5 id="nextBillingDate" class="mb-0">-</h5>
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Amount Due</h6>
+                    <h4 id="amountDue" class="mb-0 text-success">$0.00</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Invoices -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> Recent Invoices</h5>
+                    <a href="/Billing/Invoices" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div id="recentInvoices">
+                        <div class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-credit-card-2-front"></i> Payment Methods</h5>
+                    <button class="btn btn-sm btn-primary" onclick="addPaymentMethod()">
+                        <i class="bi bi-plus-circle"></i> Add Payment Method
+                    </button>
+                </div>
+                <div class="card-body" id="paymentMethods">
+                    <div class="text-center py-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        // Configuration object with nonce for CSP compliance
+        window.billingConfig = { 
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/billing-page.js" asp-append-version="true"></script>
+}
