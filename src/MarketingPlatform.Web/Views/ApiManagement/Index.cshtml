@@ -1,0 +1,276 @@
+@{
+    ViewData["Title"] = "API Management";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-code-square"></i> API Management</h2>
+            <p class="text-muted mb-0">View, test, and manage all API endpoints</p>
+        </div>
+        <div>
+            <span class="badge bg-success">API Connected</span>
+            <span class="badge bg-info ms-2" id="api-base-url">@ViewBag.ApiBaseUrl</span>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="stat-icon bg-primary">
+                                <i class="bi bi-code-slash"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-0">Total Endpoints</h6>
+                            <h3 class="mb-0" id="total-endpoints">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="stat-icon bg-success">
+                                <i class="bi bi-controller"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-0">Controllers</h6>
+                            <h3 class="mb-0" id="total-controllers">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="stat-icon bg-warning">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-0">Protected</h6>
+                            <h3 class="mb-0" id="protected-endpoints">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="stat-icon bg-info">
+                                <i class="bi bi-unlock"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="text-muted mb-0">Public</h6>
+                            <h3 class="mb-0" id="public-endpoints">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="search-endpoints" placeholder="Search endpoints...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filter-method">
+                        <option value="">All Methods</option>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="filter-controller">
+                        <option value="">All Controllers</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Endpoints List -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-list-ul"></i> API Endpoints</h5>
+            <button class="btn btn-sm btn-outline-primary" id="refresh-endpoints">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <div id="endpoints-loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Loading API endpoints...</p>
+            </div>
+            <div id="endpoints-container" style="display: none;">
+                <!-- Endpoints will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Test Modal -->
+<div class="modal fade" id="apiTestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="method-badge" id="modal-method">GET</span>
+                    <span id="modal-path">/api/endpoint</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Request Section -->
+                <h6>Request</h6>
+                <div class="mb-3">
+                    <label class="form-label">Headers</label>
+                    <div id="request-headers">
+                        <div class="header-row mb-2">
+                            <div class="row">
+                                <div class="col-5">
+                                    <input type="text" class="form-control form-control-sm" placeholder="Header name" value="Content-Type">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" class="form-control form-control-sm" placeholder="Header value" value="application/json">
+                                </div>
+                                <div class="col-1">
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary" id="add-header">
+                        <i class="bi bi-plus"></i> Add Header
+                    </button>
+                </div>
+
+                <div class="mb-3" id="request-body-section" style="display: none;">
+                    <label class="form-label">Request Body (JSON)</label>
+                    <textarea class="form-control" id="request-body" rows="10" placeholder='{\n  "key": "value"\n}'></textarea>
+                </div>
+
+                <!-- Response Section -->
+                <h6 class="mt-4">Response</h6>
+                <div id="response-container" style="display: none;">
+                    <div class="mb-2">
+                        <span class="badge" id="response-status">200 OK</span>
+                        <span class="text-muted ms-2">Response Time: <span id="response-time">0ms</span></span>
+                    </div>
+                    <pre class="bg-light p-3 rounded"><code id="response-body"></code></pre>
+                </div>
+                <div id="response-placeholder" class="text-center text-muted py-4">
+                    <i class="bi bi-arrow-right-circle fs-1"></i>
+                    <p>Click "Send Request" to test this endpoint</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="send-request">
+                    <i class="bi bi-send"></i> Send Request
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .stat-icon.bg-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .stat-icon.bg-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+    .stat-icon.bg-warning { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); }
+    .stat-icon.bg-info { background: linear-gradient(135deg, #17a2b8 0%, #00bcd4 100%); }
+
+    .endpoint-item {
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s;
+    }
+
+    .endpoint-item:hover {
+        background: #f8f9fa;
+    }
+
+    .endpoint-item:last-child {
+        border-bottom: none;
+    }
+
+    .method-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+    }
+
+    .method-badge.GET { background: #61affe; color: white; }
+    .method-badge.POST { background: #49cc90; color: white; }
+    .method-badge.PUT { background: #fca130; color: white; }
+    .method-badge.DELETE { background: #f93e3e; color: white; }
+    .method-badge.PATCH { background: #50e3c2; color: white; }
+
+    .auth-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .auth-badge.required { background: #fff3cd; color: #856404; }
+    .auth-badge.public { background: #d1ecf1; color: #0c5460; }
+
+    #response-body {
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
+}
+
+@section Scripts {
+<script src="~/js/api-management.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Choose Your Plan"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1>Choose the Perfect Plan for Your Business</h1>
+            <p class="lead text-muted">Select a plan that fits your needs and scale as you grow</p>
+        </div>
+    </div>
+
+    <!-- Billing Toggle -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="billingCycle" id="monthly" value="monthly" checked>
+                <label class="btn btn-outline-primary" for="monthly">Monthly</label>
+
+                <input type="radio" class="btn-check" name="billingCycle" id="yearly" value="yearly">
+                <label class="btn btn-outline-primary" for="yearly">Yearly <span class="badge bg-success">Save 20%</span></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Plans -->
+    <div class="row" id="subscriptionPlans">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading available plans...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Complete Your Subscription</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Selected Plan</h6>
+                        <div id="selectedPlanDetails"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Payment Information</h6>
+                        <div id="paymentElement"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-action="process-payment">
+                    <i class="bi bi-lock"></i> Pay Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script nonce="@Context.GetCspNonce()">
+        window.billingSubscribeConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl',
+            stripePublishableKey: '@ViewBag.StripePublishableKey'
+        };
+    </script>
+    <script src="~/js/billing-subscribe.js" asp-append-version="true"></script>
+}

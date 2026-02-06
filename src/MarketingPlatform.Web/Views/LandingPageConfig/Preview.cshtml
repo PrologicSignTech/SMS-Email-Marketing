@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Landing Page Preview"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-eye"></i> Landing Page Preview</h2>
+        <div>
+            <button class="btn btn-outline-secondary me-2" onclick="toggleDevice('desktop')">
+                <i class="bi bi-display"></i> Desktop
+            </button>
+            <button class="btn btn-outline-secondary me-2" onclick="toggleDevice('tablet')">
+                <i class="bi bi-tablet"></i> Tablet
+            </button>
+            <button class="btn btn-outline-secondary me-2" onclick="toggleDevice('mobile')">
+                <i class="bi bi-phone"></i> Mobile
+            </button>
+            <a href="@Url.Action("Index", "LandingPageConfig")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body text-center">
+            <div id="previewFrame" class="mx-auto" style="max-width: 100%; height: 600px; border: 2px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+                <iframe src="/" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        function toggleDevice(device) {
+            const frame = document.getElementById('previewFrame');
+            const sizes = {
+                desktop: '100%',
+                tablet: '768px',
+                mobile: '375px'
+            };
+            frame.style.maxWidth = sizes[device];
+        }
+    </script>
+}

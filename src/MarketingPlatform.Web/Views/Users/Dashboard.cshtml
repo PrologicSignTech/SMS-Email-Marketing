@@ -1,0 +1,127 @@
+@{
+    ViewData["Title"] = "Dashboard"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Active Campaigns</h6>
+                            <h2 class="mb-0" id="activeCampaigns">0</h2>
+                        </div>
+                        <i class="bi bi-megaphone" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Contacts</h6>
+                            <h2 class="mb-0" id="totalContacts">0</h2>
+                        </div>
+                        <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Messages Sent</h6>
+                            <h2 class="mb-0" id="messagesSent">0</h2>
+                        </div>
+                        <i class="bi bi-envelope" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Open Rate</h6>
+                            <h2 class="mb-0" id="openRate">0%</h2>
+                        </div>
+                        <i class="bi bi-graph-up" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-clock-history"></i> Recent Campaigns</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recentCampaigns">Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-bell"></i> Notifications</h5>
+                </div>
+                <div class="card-body">
+                    <div id="notifications">
+                        <p class="text-muted">No new notifications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        const apiBaseUrl = '@ViewBag.ApiBaseUrl';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+        });
+
+        async function loadDashboard() {
+            // Mock data
+            document.getElementById('activeCampaigns').textContent = '12';
+            document.getElementById('totalContacts').textContent = '5,432';
+            document.getElementById('messagesSent').textContent = '23,456';
+            document.getElementById('openRate').textContent = '42.5%';
+            
+            const recentHtml = `
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Summer Sale Campaign</h6>
+                            <small class="text-muted">2h ago</small>
+                        </div>
+                        <p class="mb-1"><span class="badge bg-success">Running</span></p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Newsletter July</h6>
+                            <small class="text-muted">1d ago</small>
+                        </div>
+                        <p class="mb-1"><span class="badge bg-warning">Scheduled</span></p>
+                    </a>
+                </div>
+            `;
+            document.getElementById('recentCampaigns').innerHTML = recentHtml;
+        }
+    </script>
+}

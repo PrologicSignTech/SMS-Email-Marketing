@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Channel Pricing"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cash-coin"></i> Channel Pricing</h2>
+        <a href="@Url.Action("Index", "Pricing")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5>Email Pricing</h5></div>
+        <div class="card-body">
+            <form>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Base Cost per Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" value="0.001" step="0.0001">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Volume Discount Threshold</label>
+                        <input type="number" class="form-control" value="100000">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5>SMS Pricing</h5></div>
+        <div class="card-body">
+            <form>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Domestic SMS Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" value="0.0075" step="0.0001">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">International SMS Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" value="0.05" step="0.0001">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5>MMS Pricing</h5></div>
+        <div class="card-body">
+            <form>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Domestic MMS Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" value="0.02" step="0.0001">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">International MMS Cost</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" value="0.08" step="0.0001">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>

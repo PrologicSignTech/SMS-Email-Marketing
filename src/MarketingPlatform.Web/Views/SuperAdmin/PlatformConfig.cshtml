@@ -1,0 +1,178 @@
+@{
+    ViewData["Title"] = "Platform Configuration";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-gear"></i> Platform Configuration</h2>
+        <button class="btn btn-primary" onclick="saveConfig()">
+            <i class="bi bi-save"></i> Save Configuration
+        </button>
+    </div>
+
+    <form id="configForm">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Platform Name</label>
+                                <input type="text" class="form-control" id="platformName" name="platformName">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Support Email</label>
+                                <input type="email" class="form-control" id="supportEmail" name="supportEmail">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="maintenanceMode" name="maintenanceMode">
+                                <label class="form-check-label" for="maintenanceMode">
+                                    Maintenance Mode
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Email Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">SMTP Server</label>
+                                <input type="text" class="form-control" id="smtpServer" name="smtpServer">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Port</label>
+                                <input type="number" class="form-control" id="smtpPort" name="smtpPort">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Use SSL</label>
+                                <select class="form-select" id="smtpUseSsl" name="smtpUseSsl">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>SMS Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">SMS Provider</label>
+                            <select class="form-select" id="smsProvider" name="smsProvider">
+                                <option value="Twilio">Twilio</option>
+                                <option value="Nexmo">Nexmo</option>
+                                <option value="AWS_SNS">AWS SNS</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">API Key</label>
+                            <input type="password" class="form-control" id="smsApiKey" name="smsApiKey" placeholder="Enter API key to update">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Rate Limits</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Requests per Minute</label>
+                                <input type="number" class="form-control" id="requestsPerMinute" name="requestsPerMinute">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Requests per Hour</label>
+                                <input type="number" class="form-control" id="requestsPerHour" name="requestsPerHour">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Requests per Day</label>
+                                <input type="number" class="form-control" id="requestsPerDay" name="requestsPerDay">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConfig();
+        });
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/SuperAdmin/GetPlatformConfig');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const config = result.data;
+                    document.getElementById('platformName').value = config.platformName || 'Marketing Platform';
+                    document.getElementById('supportEmail').value = config.supportEmail || '';
+                    document.getElementById('maintenanceMode').checked = config.maintenanceMode || false;
+                    document.getElementById('smtpServer').value = config.smtpServer || '';
+                    document.getElementById('smtpPort').value = config.smtpPort || 587;
+                    document.getElementById('smtpUseSsl').value = config.smtpUseSsl ? 'true' : 'false';
+                    document.getElementById('smsProvider').value = config.smsProvider || 'Twilio';
+                    document.getElementById('requestsPerMinute').value = config.requestsPerMinute || 60;
+                    document.getElementById('requestsPerHour').value = config.requestsPerHour || 1000;
+                    document.getElementById('requestsPerDay').value = config.requestsPerDay || 10000;
+                }
+            } catch (error) {
+                console.error('Error loading configuration:', error);
+            }
+        }
+
+        async function saveConfig() {
+            const configData = {
+                platformName: document.getElementById('platformName').value,
+                supportEmail: document.getElementById('supportEmail').value,
+                maintenanceMode: document.getElementById('maintenanceMode').checked,
+                smtpServer: document.getElementById('smtpServer').value,
+                smtpPort: parseInt(document.getElementById('smtpPort').value) || 587,
+                smtpUseSsl: document.getElementById('smtpUseSsl').value === 'true',
+                smsProvider: document.getElementById('smsProvider').value,
+                smsApiKey: document.getElementById('smsApiKey').value || null,
+                requestsPerMinute: parseInt(document.getElementById('requestsPerMinute').value) || 60,
+                requestsPerHour: parseInt(document.getElementById('requestsPerHour').value) || 1000,
+                requestsPerDay: parseInt(document.getElementById('requestsPerDay').value) || 10000
+            };
+
+            try {
+                const response = await fetch('/SuperAdmin/UpdatePlatformConfig', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Configuration saved successfully!', 'success');
+                } else {
+                    showNotification(result.message || 'Failed to save configuration', 'danger');
+                }
+            } catch (error) {
+                console.error('Error saving configuration:', error);
+                showNotification('An error occurred while saving', 'danger');
+            }
+        }
+    </script>
+}

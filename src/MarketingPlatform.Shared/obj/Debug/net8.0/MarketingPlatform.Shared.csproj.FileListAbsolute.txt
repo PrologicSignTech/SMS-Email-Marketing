@@ -1,0 +1,13 @@
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\bin\Debug\net8.0\MarketingPlatform.Shared.deps.json
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\bin\Debug\net8.0\MarketingPlatform.Shared.dll
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\bin\Debug\net8.0\MarketingPlatform.Shared.pdb
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.csproj.AssemblyReference.cache
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.AssemblyInfoInputs.cache
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.AssemblyInfo.cs
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.csproj.CoreCompileInputs.cache
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.sourcelink.json
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.dll
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\refint\MarketingPlatform.Shared.dll
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\MarketingPlatform.Shared.pdb
+E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Shared\obj\Debug\net8.0\ref\MarketingPlatform.Shared.dll

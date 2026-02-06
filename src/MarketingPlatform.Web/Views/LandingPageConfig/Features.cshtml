@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = "Features Configuration"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-stars"></i> Features Configuration</h2>
+        <a href="@Url.Action("Index", "LandingPageConfig")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <button class="btn btn-sm btn-primary mb-3" onclick="addFeature()">
+                <i class="bi bi-plus"></i> Add Feature
+            </button>
+
+            <div id="features">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <label class="form-label">Icon (Bootstrap Icons class)</label>
+                            <input type="text" class="form-control" value="bi-envelope" placeholder="bi-icon-name">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" value="Email Marketing">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="2">Create beautiful email campaigns that engage your audience</textarea>
+                        </div>
+                        <button class="btn btn-sm btn-danger" onclick="removeFeature(this)">
+                            <i class="bi bi-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <label class="form-label">Icon</label>
+                            <input type="text" class="form-control" value="bi-phone" placeholder="bi-icon-name">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" value="SMS Campaigns">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="2">Reach customers directly on their mobile devices</textarea>
+                        </div>
+                        <button class="btn btn-sm btn-danger" onclick="removeFeature(this)">
+                            <i class="bi bi-trash"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Save Features
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        function addFeature() {
+            const features = document.getElementById('features');
+            const newFeature = document.createElement('div');
+            newFeature.className = 'card mb-3';
+            newFeature.innerHTML = `
+                <div class="card-body">
+                    <div class="mb-2">
+                        <label class="form-label">Icon</label>
+                        <input type="text" class="form-control" placeholder="bi-icon-name">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="2"></textarea>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="removeFeature(this)">
+                        <i class="bi bi-trash"></i> Remove
+                    </button>
+                </div>
+            `;
+            features.appendChild(newFeature);
+        }
+
+        function removeFeature(btn) {
+            btn.closest('.card').remove();
+        }
+    </script>
+}

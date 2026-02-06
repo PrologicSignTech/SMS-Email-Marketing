@@ -1,0 +1,644 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MarketingPlatform.Application.DTOs.Auth;
+using MarketingPlatform.Application.Interfaces;
+
+namespace MarketingPlatform.API.Controllers
+{
+    /// <summary>
+    /// Manages OAuth2/SSO authentication flows and provider configurations
+    /// </summary>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OAuth2Controller : ControllerBase
+    {
+        private readonly IOAuth2Service _oauth2Service;
+        private readonly ILogger<OAuth2Controller> _logger;
+
+        public OAuth2Controller(
+            IOAuth2Service oauth2Service,
+            ILogger<OAuth2Controller> logger)
+        {
+            _oauth2Service = oauth2Service;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// Get list of enabled OAuth2/SSO providers
+        /// </summary>
+        /// <returns>List of enabled authentication providers</returns>
+        [HttpGet("providers")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProviders()
+        {
+            try
+            {
+                var providers = await _oauth2Service.GetEnabledProvidersAsync();
+                return Ok(providers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting OAuth2 providers");
+                return StatusCode(500, new { message = "Error retrieving providers" });
+            }
+        }
+
+        /// <summary>
+        /// Get authorization URL to initiate OAuth2 flow
+        /// </summary>
+        /// <param name="providerName">The OAuth2 provider name (e.g., "AzureAD", "Google")</param>
+        /// <param name="redirectUri">Optional redirect URI after authentication</param>
+        /// <returns>Authorization URL to redirect user to</returns>
+        [HttpGet("authorize/{providerName}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAuthorizationUrl(string providerName, [FromQuery] string? redirectUri = null)
+        {
+            try
+            {
+                var state = Guid.NewGuid().ToString();
+                var authUrl = await _oauth2Service.GetAuthorizationUrlAsync(providerName, redirectUri, state);
+                
+                return Ok(new { authorizationUrl = authUrl, state });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning("OAuth2 provider error: {Message}", ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting authorization URL for {Provider}", providerName);
+                return StatusCode(500, new { message = "Error initiating OAuth2 flow" });
+            }
+        }
+
+        /// <summary>
+        /// Handle OAuth2 callback and complete authentication
+        /// </summary>
+        /// <param name="providerName">The OAuth2 provider name</param>
+        /// <param name="callback">OAuth2 callback data including authorization code</param>
+        /// <returns>Authentication response with JWT tokens</returns>
+        [HttpPost("callback/{providerName}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> HandleCallback(string providerName, [FromBody] OAuth2CallbackDto callback)
+        {
+            try
+            {
+                var authResponse = await _oauth2Service.HandleCallbackAsync(providerName, callback);
+                return Ok(authResponse);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning("OAuth2 callback error for {Provider}: {Message}", providerName, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling OAuth2 callback for {Provider}", providerName);
+                return StatusCode(500, new { message = "Error completing OAuth2 authentication" });
+            }
+        }
+
+        /// <summary>
+        /// Link external OAuth2 account to current user
+        /// </summary>
+        /// <param name="providerName">The OAuth2 provider name</param>
+        /// <param name="callback">OAuth2 callback data</param>
+        /// <returns>Success response if account is linked</returns>
+        [HttpPost("link/{providerName}")]
+        [Authorize]
+        public async Task<IActionResult> LinkExternalAccount(
+            string providerName, 
+            [FromBody] OAuth2CallbackDto callback)
+        {
+            try
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                // Handle callback to get tokens
+                var authResponse = await _oauth2Service.HandleCallbackAsync(providerName, callback);
+                
+                return Ok(new { message = "External account linked successfully", providerName });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error linking external account for {Provider}", providerName);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Unlink an external account from the current user
+        /// </summary>
+        /// <param name="providerName">The OAuth2 provider name to unlink</param>
+        /// <returns>Success response if account is unlinked</returns>
+        [HttpDelete("unlink/{providerName}")]
+        [Authorize]
+        public async Task<IActionResult> UnlinkExternalAccount(string providerName)
+        {
+            try
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                var result = await _oauth2Service.UnlinkExternalAccountAsync(userId, providerName);
+                
+                if (result)
+                {
+                    return Ok(new { message = "External account unlinked successfully" });
+                }
+                
+                return NotFound(new { message = "External account not found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unlinking external account for {Provider}", providerName);
+                return StatusCode(500, new { message = "Error unlinking account" });
+            }
+        }
+
+        /// <summary>
+        /// Get all OAuth2 providers (Admin only)
+        /// </summary>
+        /// <returns>List of all OAuth2 provider configurations</returns>
+        [HttpGet("admin/providers")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllProviders()
+        {
+            try
+            {
+                var providers = await _oauth2Service.GetAllProvidersAsync();
+                
+                // Don't expose sensitive data like secrets
+                var safeProviders = providers.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.DisplayName,
+                    p.ProviderType,
+                    p.Authority,
+                    p.TenantId,
+                    p.Domain,
+                    p.Region,
+                    p.UserPoolId,
+                    p.CallbackPath,
+                    p.Scopes,
+                    p.IsEnabled,
+                    p.IsDefault,
+                    p.CreatedAt,
+                    p.UpdatedAt
+                });
+
+                return Ok(safeProviders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all OAuth2 providers");
+                return StatusCode(500, new { message = "Error retrieving providers" });
+            }
+        }
+
+        /// <summary>
+        /// Get OAuth2 provider by ID (Admin only)
+        /// </summary>
+        /// <param name="id">The provider ID</param>
+        /// <returns>OAuth2 provider configuration details</returns>
+        [HttpGet("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProvider(int id)
+        {
+            try
+            {
+                var provider = await _oauth2Service.GetProviderByIdAsync(id);
+                if (provider == null)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                // Don't expose sensitive data
+                return Ok(new
+                {
+                    provider.Id,
+                    provider.Name,
+                    provider.DisplayName,
+                    provider.ProviderType,
+                    provider.Authority,
+                    provider.TenantId,
+                    provider.Domain,
+                    provider.Region,
+                    provider.UserPoolId,
+                    provider.CallbackPath,
+                    provider.Scopes,
+                    provider.IsEnabled,
+                    provider.IsDefault,
+                    provider.CreatedAt,
+                    provider.UpdatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error retrieving provider" });
+            }
+        }
+
+        /// <summary>
+        /// Create a new OAuth2 provider configuration (Admin only)
+        /// </summary>
+        /// <param name="dto">The provider configuration data</param>
+        /// <returns>The created provider configuration</returns>
+        [HttpPost("admin/providers")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateProvider([FromBody] CreateExternalAuthProviderDto dto)
+        {
+            try
+            {
+                var provider = new Core.Entities.ExternalAuthProvider
+                {
+                    Name = dto.Name,
+                    DisplayName = dto.DisplayName,
+                    ProviderType = dto.ProviderType,
+                    ClientId = dto.ClientId,
+                    ClientSecret = dto.ClientSecret,
+                    Authority = dto.Authority,
+                    TenantId = dto.TenantId,
+                    Domain = dto.Domain,
+                    Region = dto.Region,
+                    UserPoolId = dto.UserPoolId,
+                    CallbackPath = dto.CallbackPath,
+                    Scopes = dto.Scopes,
+                    IsEnabled = dto.IsEnabled,
+                    ConfigurationJson = dto.ConfigurationJson
+                };
+
+                var createdProvider = await _oauth2Service.CreateProviderAsync(provider);
+
+                return Ok(new { message = "Provider created successfully", providerId = createdProvider.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating OAuth2 provider");
+                return StatusCode(500, new { message = "Error creating provider" });
+            }
+        }
+
+        /// <summary>
+        /// Update an OAuth2 provider configuration (Admin only)
+        /// </summary>
+        /// <param name="id">The provider ID to update</param>
+        /// <param name="dto">The updated provider configuration data</param>
+        /// <returns>Success response if provider is updated</returns>
+        [HttpPut("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProvider(int id, [FromBody] UpdateExternalAuthProviderDto dto)
+        {
+            try
+            {
+                var provider = await _oauth2Service.GetProviderByIdAsync(id);
+                if (provider == null)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                // Update only provided fields
+                if (dto.DisplayName != null) provider.DisplayName = dto.DisplayName;
+                if (dto.ClientId != null) provider.ClientId = dto.ClientId;
+                if (dto.ClientSecret != null) provider.ClientSecret = dto.ClientSecret;
+                if (dto.Authority != null) provider.Authority = dto.Authority;
+                if (dto.TenantId != null) provider.TenantId = dto.TenantId;
+                if (dto.Domain != null) provider.Domain = dto.Domain;
+                if (dto.Region != null) provider.Region = dto.Region;
+                if (dto.UserPoolId != null) provider.UserPoolId = dto.UserPoolId;
+                if (dto.CallbackPath != null) provider.CallbackPath = dto.CallbackPath;
+                if (dto.Scopes != null) provider.Scopes = dto.Scopes;
+                if (dto.IsEnabled.HasValue) provider.IsEnabled = dto.IsEnabled.Value;
+                if (dto.ConfigurationJson != null) provider.ConfigurationJson = dto.ConfigurationJson;
+
+                var updatedProvider = await _oauth2Service.UpdateProviderAsync(id, provider);
+
+                return Ok(new { message = "Provider updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error updating provider" });
+            }
+        }
+
+        /// <summary>
+        /// Delete an OAuth2 provider (Admin only)
+        /// </summary>
+        /// <param name="id">The provider ID to delete</param>
+        /// <returns>Success response if provider is deleted</returns>
+        [HttpDelete("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProvider(int id)
+        {
+            try
+            {
+                var deleted = await _oauth2Service.DeleteProviderAsync(id);
+                
+                if (!deleted)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                return Ok(new { message = "Provider deleted successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning("Cannot delete OAuth2 provider {Id}: {Message}", id, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error deleting provider" });
+            }
+        }
+
+        /// <summary>
+        /// Enable or disable an OAuth2 provider (Admin only)
+        /// </summary>
+        /// <param name="id">The provider ID</param>
+        /// <param name="isEnabled">True to enable, false to disable</param>
+        /// <returns>Success response if provider status is toggled</returns>
+        [HttpPatch("admin/providers/{id}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ToggleProviderStatus(int id, [FromBody] bool isEnabled)
+        {
+            try
+            {
+                var toggled = await _oauth2Service.ToggleProviderStatusAsync(id, isEnabled);
+                
+                if (!toggled)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                return Ok(new { message = $"Provider {(isEnabled ? "enabled" : "disabled")} successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling OAuth2 provider {Id} status", id);
+                return StatusCode(500, new { message = "Error updating provider status" });
+            }
+        }
+    }
+}
+                
+                return Ok(new { authorizationUrl = authUrl, state });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating authorization URL for {Provider}", providerName);
+                return StatusCode(500, new { message = "Error generating authorization URL" });
+            }
+        }
+
+        /// <summary>
+        /// Handle OAuth2 callback and complete authentication
+        /// </summary>
+        [HttpPost("callback/{providerName}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> HandleCallback(string providerName, [FromBody] OAuth2CallbackDto callback)
+        {
+            try
+            {
+                var authResponse = await _oauth2Service.HandleCallbackAsync(providerName, callback);
+                return Ok(authResponse);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling OAuth2 callback for {Provider}", providerName);
+                return StatusCode(500, new { message = "Authentication failed" });
+            }
+        }
+
+        /// <summary>
+        /// Link an external account to the current user
+        /// </summary>
+        [HttpPost("link/{providerName}")]
+        [Authorize]
+        public async Task<IActionResult> LinkExternalAccount(
+            string providerName, 
+            [FromBody] OAuth2CallbackDto callback)
+        {
+            try
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                // Handle callback to get tokens
+                var authResponse = await _oauth2Service.HandleCallbackAsync(providerName, callback);
+                
+                return Ok(new { message = "External account linked successfully", providerName });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error linking external account for {Provider}", providerName);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Unlink an external account from the current user
+        /// </summary>
+        [HttpDelete("unlink/{providerName}")]
+        [Authorize]
+        public async Task<IActionResult> UnlinkExternalAccount(string providerName)
+        {
+            try
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                var result = await _oauth2Service.UnlinkExternalAccountAsync(userId, providerName);
+                
+                if (result)
+                {
+                    return Ok(new { message = "External account unlinked successfully" });
+                }
+                
+                return NotFound(new { message = "External account not found" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unlinking external account for {Provider}", providerName);
+                return StatusCode(500, new { message = "Error unlinking account" });
+            }
+        }
+
+        /// <summary>
+        /// Create or update OAuth2 provider configuration (Admin only)
+        /// </summary>
+        [HttpPost("admin/providers")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateProvider([FromBody] CreateExternalAuthProviderDto dto)
+        {
+            try
+            {
+                var provider = new Core.Entities.ExternalAuthProvider
+                {
+                    Name = dto.Name,
+                    DisplayName = dto.DisplayName,
+                    ProviderType = dto.ProviderType,
+                    ClientId = dto.ClientId,
+                    ClientSecret = dto.ClientSecret,
+                    Authority = dto.Authority,
+                    TenantId = dto.TenantId,
+                    Domain = dto.Domain,
+                    Region = dto.Region,
+                    UserPoolId = dto.UserPoolId,
+                    CallbackPath = dto.CallbackPath,
+                    Scopes = dto.Scopes,
+                    IsEnabled = dto.IsEnabled,
+                    ConfigurationJson = dto.ConfigurationJson,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _providerRepository.AddAsync(provider);
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok(new { message = "Provider created successfully", providerId = provider.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating OAuth2 provider");
+                return StatusCode(500, new { message = "Error creating provider" });
+            }
+        }
+
+        /// <summary>
+        /// Update OAuth2 provider configuration (Admin only)
+        /// </summary>
+        [HttpPut("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProvider(int id, [FromBody] UpdateExternalAuthProviderDto dto)
+        {
+            try
+            {
+                var provider = await _providerRepository.GetByIdAsync(id);
+                if (provider == null)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                if (dto.DisplayName != null) provider.DisplayName = dto.DisplayName;
+                if (dto.ClientId != null) provider.ClientId = dto.ClientId;
+                if (dto.ClientSecret != null) provider.ClientSecret = dto.ClientSecret;
+                if (dto.Authority != null) provider.Authority = dto.Authority;
+                if (dto.TenantId != null) provider.TenantId = dto.TenantId;
+                if (dto.Domain != null) provider.Domain = dto.Domain;
+                if (dto.Region != null) provider.Region = dto.Region;
+                if (dto.UserPoolId != null) provider.UserPoolId = dto.UserPoolId;
+                if (dto.CallbackPath != null) provider.CallbackPath = dto.CallbackPath;
+                if (dto.Scopes != null) provider.Scopes = dto.Scopes;
+                if (dto.IsEnabled.HasValue) provider.IsEnabled = dto.IsEnabled.Value;
+                if (dto.ConfigurationJson != null) provider.ConfigurationJson = dto.ConfigurationJson;
+                
+                provider.UpdatedAt = DateTime.UtcNow;
+
+                _providerRepository.Update(provider);
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok(new { message = "Provider updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error updating provider" });
+            }
+        }
+
+        /// <summary>
+        /// Get OAuth2 provider by ID (Admin only)
+        /// </summary>
+        [HttpGet("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetProvider(int id)
+        {
+            try
+            {
+                var provider = await _providerRepository.GetByIdAsync(id);
+                if (provider == null)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                // Don't expose sensitive data
+                return Ok(new
+                {
+                    provider.Id,
+                    provider.Name,
+                    provider.DisplayName,
+                    provider.ProviderType,
+                    provider.Authority,
+                    provider.TenantId,
+                    provider.Domain,
+                    provider.Region,
+                    provider.UserPoolId,
+                    provider.CallbackPath,
+                    provider.Scopes,
+                    provider.IsEnabled,
+                    provider.IsDefault,
+                    provider.CreatedAt,
+                    provider.UpdatedAt
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error retrieving provider" });
+            }
+        }
+
+        /// <summary>
+        /// Delete OAuth2 provider (Admin only)
+        /// </summary>
+        [HttpDelete("admin/providers/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteProvider(int id)
+        {
+            try
+            {
+                var provider = await _providerRepository.GetByIdAsync(id);
+                if (provider == null)
+                {
+                    return NotFound(new { message = "Provider not found" });
+                }
+
+                _providerRepository.Remove(provider);
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok(new { message = "Provider deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting OAuth2 provider {Id}", id);
+                return StatusCode(500, new { message = "Error deleting provider" });
+            }
+        }
+    }
+}

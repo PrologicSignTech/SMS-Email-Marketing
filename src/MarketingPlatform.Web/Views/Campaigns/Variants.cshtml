@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Manage A/B Test Variants"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>A/B Test Variants</h2>
+            <p class="text-muted mb-0">Manage test variants for Campaign: <span id="campaignName"></span></p>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createVariantModal">
+                <i class="bi bi-plus-circle"></i> Add Variant
+            </button>
+            <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Campaigns
+            </a>
+        </div>
+    </div>
+
+    <!-- Traffic Allocation Summary -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Traffic Allocation</h5>
+            <span id="totalTraffic" class="badge bg-info">0%</span>
+        </div>
+        <div class="card-body">
+            <div id="trafficChart"></div>
+        </div>
+    </div>
+
+    <!-- Variants List -->
+    <div class="row" id="variantsList">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variant Comparison -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Performance Comparison</h5>
+            <button type="button" class="btn btn-sm btn-primary" data-action="refresh-comparison">
+                <i class="bi bi-arrow-repeat"></i> Refresh
+            </button>
+        </div>
+        <div class="card-body">
+            <div id="comparisonContent">
+                <p class="text-muted text-center">Click refresh to compare variant performance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Variant Modal -->
+<div class="modal fade" id="createVariantModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Variant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createVariantForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="variantName" class="form-label">Variant Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="variantName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="variantTraffic" class="form-label">Traffic % <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="variantTraffic" min="0" max="100" step="1" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="variantDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="variantDescription" rows="2"></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="isControl">
+                        <label class="form-check-label" for="isControl">
+                            This is the control variant
+                        </label>
+                    </div>
+                    <hr>
+                    <h6>Content</h6>
+                    <div class="mb-3">
+                        <label for="variantSubject" class="form-label">Subject (for Email)</label>
+                        <input type="text" class="form-control" id="variantSubject">
+                    </div>
+                    <div class="mb-3">
+                        <label for="variantMessage" class="form-label">Message Body <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="variantMessage" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-action="create-variant">Create Variant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script nonce="@Context.GetCspNonce()">
+    window.campaignsVariantsConfig = {
+        campaignId: parseInt('@ViewBag.CampaignId') || 0,
+        apiBaseUrl: '@ViewBag.ApiBaseUrl'
+    };
+</script>
+<script src="~/js/campaigns-variants.js" asp-append-version="true"></script>
+}

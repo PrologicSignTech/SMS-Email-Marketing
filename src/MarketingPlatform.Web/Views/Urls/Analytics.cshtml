@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "URL Analytics"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-graph-up"></i> URL Analytics</h2>
+        <a href="@Url.Action("Index", "Urls")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to URLs
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 id="shortUrl" class="mb-1">Loading...</h5>
+                    <p class="text-muted mb-0" id="originalUrl"></p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-sm btn-outline-primary" onclick="copyUrl()">
+                        <i class="bi bi-clipboard"></i> Copy Short URL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="totalClicks" class="text-primary">-</h3>
+                    <p class="text-muted mb-0">Total Clicks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="uniqueClicks" class="text-success">-</h3>
+                    <p class="text-muted mb-0">Unique Clicks</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="clickRate" class="text-info">-</h3>
+                    <p class="text-muted mb-0">Click Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 id="avgPerDay" class="text-warning">-</h3>
+                    <p class="text-muted mb-0">Avg Per Day</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Clicks Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="clicksChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Referrers</h5>
+                </div>
+                <div class="card-body">
+                    <div id="referrersList">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Devices</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="devicesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Locations</h5>
+                </div>
+                <div class="card-body">
+                    <div id="locationsList">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/urls-analytics.js" asp-append-version="true"></script>
+}

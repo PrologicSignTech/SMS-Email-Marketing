@@ -1,0 +1,792 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Marketing Platform</title>
+    <script nonce="@Context.GetCspNonce()">
+        window.appConfig = {
+            apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
+            recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
+            stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+        };
+        window.authConfig = {
+            apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
+            recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
+            stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+        };
+    </script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="~/css/datatables-custom.css" asp-append-version="true" />
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 80px;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --sidebar-bg: #1a1d2e;
+            --sidebar-hover: rgba(102, 126, 234, 0.1);
+            --text-muted: #8a92a6;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1040;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            transition: width 0.3s ease, left 0.3s ease;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 70px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .sidebar-logo-text {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .sidebar-logo-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .sidebar-toggle {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            margin: 0 auto;
+        }
+
+        /* Sidebar Menu */
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1rem 0;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+
+        .menu-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-section-title {
+            padding: 0.5rem 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .menu-section-title {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            position: relative;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .menu-link:hover {
+            color: white;
+            background: var(--sidebar-hover);
+        }
+
+        .menu-link.active {
+            color: white;
+            background: var(--primary-gradient);
+        }
+
+        .menu-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: white;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+
+        .menu-text {
+            flex: 1;
+            margin-left: 0.75rem;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar.collapsed .menu-text {
+            opacity: 0;
+            width: 0;
+            margin: 0;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            transition: transform 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar.collapsed .menu-arrow {
+            display: none;
+        }
+
+        .menu-link[data-bs-toggle="collapse"][aria-expanded="true"] .menu-arrow {
+            transform: rotate(90deg);
+        }
+
+        .submenu {
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 0;
+        }
+
+        .submenu .menu-link {
+            padding-left: 3.5rem;
+            font-size: 0.9rem;
+        }
+
+        .sidebar.collapsed .submenu {
+            display: none;
+        }
+
+        /* Top Navbar */
+        .navbar-top {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            z-index: 1030;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 0.75rem 1.5rem;
+            transition: left 0.3s ease;
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar.collapsed + .navbar-top,
+        body:has(.sidebar.collapsed) .navbar-top {
+            left: var(--sidebar-collapsed-width);
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .navbar-search {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+        }
+
+        .search-input {
+            border-radius: 10px;
+            border: 1px solid #e1e5eb;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            background: #f5f7fa;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-dropdown:hover {
+            background: #f5f7fa;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #1a1d2e;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding-top: 70px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        body:has(.sidebar.collapsed) .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 8px;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Mobile Responsive */
+        @@media (max-width: 768px) {
+            .sidebar {
+                left: calc(var(--sidebar-width) * -1);
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .navbar-top {
+                left: 0 !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .navbar-search {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block !important;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #1a1d2e;
+            margin-right: 1rem;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f7fa;
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="/" class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="bi bi-megaphone-fill"></i>
+                </div>
+                <span class="sidebar-logo-text">Marketing Pro</span>
+            </a>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-menu">
+            <!-- Dashboards -->
+            <div class="menu-section" require-permission="ViewProfile">
+                <div class="menu-section-title">Dashboards</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="UserDashboard" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-grid-fill"></i></span>
+                        <span class="menu-text">My Dashboard</span>
+                    </a>
+                </div>
+                <div class="menu-item" require-permission="ViewUsers">
+                    <a class="menu-link" asp-controller="AdminDashboard" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-speedometer2"></i></span>
+                        <span class="menu-text">Admin Dashboard</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Campaigns -->
+            <div class="menu-section" require-permission="ViewCampaigns">
+                <div class="menu-section-title">Marketing</div>
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#campaignsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-megaphone"></i></span>
+                        <span class="menu-text">Campaigns</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="campaignsMenu">
+                        <a class="menu-link" asp-controller="Campaigns" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Campaigns</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Campaigns" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
+                            <span class="menu-text">Create Campaign</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts -->
+            <div class="menu-section" require-permission="ViewContacts">
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#contactsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-people"></i></span>
+                        <span class="menu-text">Contacts</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="contactsMenu">
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Contacts</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-person-plus"></i></span>
+                            <span class="menu-text">Add Contact</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Groups">
+                            <span class="menu-icon"><i class="bi bi-collection"></i></span>
+                            <span class="menu-text">Groups</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="menu-section" require-permission="ViewTemplates">
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#templatesMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
+                        <span class="menu-text">Templates</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="templatesMenu">
+                        <a class="menu-link" asp-controller="Templates" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Templates</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Templates" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
+                            <span class="menu-text">Create Template</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflows -->
+            <div class="menu-section" require-permission="ViewWorkflows">
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#workflowsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-diagram-3"></i></span>
+                        <span class="menu-text">Workflows</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="workflowsMenu">
+                        <a class="menu-link" asp-controller="Workflows" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Workflows</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Workflows" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
+                            <span class="menu-text">Create Workflow</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="menu-section" require-permission="ViewAnalytics">
+                <div class="menu-section-title">Reports</div>
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#analyticsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                        <span class="menu-text">Analytics</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="analyticsMenu">
+                        <a class="menu-link" asp-controller="Analytics" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-speedometer"></i></span>
+                            <span class="menu-text">Dashboard</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Analytics" asp-action="Campaigns">
+                            <span class="menu-icon"><i class="bi bi-bar-chart"></i></span>
+                            <span class="menu-text">Campaign Performance</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Analytics" asp-action="Reports">
+                            <span class="menu-icon"><i class="bi bi-file-earmark-bar-graph"></i></span>
+                            <span class="menu-text">Reports</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Administration -->
+            <div class="menu-section" require-permission="ViewUsers">
+                <div class="menu-section-title">Administration</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Users" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-people"></i></span>
+                        <span class="menu-text">Manage Users</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Roles" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-key"></i></span>
+                        <span class="menu-text">Roles & Permissions</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Settings" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-gear"></i></span>
+                        <span class="menu-text">Settings</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Super Admin -->
+            <div class="menu-section" require-permission="ManageSuperAdmins">
+                <div class="menu-section-title">Super Admin</div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="SuperAdmin" asp-action="Dashboard">
+                        <span class="menu-icon"><i class="bi bi-lightning-fill"></i></span>
+                        <span class="menu-text">Admin Dashboard</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="ApiManagement" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-code-square"></i></span>
+                        <span class="menu-text">API Management</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="LandingPageConfig" asp-action="Index">
+                        <span class="menu-icon"><i class="bi bi-layout-text-window"></i></span>
+                        <span class="menu-text">Landing Config</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Top Navbar -->
+    <nav class="navbar-top">
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="navbar-search position-relative">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control search-input" placeholder="Search...">
+        </div>
+
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <button class="btn btn-link text-dark" type="button">
+                <i class="bi bi-bell fs-5"></i>
+            </button>
+
+            <div class="dropdown">
+                <div class="user-dropdown" data-bs-toggle="dropdown">
+                    <div class="user-avatar">
+                        <span id="user-initials">U</span>
+                    </div>
+                    <div class="user-info d-none d-md-flex">
+                        <span class="user-name" id="user-name">User</span>
+                        <span class="user-role">Member</span>
+                    </div>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Profile"><i class="bi bi-person me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" asp-controller="Users" asp-action="Settings"><i class="bi bi-gear me-2"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="~/js/app-urls.js" asp-append-version="true"></script>
+    <script src="~/js/api-client.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/common.js" asp-append-version="true"></script>
+    <script src="~/js/custom.js" asp-append-version="true"></script>
+    <script src="~/js/csp-handlers.js" asp-append-version="true"></script>
+    <script>
+        // Sidebar toggle functionality
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+
+        sidebarToggle?.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+
+        mobileToggle?.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+
+        // Restore sidebar state
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+        }
+
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const isClickInside = sidebar.contains(event.target) || mobileToggle?.contains(event.target);
+                if (!isClickInside && sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        });
+
+        // Get user info and display
+        fetch('/api/auth/me', {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const name = data.data.name || 'User';
+                document.getElementById('user-name').textContent = name;
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('user-initials').textContent = initials;
+            }
+        })
+        .catch(() => {
+            // Silently fail
+        });
+
+        // Highlight active menu item
+        const currentPath = window.location.pathname.toLowerCase();
+        document.querySelectorAll('.sidebar .menu-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && currentPath.includes(href.toLowerCase()) && href !== '/' && href !== '#') {
+                link.classList.add('active');
+
+                // Expand parent collapse if exists
+                const collapse = link.closest('.collapse');
+                if (collapse) {
+                    collapse.classList.add('show');
+                    const toggle = document.querySelector(`[href="#${collapse.id}"]`);
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'true');
+                    }
+                }
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

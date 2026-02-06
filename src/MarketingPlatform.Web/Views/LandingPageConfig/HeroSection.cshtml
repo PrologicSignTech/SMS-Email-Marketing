@@ -1,0 +1,62 @@
+@{
+    ViewData["Title"] = "Hero Section"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-images"></i> Hero Section Configuration</h2>
+        <a href="@Url.Action("Index", "LandingPageConfig")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="heroForm">
+                <div class="mb-3">
+                    <label for="headline" class="form-label">Headline <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="headline" value="Transform Your Marketing Strategy" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="subheadline" class="form-label">Subheadline</label>
+                    <textarea class="form-control" id="subheadline" rows="2">Powerful multi-channel marketing platform for modern businesses</textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="ctaText" class="form-label">CTA Button Text</label>
+                        <input type="text" class="form-control" id="ctaText" value="Get Started Free">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ctaLink" class="form-label">CTA Button Link</label>
+                        <input type="text" class="form-control" id="ctaLink" value="/Auth/Register">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="backgroundImage" class="form-label">Background Image URL</label>
+                    <input type="text" class="form-control" id="backgroundImage" placeholder="https://example.com/hero-bg.jpg">
+                </div>
+
+                <div class="mb-3">
+                    <label for="backgroundColor" class="form-label">Background Color</label>
+                    <input type="color" class="form-control" id="backgroundColor" value="#667eea">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        document.getElementById('heroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Hero section saved! (Demo)');
+        });
+    </script>
+}

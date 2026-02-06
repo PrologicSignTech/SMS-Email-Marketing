@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Edit Pricing Plan"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil-square"></i> Edit Pricing Plan</h2>
+        <a href="@Url.Action("Index", "Pricing")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Plans
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="pricingForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="planName" class="form-label">Plan Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="planName" value="Professional" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="planPrice" class="form-label">Price <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="planPrice" value="79" step="0.01" required>
+                            <span class="input-group-text">/month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" rows="2">Perfect for growing businesses</textarea>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="maxContacts" class="form-label">Max Contacts</label>
+                        <input type="number" class="form-control" id="maxContacts" value="10000">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="maxEmails" class="form-label">Max Emails/Month</label>
+                        <input type="number" class="form-control" id="maxEmails" value="50000">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="maxSMS" class="form-label">Max SMS/Month</label>
+                        <input type="number" class="form-control" id="maxSMS" value="5000">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            Active Plan
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPopular" checked>
+                        <label class="form-check-label" for="isPopular">
+                            Mark as Popular
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-danger" data-action="delete-plan">
+                        <i class="bi bi-trash"></i> Delete Plan
+                    </button>
+                    <div>
+                        <a href="@Url.Action("Index", "Pricing")" class="btn btn-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/pricing-edit.js" asp-append-version="true"></script>
+}

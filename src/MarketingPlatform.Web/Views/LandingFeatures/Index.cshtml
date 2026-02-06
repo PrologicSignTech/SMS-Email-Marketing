@@ -1,0 +1,99 @@
+@{
+    ViewData["Title"] = "Landing Page Features";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-stars"></i> Landing Page Features</h2>
+        <a href="@Url.Action("Create", "LandingFeatures")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Feature
+        </a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Manage features displayed on the public landing page. Features appear as flip cards with statistics.
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="featuresTable" class="table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Title</th>
+                        <th>Short Description</th>
+                        <th>Icon</th>
+                        <th>Color</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let featuresTable;
+
+        $(document).ready(function() {
+            featuresTable = $('#featuresTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: '/LandingFeatures/GetFeatures',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function(d) {
+                        return JSON.stringify({ draw: d.draw });
+                    },
+                    dataSrc: function(json) { return json.data || []; }
+                },
+                columns: [
+                    { data: 'displayOrder' },
+                    { data: 'title', render: function(data) { return `<strong>${escapeHtml(data || '')}</strong>`; } },
+                    { data: 'shortDescription', render: function(data) { return data ? escapeHtml(data).substring(0, 50) + '...' : ''; } },
+                    { data: 'iconClass', render: function(data) { return data ? `<i class="${data} fs-4"></i>` : ''; } },
+                    { data: 'colorClass', render: function(data) { return data ? `<span class="badge bg-${data}">${data}</span>` : ''; } },
+                    { data: 'isActive', render: function(data) { return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; } },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<div class="btn-group btn-group-sm">
+                                <a href="/LandingFeatures/Edit/${data}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                <button class="btn btn-outline-danger" onclick="deleteFeature(${data})"><i class="bi bi-trash"></i></button>
+                            </div>`;
+                        }
+                    }
+                ],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+        });
+
+        function deleteFeature(id) {
+            if (confirm('Delete this feature?')) {
+                $.ajax({
+                    url: `/LandingFeatures/Delete?id=${id}`,
+                    method: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('Feature deleted successfully!', 'success');
+                            featuresTable.ajax.reload(null, false);
+                        } else {
+                            showNotification(response.message || 'Failed to delete feature', 'danger');
+                        }
+                    },
+                    error: function() {
+                        showNotification('An error occurred while deleting', 'danger');
+                    }
+                });
+            }
+        }
+    </script>
+}

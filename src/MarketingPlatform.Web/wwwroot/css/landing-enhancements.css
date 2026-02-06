@@ -1,0 +1,329 @@
+/**
+ * Landing Page Enhancements
+ * Additional styles for improved landing page appearance
+ */
+
+/* ========== SMOOTH SCROLLING ========== */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ========== FLIP CARD STYLES ========== */
+.flip-card-container {
+    perspective: 1000px;
+    height: 100%;
+    min-height: 400px;
+}
+
+.flip-card {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg) !important;
+    will-change: auto;
+}
+
+/* Only add transition when flipping */
+.flip-card.flipping {
+    transition: transform 0.6s ease-in-out;
+}
+
+.flip-card.flipped {
+    transform: rotateY(180deg) !important;
+}
+
+/* Explicitly prevent any hover transformations */
+.flip-card:hover,
+.flip-card-container:hover .flip-card {
+    transform: rotateY(0deg) !important;
+}
+
+.flip-card.flipped:hover,
+.flip-card-container:hover .flip-card.flipped {
+    transform: rotateY(180deg) !important;
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    min-height: 400px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.flip-card-front {
+    background: white;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+    overflow: hidden;
+    pointer-events: auto; /* Ensure pointer events work */
+}
+
+/* Buttons and links are clickable */
+.flip-card-back button,
+.flip-card-back a {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+/* Scrollable area should allow scrolling */
+.flip-card-back .overflow-auto {
+    pointer-events: auto;
+}
+
+/* Stats on flip card back - ensure text is visible */
+.flip-card-back .bg-opacity-20 {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.flip-card-back .bg-opacity-20 .fw-bold,
+.flip-card-back .bg-opacity-20 small {
+    color: white !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Better text handling on flip card back */
+.flip-card-back .overflow-auto {
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.flip-card-back .overflow-auto::-webkit-scrollbar {
+    width: 4px;
+}
+
+.flip-card-back .overflow-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.flip-card-back .overflow-auto::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.flip-card-back .overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* ========== FEATURE ICON CENTERING ========== */
+.feature-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+}
+
+.feature-icon-bg {
+    position: absolute; 
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.feature-icon-lg {
+    font-size: 3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========== STATS SECTION TEXT OVERFLOW FIX ========== */
+.stat-item-enhanced h2 {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.stat-item-enhanced p {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Mobile responsive stats */
+@media (max-width: 767.98px) {
+    .stat-item-enhanced {
+        padding: 1.5rem 1rem;
+    }
+
+    .stat-item-enhanced h2 {
+        font-size: 1.75rem !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-item-enhanced p {
+        font-size: 0.875rem;
+    }
+
+    .stat-icon {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .stat-icon i {
+        font-size: 2rem !important;
+    }
+}
+
+/* ========== SECTION HEADINGS - UNIFIED STYLE ========== */
+.section-header-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.section-header-badge i {
+    margin-right: 0.5rem;
+}
+
+.section-heading {
+    color: #1f2937;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+.section-subheading {
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* ========== RESPONSIVE IMPROVEMENTS ========== */
+@media (max-width: 991.98px) {
+    .flip-card {
+        min-height: 350px;
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+        min-height: 350px;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .flip-card {
+        min-height: 320px;
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+        min-height: 320px;
+        padding: 1.25rem;
+    }
+
+    .feature-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+
+    .feature-icon-bg {
+        width: 60px;
+        height: 60px;
+    }
+
+    .feature-icon-lg {
+        font-size: 2rem;
+    }
+}
+
+/* ========== FLIP CARD ANIMATION ENHANCEMENTS ========== */
+.flip-card-back .btn {
+    transition: all 0.3s ease;
+}
+
+.flip-card-back .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== LOADING STATES ========== */
+.features-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+/* ========== ACCESSIBILITY ========== */
+.flip-trigger,
+.flip-back-trigger {
+    cursor: pointer;
+    user-select: none;
+}
+
+.flip-trigger:focus,
+.flip-back-trigger:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .flip-card {
+        transition: none;
+    }
+
+    .feature-icon-bg {
+        animation: none;
+    }
+}
+
+/* ========== AOS VISIBILITY FIX ========== */
+/* Ensure elements are visible even before AOS initializes */
+[data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* Let AOS handle animations after it loads */
+.aos-init[data-aos] {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.aos-init[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+    transition-property: opacity, transform;
+}
+
+/* Feature cards should always be visible */
+#features-cards .col-md-6,
+#features-cards .col-lg-4 {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Ensure flip cards are visible */
+.flip-card-container,
+.flip-card,
+.flip-card-front,
+.feature-card {
+    opacity: 1 !important;
+    visibility: visible !important;
+}

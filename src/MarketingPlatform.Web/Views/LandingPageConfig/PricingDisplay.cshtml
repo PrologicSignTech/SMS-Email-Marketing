@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Pricing Display"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-tag"></i> Pricing Display Configuration</h2>
+        <a href="@Url.Action("Index", "LandingPageConfig")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form>
+                <div class="mb-3">
+                    <label class="form-label">Section Title</label>
+                    <input type="text" class="form-control" value="Choose Your Plan">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Section Subtitle</label>
+                    <textarea class="form-control" rows="2">Select the perfect plan for your business needs</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="showAnnualToggle" checked>
+                        <label class="form-check-label" for="showAnnualToggle">
+                            Show Monthly/Annual Toggle
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="highlightPopular" checked>
+                        <label class="form-check-label" for="highlightPopular">
+                            Highlight Most Popular Plan
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">CTA Button Text</label>
+                    <input type="text" class="form-control" value="Get Started">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Save Configuration
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

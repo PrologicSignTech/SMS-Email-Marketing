@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Import Suppression List"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-upload"></i> Import Suppression List</h2>
+        <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Lists
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Upload CSV File</h5>
+                </div>
+                <div class="card-body">
+                    <form id="importForm">
+                        <div class="mb-3">
+                            <label for="suppressionList" class="form-label">Select Suppression List <span class="text-danger">*</span></label>
+                            <select class="form-select" id="suppressionList" required>
+                                <option value="">Choose a list...</option>
+                                <option value="1">Global Opt-Outs</option>
+                                <option value="2">Hard Bounces</option>
+                                <option value="3">Spam Complaints</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="csvFile" class="form-label">CSV File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="csvFile" accept=".csv" required>
+                            <div class="form-text">Upload a CSV file with email addresses or phone numbers</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="skipDuplicates" checked>
+                                <label class="form-check-label" for="skipDuplicates">
+                                    Skip duplicate entries
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Import File
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6><i class="bi bi-info-circle"></i> CSV Format</h6>
+                    <p class="small mb-2">Your CSV file should have the following format:</p>
+                    <pre class="bg-white p-2 rounded small">value,reason
+user@example.com,Opt-out
++1234567890,Bounced
+another@example.com,Spam</pre>
+                    <hr>
+                    <h6><i class="bi bi-download"></i> Download Template</h6>
+                    <button class="btn btn-sm btn-outline-primary" onclick="downloadTemplate()">
+                        <i class="bi bi-file-earmark-arrow-down"></i> CSV Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        document.getElementById('importForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Import started! (Demo)');
+            window.location.href = '/Suppression/Index';
+        });
+
+        function downloadTemplate() {
+            alert('Downloading template... (Demo)');
+        }
+    </script>
+}

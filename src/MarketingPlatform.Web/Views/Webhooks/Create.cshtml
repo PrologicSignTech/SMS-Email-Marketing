@@ -1,0 +1,114 @@
+@{
+    ViewData["Title"] = "Create Webhook"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-broadcast"></i> Create Webhook</h2>
+        <a href="@Url.Action("Index", "Webhooks")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Webhooks
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Webhook Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="webhookForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Webhook Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="url" class="form-label">Endpoint URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" id="url" placeholder="https://api.example.com/webhook" required>
+                            <div class="form-text">Must be a valid HTTPS URL</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Events <span class="text-danger">*</span></label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt1" value="CampaignStarted"><label class="form-check-label" for="evt1">Campaign Started</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt2" value="CampaignCompleted"><label class="form-check-label" for="evt2">Campaign Completed</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt3" value="MessageSent"><label class="form-check-label" for="evt3">Message Sent</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt4" value="MessageDelivered"><label class="form-check-label" for="evt4">Message Delivered</label></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt5" value="MessageFailed"><label class="form-check-label" for="evt5">Message Failed</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt6" value="ContactOptedOut"><label class="form-check-label" for="evt6">Contact Opted Out</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt7" value="ContactCreated"><label class="form-check-label" for="evt7">Contact Created</label></div>
+                                    <div class="form-check"><input class="form-check-input" type="checkbox" id="evt8" value="ContactUpdated"><label class="form-check-label" for="evt8">Contact Updated</label></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="secret" class="form-label">Secret Key (Optional)</label>
+                            <input type="text" class="form-control" id="secret" placeholder="Used to sign webhook payloads">
+                            <div class="form-text">Include this to verify webhook authenticity</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive" checked>
+                                <label class="form-check-label" for="isActive"><strong>Active Webhook</strong></label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Webhooks")" class="btn btn-secondary">Cancel</a>
+                            <button type="button" class="btn btn-outline-primary" onclick="testEndpoint()"><i class="bi bi-play"></i> Test Endpoint</button>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Create Webhook</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6><i class="bi bi-info-circle"></i> Webhook Payload</h6>
+                    <p class="small">Webhooks send POST requests with JSON:</p>
+                    <pre class="bg-white p-2 rounded small">{
+  "event": "MessageDelivered",
+  "timestamp": "2024-03-20T10:30:00Z",
+  "data": {
+    "messageId": 123,
+    "recipient": "+1234567890"
+  }
+}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        function testEndpoint() {
+            const url = document.getElementById('url').value;
+            if (!url) {
+                alert('Please enter an endpoint URL.');
+                return;
+            }
+            alert('Testing endpoint... (Demo)');
+        }
+
+        document.getElementById('webhookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const checkedEvents = document.querySelectorAll('input[type="checkbox"]:checked:not(#isActive)');
+            if (checkedEvents.length === 0) {
+                alert('Please select at least one event.');
+                return;
+            }
+            alert('Webhook created! (Demo)');
+            window.location.href = '/Webhooks/Index';
+        });
+    </script>
+}

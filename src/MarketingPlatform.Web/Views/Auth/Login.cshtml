@@ -1,0 +1,122 @@
+@model MarketingPlatform.Application.DTOs.Auth.LoginRequestDto
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LayoutAuth";
+}
+
+<h2 class="auth-title">Welcome Back</h2>
+<p class="auth-subtitle">Sign in to your account</p>
+
+<!-- Display server-side error message -->
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Server-side form submission (with fallback to JavaScript) -->
+<form id="loginForm" asp-action="login" asp-controller="Auth" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email"
+                   asp-for="Email" placeholder="Enter your email" required>
+        </div>
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" id="password" name="password"
+                   asp-for="Password" placeholder="Enter your password" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                <i class="bi bi-eye"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Password" class="text-danger small"></span>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" asp-for="RememberMe">
+            <label class="form-check-label" for="rememberMe">
+                Remember me
+            </label>
+        </div>
+        <a href="/forgot-password" class="text-decoration-none small">Forgot password?</a>
+    </div>
+
+    <!-- Google reCAPTCHA (optional - only shown if configured) -->
+    @if (ViewBag.RecaptchaSiteKey != null && ViewBag.RecaptchaSiteKey != "YOUR_RECAPTCHA_SITE_KEY")
+    {
+        <div class="d-flex justify-content-center mb-3">
+            <div class="g-recaptcha" data-sitekey="@ViewBag.RecaptchaSiteKey"></div>
+        </div>
+    }
+
+    <div id="errorMessage" class="alert alert-danger d-none"></div>
+    <div id="successMessage" class="alert alert-success d-none"></div>
+
+    <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
+        <i class="bi bi-box-arrow-in-right"></i> Sign In
+    </button>
+
+    <div class="text-center">
+        <p class="mb-0 small">Don't have an account? <a href="/register" class="fw-semibold">Sign up</a></p>
+    </div>
+</form>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        // Configuration object with nonce for CSP compliance
+        window.authConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl',
+            recaptchaSiteKey: '@ViewBag.RecaptchaSiteKey',
+            useServerSideAuth: true  // Flag to disable client-side interception
+        };
+
+        // Debug logging for form submission
+        console.log('[Login Page] Configuration loaded:', {
+            useServerSideAuth: window.authConfig.useServerSideAuth,
+            recaptchaConfigured: !!(window.authConfig.recaptchaSiteKey && window.authConfig.recaptchaSiteKey !== 'YOUR_RECAPTCHA_SITE_KEY')
+        });
+
+        // Simple password toggle (no form interception)
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Login Page] DOM Content Loaded');
+
+            const toggleButton = document.getElementById('togglePassword');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    const passwordInput = document.getElementById('password');
+                    const icon = this.querySelector('i');
+
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.replace('bi-eye', 'bi-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.replace('bi-eye-slash', 'bi-eye');
+                    }
+                });
+            }
+
+            // Add form submit listener for debugging
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    console.log('[Login Page] Form submit event fired - allowing server-side submission');
+                    console.log('[Login Page] Form action:', loginForm.action);
+                    console.log('[Login Page] Form method:', loginForm.method);
+                }, true);
+            }
+        });
+    </script>
+}

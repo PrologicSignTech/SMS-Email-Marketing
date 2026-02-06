@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "Edit SMS Keyword"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil"></i> Edit SMS Keyword</h2>
+        <a href="@Url.Action("Index", "Keywords")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Keywords
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Keyword Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <div id="loading" class="text-center py-5">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <form id="keywordForm" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="keyword" class="form-label">Keyword <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control text-uppercase" id="keyword" required maxlength="20">
+                                <div class="form-text">Single word, no spaces</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="shortCode" class="form-label">Short Code <span class="text-danger">*</span></label>
+                                <select class="form-select" id="shortCode" required>
+                                    <option value="">Select Short Code</option>
+                                    <option value="12345">12345</option>
+                                    <option value="67890">67890</option>
+                                    <option value="54321">54321</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="campaignId" class="form-label">Associated Campaign</label>
+                            <select class="form-select" id="campaignId">
+                                <option value="">No Campaign (Optional)</option>
+                                <option value="1">Newsletter Signup</option>
+                                <option value="2">Flash Deals</option>
+                                <option value="3">Summer Sale 2024</option>
+                                <option value="4">Contest Entry</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="autoResponse" class="form-label">Auto-Response Message <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="autoResponse" rows="4" required maxlength="160"></textarea>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">Message sent automatically when keyword is received</small>
+                                <small id="charCount" class="text-muted">0/160 characters</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Additional Settings</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="doubleOptIn">
+                                <label class="form-check-label" for="doubleOptIn">
+                                    Require Double Opt-In
+                                </label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="trackClicks">
+                                <label class="form-check-label" for="trackClicks">
+                                    Track URL Clicks
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" class="form-control" id="tags" placeholder="Add tags separated by commas">
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive">
+                                <label class="form-check-label" for="isActive">
+                                    <strong>Active Keyword</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> <strong>Note:</strong> Changes to active keywords will take effect immediately. Test your changes before activating.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-danger" data-action="delete-keyword">
+                                <i class="bi bi-trash"></i> Delete Keyword
+                            </button>
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Index", "Keywords")" class="btn btn-secondary">Cancel</a>
+                                <button type="button" class="btn btn-outline-primary" data-action="preview-keyword">
+                                    <i class="bi bi-eye"></i> Preview
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Statistics Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h3 id="statTotal" class="text-primary">-</h3>
+                            <p class="text-muted mb-0">Total Messages</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 id="statOptIns" class="text-success">-</h3>
+                            <p class="text-muted mb-0">Opt-Ins</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 id="statOptOuts" class="text-danger">-</h3>
+                            <p class="text-muted mb-0">Opt-Outs</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 id="statRate" class="text-info">-</h3>
+                            <p class="text-muted mb-0">Success Rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-clock-history"></i> Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recentActivity">
+                        <div class="text-center text-muted py-3">
+                            <small>Loading activity...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Auto-Response Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-phone text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-1"><strong>From:</strong> <span id="previewShortCode"></span></p>
+                                    <p class="mb-0" id="previewMessage"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.keywordsEditConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/keywords-edit.js" asp-append-version="true"></script>
+}

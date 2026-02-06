@@ -1,0 +1,330 @@
+@{
+    ViewData["Title"] = "Create Campaign"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Create New Campaign</h2>
+        <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Campaigns
+        </a>
+    </div>
+
+    <form id="campaignForm">
+        <!-- Step Indicator -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center step-indicator active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Basic Info</div>
+                    </div>
+                    <div class="col-md-3 text-center step-indicator" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Content</div>
+                    </div>
+                    <div class="col-md-3 text-center step-indicator" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Audience</div>
+                    </div>
+                    <div class="col-md-3 text-center step-indicator" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Schedule</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Information -->
+        <div class="card mb-4 step-content" id="step1">
+            <div class="card-header">
+                <h5>Basic Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="campaignName" class="form-label">Campaign Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="campaignName" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="campaignType" class="form-label">Campaign Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="campaignType" required>
+                            <option value="">Select Type</option>
+                            <option value="0">SMS Campaign</option>
+                            <option value="1">MMS Campaign</option>
+                            <option value="2">Email Campaign</option>
+                            <option value="3">Multi-Channel Campaign</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="campaignDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="campaignDescription" rows="3"></textarea>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="isABTest">
+                    <label class="form-check-label" for="isABTest">
+                        Enable A/B Testing for this campaign
+                    </label>
+                    <small class="form-text text-muted d-block">Create multiple variants to test different messages or content</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Content Configuration -->
+        <div class="card mb-4 step-content d-none" id="step2">
+            <div class="card-header">
+                <h5>Content Configuration</h5>
+            </div>
+            <div class="card-body">
+                <!-- Channel Selection for Multi-Channel -->
+                <div class="mb-3" id="channelSelection" style="display: none;">
+                    <label class="form-label">Select Channel <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="channel" id="channelSMS" value="0">
+                            <label class="form-check-label" for="channelSMS">SMS</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="channel" id="channelMMS" value="1">
+                            <label class="form-check-label" for="channelMMS">MMS</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="channel" id="channelEmail" value="2">
+                            <label class="form-check-label" for="channelEmail">Email</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Subject (shown for Email campaigns) -->
+                <div class="mb-3 d-none" id="emailSubjectGroup">
+                    <label for="emailSubject" class="form-label">Email Subject <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="emailSubject">
+                </div>
+
+                <!-- Message Body -->
+                <div class="mb-3">
+                    <label for="messageBody" class="form-label">Message Body <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="messageBody" rows="5" required></textarea>
+                    <div class="form-text">
+                        <span id="charCount">0</span> characters
+                        <span id="smsSegments" class="d-none">(<span id="segmentCount">0</span> SMS segments)</span>
+                    </div>
+                </div>
+
+                <!-- HTML Content (shown for Email campaigns) -->
+                <div class="mb-3 d-none" id="htmlContentGroup">
+                    <label for="htmlContent" class="form-label">HTML Content</label>
+                    <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                    <div class="form-text">Optional: Rich HTML email content</div>
+                </div>
+
+                <!-- Media URLs (shown for MMS campaigns) -->
+                <div class="mb-3 d-none" id="mediaUrlsGroup">
+                    <label for="mediaUrls" class="form-label">Media URLs</label>
+                    <input type="text" class="form-control mb-2" id="mediaUrl1" placeholder="https://example.com/image1.jpg">
+                    <input type="text" class="form-control" id="mediaUrl2" placeholder="https://example.com/image2.jpg">
+                    <div class="form-text">Add up to 2 media URLs for MMS</div>
+                </div>
+
+                <!-- Template Selection -->
+                <div class="mb-3">
+                    <label for="templateSelect" class="form-label">Use Template (Optional)</label>
+                    <select class="form-select" id="templateSelect">
+                        <option value="">No Template</option>
+                    </select>
+                </div>
+
+                <!-- Personalization Tokens -->
+                <div class="mb-3">
+                    <label class="form-label">Personalization Tokens</label>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">{{FirstName}}</span>
+                        <input type="text" class="form-control" id="tokenFirstName" placeholder="Default value">
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">{{LastName}}</span>
+                        <input type="text" class="form-control" id="tokenLastName" placeholder="Default value">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="addTokenBtn">
+                        <i class="bi bi-plus"></i> Add Custom Token
+                    </button>
+                    <div id="customTokens"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Audience Selection -->
+        <div class="card mb-4 step-content d-none" id="step3">
+            <div class="card-header">
+                <h5>Audience Selection</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Target Type <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetAll" value="0">
+                            <label class="form-check-label" for="targetAll">
+                                All Contacts
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetGroups" value="1" checked>
+                            <label class="form-check-label" for="targetGroups">
+                                Specific Groups
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetSegments" value="2">
+                            <label class="form-check-label" for="targetSegments">
+                                Segments (Advanced)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Selection -->
+                <div class="mb-3" id="groupSelection">
+                    <label class="form-label">Select Groups <span class="text-danger">*</span></label>
+                    <select class="form-select" id="groupSelect" multiple size="5">
+                        <option value="">Loading groups...</option>
+                    </select>
+                    <div class="form-text">Hold Ctrl/Cmd to select multiple groups</div>
+                </div>
+
+                <!-- Segment Criteria -->
+                <div class="mb-3 d-none" id="segmentCriteria">
+                    <label for="segmentInput" class="form-label">Segment Criteria</label>
+                    <textarea class="form-control" id="segmentInput" rows="3" placeholder="Advanced segment filtering"></textarea>
+                </div>
+
+                <!-- Exclusion Lists -->
+                <div class="mb-3">
+                    <label for="exclusionLists" class="form-label">Exclusion Lists (Optional)</label>
+                    <select class="form-select" id="exclusionLists" multiple size="3">
+                    </select>
+                    <div class="form-text">Contacts in these groups will be excluded</div>
+                </div>
+
+                <!-- Audience Size -->
+                <div class="alert alert-info">
+                    <strong>Estimated Audience Size:</strong> <span id="audienceSize">-</span> contacts
+                    <button type="button" class="btn btn-sm btn-primary ms-2" id="calculateAudienceBtn">
+                        Calculate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Schedule Configuration -->
+        <div class="card mb-4 step-content d-none" id="step4">
+            <div class="card-header">
+                <h5>Schedule Configuration</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Schedule Type <span class="text-danger">*</span></label>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="scheduleType" id="scheduleOneTime" value="0" checked>
+                            <label class="form-check-label" for="scheduleOneTime">
+                                One-Time Campaign
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="scheduleType" id="scheduleRecurring" value="1">
+                            <label class="form-check-label" for="scheduleRecurring">
+                                Recurring Campaign
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="scheduleType" id="scheduleDrip" value="2">
+                            <label class="form-check-label" for="scheduleDrip">
+                                Drip Campaign
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Date/Time -->
+                <div class="row mb-3" id="scheduleDateTime">
+                    <div class="col-md-6">
+                        <label for="scheduleDate" class="form-label">Schedule Date</label>
+                        <input type="date" class="form-control" id="scheduleDate">
+                        <div class="form-text">Leave empty to send immediately</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="scheduleTime" class="form-label">Schedule Time</label>
+                        <input type="time" class="form-control" id="scheduleTime">
+                    </div>
+                </div>
+
+                <!-- Recurrence Rule -->
+                <div class="mb-3 d-none" id="recurrenceGroup">
+                    <label for="recurrenceRule" class="form-label">Recurrence Rule</label>
+                    <select class="form-select mb-2" id="recurrenceRule">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="custom">Custom (Cron Expression)</option>
+                    </select>
+                    <input type="text" class="form-control d-none" id="customRecurrence" placeholder="0 0 12 * * ?">
+                </div>
+
+                <!-- Timezone Settings -->
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="timeZoneAware" checked>
+                        <label class="form-check-label" for="timeZoneAware">
+                            Timezone Aware Scheduling
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3" id="timezoneGroup">
+                    <label for="preferredTimeZone" class="form-label">Preferred Timezone</label>
+                    <select class="form-select" id="preferredTimeZone">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern Time (US)</option>
+                        <option value="America/Chicago">Central Time (US)</option>
+                        <option value="America/Denver">Mountain Time (US)</option>
+                        <option value="America/Los_Angeles">Pacific Time (US)</option>
+                        <option value="Europe/London">London</option>
+                        <option value="Europe/Paris">Paris</option>
+                        <option value="Asia/Tokyo">Tokyo</option>
+                        <option value="Asia/Dubai">Dubai</option>
+                        <option value="Australia/Sydney">Sydney</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+                        <i class="bi bi-arrow-left"></i> Previous
+                    </button>
+                    <div></div>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="nextBtn">
+                            Next <i class="bi bi-arrow-right"></i>
+                        </button>
+                        <button type="button" class="btn btn-success d-none" id="saveDraftBtn">
+                            <i class="bi bi-save"></i> Save as Draft
+                        </button>
+                        <button type="submit" class="btn btn-success d-none" id="createBtn">
+                            <i class="bi bi-check-circle"></i> Create Campaign
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/campaign-create.js"></script>
+}

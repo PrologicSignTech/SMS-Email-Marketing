@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "Use Cases";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-lightbulb"></i> Use Cases</h2>
+        <a href="@Url.Action("Create", "UseCases")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Use Case
+        </a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Manage use cases displayed on the public landing page to showcase different industry applications.
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="useCasesTable" class="table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Title</th>
+                        <th>Industry</th>
+                        <th>Description</th>
+                        <th>Icon</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let useCasesTable;
+
+        $(document).ready(function() {
+            useCasesTable = $('#useCasesTable').DataTable({
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: '/UseCases/GetUseCases',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function(d) {
+                        return JSON.stringify({ draw: d.draw, start: d.start, length: d.length, search: d.search });
+                    },
+                    dataSrc: function(json) { return json.data || []; }
+                },
+                columns: [
+                    { data: 'displayOrder' },
+                    { data: 'title', render: function(data) { return `<strong>${escapeHtml(data)}</strong>`; } },
+                    { data: 'industry', render: function(data) { return escapeHtml(data || 'General'); } },
+                    { data: 'description', render: function(data) { return escapeHtml(data).substring(0, 60) + '...'; } },
+                    { data: 'iconClass', render: function(data) { return `<i class="${data} fs-4"></i>`; } },
+                    { data: 'isActive', render: function(data) { return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; } },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<div class="btn-group btn-group-sm">
+                                <a href="/UseCases/Edit/${data}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                <button class="btn btn-outline-danger" onclick="deleteUseCase(${data})"><i class="bi bi-trash"></i></button>
+                            </div>`;
+                        }
+                    }
+                ],
+                order: [[0, 'asc']]
+            });
+        });
+
+        function deleteUseCase(id) {
+            if (confirm('Delete this use case?')) {
+                $.ajax({
+                    url: `/UseCases/Delete?id=${id}`,
+                    method: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('Use case deleted successfully!', 'success');
+                            useCasesTable.ajax.reload(null, false);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+}

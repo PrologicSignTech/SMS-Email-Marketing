@@ -1,0 +1,184 @@
+@{
+   Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Create SMS Keyword";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/keywords.css" asp-append-version="true" />
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-hash"></i> Create SMS Keyword</h2>
+        <a href="@Url.Action("Index", "Keywords")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Keywords
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Keyword Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="keywordForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="keyword" class="form-label">Keyword <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control text-uppercase" id="keyword" required maxlength="20">
+                                <div class="form-text">Single word, no spaces (e.g., JOIN, DEALS, WIN)</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="shortCode" class="form-label">Short Code <span class="text-danger">*</span></label>
+                                <select class="form-select" id="shortCode" required>
+                                    <option value="">Select Short Code</option>
+                                    <option value="12345">12345</option>
+                                    <option value="67890">67890</option>
+                                    <option value="54321">54321</option>
+                                </select>
+                                <div class="form-text">SMS short code number</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="campaignId" class="form-label">Associated Campaign</label>
+                            <select class="form-select" id="campaignId">
+                                <option value="">No Campaign (Optional)</option>
+                                <option value="1">Newsletter Signup</option>
+                                <option value="2">Flash Deals</option>
+                                <option value="3">Summer Sale 2024</option>
+                                <option value="4">Contest Entry</option>
+                            </select>
+                            <div class="form-text">Link this keyword to a campaign for tracking</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="autoResponse" class="form-label">Auto-Response Message <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="autoResponse" rows="4" required maxlength="160"></textarea>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">Message sent automatically when keyword is received</small>
+                                <small id="charCount" class="text-muted">0/160 characters</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Additional Settings</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="doubleOptIn">
+                                <label class="form-check-label" for="doubleOptIn">
+                                    Require Double Opt-In
+                                </label>
+                                <div class="form-text">Require confirmation message before subscribing</div>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="trackClicks" checked>
+                                <label class="form-check-label" for="trackClicks">
+                                    Track URL Clicks
+                                </label>
+                                <div class="form-text">Enable click tracking for URLs in response</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags (Optional)</label>
+                            <input type="text" class="form-control" id="tags" placeholder="Add tags separated by commas">
+                            <div class="form-text">e.g., promotion, signup, contest</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive" checked>
+                                <label class="form-check-label" for="isActive">
+                                    <strong>Activate Keyword Immediately</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="action-button-group">
+                            <a href="@Url.Action("Index", "Keywords")" class="btn btn-secondary">Cancel</a>
+                            <button type="button" class="btn btn-outline-primary" id="previewBtn">
+                                <i class="bi bi-eye"></i> Preview Response
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Create Keyword
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-lightbulb"></i> Best Practices</h5>
+                    <ul class="small">
+                        <li>Use clear, memorable keywords (e.g., JOIN, DEALS, WIN)</li>
+                        <li>Keep auto-response under 160 characters for single SMS</li>
+                        <li>Always include opt-out instructions (Reply STOP)</li>
+                        <li>Test your keyword before launching campaigns</li>
+                        <li>Monitor opt-out rates regularly</li>
+                    </ul>
+                    
+                    <hr>
+                    
+                    <h6 class="card-subtitle mb-2"><i class="bi bi-info-circle"></i> Required Elements</h6>
+                    <ul class="small">
+                        <li>Company identification</li>
+                        <li>Opt-out instructions (STOP)</li>
+                        <li>Help instructions (HELP)</li>
+                        <li>Message & data rates may apply</li>
+                    </ul>
+
+                    <hr>
+
+                    <h6 class="card-subtitle mb-2"><i class="bi bi-shield-check"></i> Compliance</h6>
+                    <p class="small mb-0">Ensure your keyword campaign complies with TCPA regulations and carrier guidelines.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Auto-Response Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start mb-2">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-phone text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-1"><strong>From:</strong> <span id="previewShortCode"></span></p>
+                                    <p class="mb-0" id="previewMessage"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted">This is how your auto-response will appear to subscribers</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.keywordsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/keywords-create.js" asp-append-version="true"></script>
+}

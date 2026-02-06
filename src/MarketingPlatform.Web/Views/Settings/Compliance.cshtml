@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Compliance"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shield-check"></i> Compliance Settings</h2>
+        <a href="@Url.Action("Index", "Settings")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Settings
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5>GDPR Compliance</h5></div>
+        <div class="card-body">
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="gdprEnabled" checked>
+                <label class="form-check-label" for="gdprEnabled">
+                    Enable GDPR Compliance Features
+                </label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Data Retention Period (days)</label>
+                <input type="number" class="form-control" value="730">
+            </div>
+            <button class="btn btn-primary">Save Settings</button>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5>CAN-SPAM Compliance</h5></div>
+        <div class="card-body">
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="canSpamEnabled" checked>
+                <label class="form-check-label" for="canSpamEnabled">
+                    Include Unsubscribe Link in All Emails
+                </label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Physical Address</label>
+                <textarea class="form-control" rows="3">123 Main St, Suite 100
+New York, NY 10001</textarea>
+            </div>
+            <button class="btn btn-primary">Save Settings</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h5>Consent Management</h5></div>
+        <div class="card-body">
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="doubleOptIn" checked>
+                <label class="form-check-label" for="doubleOptIn">
+                    Require Double Opt-in for Email
+                </label>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="smsConsent" checked>
+                <label class="form-check-label" for="smsConsent">
+                    Require Explicit SMS Consent
+                </label>
+            </div>
+            <button class="btn btn-primary">Save Settings</button>
+        </div>
+    </div>
+</div>

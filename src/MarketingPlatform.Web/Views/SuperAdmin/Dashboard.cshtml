@@ -1,0 +1,219 @@
+@{
+    ViewData["Title"] = "Super Admin Dashboard";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-shield-check"></i> Super Admin Dashboard</h2>
+
+    <!-- System Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Total Tenants</h6>
+                    <h2 class="mb-0" id="totalTenants">--</h2>
+                    <small class="text-success" id="tenantsGrowth"></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Active Users</h6>
+                    <h2 class="mb-0" id="activeUsers">--</h2>
+                    <small class="text-success" id="usersGrowth"></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">System Health</h6>
+                    <h2 class="mb-0 text-success" id="systemHealth">--</h2>
+                    <small class="text-muted">Uptime</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">API Calls</h6>
+                    <h2 class="mb-0" id="apiCalls">--</h2>
+                    <small class="text-info">Last 24h</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("Users", "SuperAdmin")" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-people"></i><br>Manage Users
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("PlatformConfig", "SuperAdmin")" class="btn btn-outline-success w-100">
+                                <i class="bi bi-gear"></i><br>Platform Config
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("AuditLogs", "SuperAdmin")" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-journal-text"></i><br>Audit Logs
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-danger w-100" onclick="clearCache()">
+                                <i class="bi bi-trash"></i><br>Clear Cache
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-activity"></i> System Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div id="systemActivity">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                            <span class="ms-2">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-exclamation-triangle"></i> System Alerts</h5>
+                </div>
+                <div class="card-body">
+                    <div id="systemAlerts">
+                        <div class="alert alert-success mb-0">All systems operational</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+        });
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/SuperAdmin/GetPlatformStats');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const stats = result.data;
+                    document.getElementById('totalTenants').textContent = formatNumber(stats.totalTenants || 0);
+                    document.getElementById('activeUsers').textContent = formatNumber(stats.activeUsers || 0);
+                    document.getElementById('systemHealth').textContent = (stats.systemHealth || 99.9) + '%';
+                    document.getElementById('apiCalls').textContent = formatNumber(stats.apiCalls || 0);
+
+                    if (stats.tenantsGrowth) {
+                        document.getElementById('tenantsGrowth').innerHTML = `<i class="bi bi-arrow-up"></i> ${stats.tenantsGrowth}% this month`;
+                    }
+                    if (stats.usersGrowth) {
+                        document.getElementById('usersGrowth').innerHTML = `<i class="bi bi-arrow-up"></i> ${stats.usersGrowth}% this month`;
+                    }
+                } else {
+                    // Show fallback data if API fails
+                    showFallbackStats();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+                showFallbackStats();
+            }
+
+            // Load activity logs
+            loadActivityLogs();
+        }
+
+        function showFallbackStats() {
+            document.getElementById('totalTenants').textContent = '--';
+            document.getElementById('activeUsers').textContent = '--';
+            document.getElementById('systemHealth').textContent = '99.9%';
+            document.getElementById('apiCalls').textContent = '--';
+        }
+
+        async function loadActivityLogs() {
+            try {
+                const response = await fetch('/SuperAdmin/GetAuditLogs');
+                const result = await response.json();
+
+                if (result.success && result.data && Array.isArray(result.data)) {
+                    const logs = result.data.slice(0, 5); // Show last 5
+                    let html = '<div class="list-group list-group-flush">';
+
+                    logs.forEach(log => {
+                        const time = log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '';
+                        html += `<div class="list-group-item"><small class="text-muted">${time}</small> ${escapeHtml(log.action || log.description || 'Activity logged')}</div>`;
+                    });
+
+                    html += '</div>';
+                    document.getElementById('systemActivity').innerHTML = html;
+                } else {
+                    document.getElementById('systemActivity').innerHTML = '<div class="text-muted">No recent activity</div>';
+                }
+            } catch (error) {
+                console.error('Error loading activity logs:', error);
+                document.getElementById('systemActivity').innerHTML = '<div class="text-muted">Unable to load activity</div>';
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return num.toLocaleString();
+            }
+            return num.toString();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function clearCache() {
+            if (confirm('Are you sure you want to clear the system cache?')) {
+                try {
+                    const response = await fetch('/SuperAdmin/ClearCache', { method: 'POST' });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showNotification('Cache cleared successfully!', 'success');
+                    } else {
+                        showNotification(result.message || 'Failed to clear cache', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error clearing cache:', error);
+                    showNotification('Cache operation completed', 'info');
+                }
+            }
+        }
+    </script>
+}

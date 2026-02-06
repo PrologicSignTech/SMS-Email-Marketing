@@ -1,0 +1,42 @@
+@{
+    Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Tracked URLs";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-link-45deg"></i> Tracked URLs</h2>
+        <a href="@Url.Action("Create", "Urls")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Short URL
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="urlsTable" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Short URL</th>
+                            <th>Original URL</th>
+                            <th>Campaign</th>
+                            <th>Clicks</th>
+                            <th>Unique</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.urlsConfig = { apiBaseUrl: '@ViewBag.ApiBaseUrl' };
+    </script>
+    <script src="~/js/urls-index.js" asp-append-version="true" nonce="@Context.GetCspNonce()"></script>
+}

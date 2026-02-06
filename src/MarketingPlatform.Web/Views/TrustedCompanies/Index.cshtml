@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Trusted Companies";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-building"></i> Trusted Companies</h2>
+        <a href="@Url.Action("Create", "TrustedCompanies")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Company
+        </a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Manage company logos displayed in the "Trusted By" section on the landing page.
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="companiesTable" class="table table-striped table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Logo</th>
+                        <th>Company Name</th>
+                        <th>Website</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let companiesTable;
+
+        $(document).ready(function() {
+            companiesTable = $('#companiesTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: '/TrustedCompanies/GetCompanies',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: function(d) {
+                        return JSON.stringify({ draw: d.draw });
+                    },
+                    dataSrc: function(json) { return json.data || []; }
+                },
+                columns: [
+                    { data: 'displayOrder' },
+                    { data: 'logoUrl', render: function(data) { return data ? `<img src="${data}" alt="Logo" style="max-height: 30px;">` : '<span class="text-muted">No logo</span>'; } },
+                    { data: 'companyName', render: function(data) { return `<strong>${escapeHtml(data || '')}</strong>`; } },
+                    { data: 'websiteUrl', render: function(data) { return data ? `<a href="${data}" target="_blank">${data}</a>` : '-'; } },
+                    { data: 'isActive', render: function(data) { return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; } },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<div class="btn-group btn-group-sm">
+                                <a href="/TrustedCompanies/Edit/${data}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                <button class="btn btn-outline-danger" onclick="deleteCompany(${data})"><i class="bi bi-trash"></i></button>
+                            </div>`;
+                        }
+                    }
+                ],
+                order: [[0, 'asc']],
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
+            });
+        });
+
+        function deleteCompany(id) {
+            if (confirm('Delete this company?')) {
+                $.ajax({
+                    url: `/TrustedCompanies/Delete?id=${id}`,
+                    method: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('Company deleted successfully!', 'success');
+                            companiesTable.ajax.reload(null, false);
+                        } else {
+                            showNotification(response.message || 'Failed to delete company', 'danger');
+                        }
+                    },
+                    error: function() {
+                        showNotification('An error occurred while deleting', 'danger');
+                    }
+                });
+            }
+        }
+    </script>
+}

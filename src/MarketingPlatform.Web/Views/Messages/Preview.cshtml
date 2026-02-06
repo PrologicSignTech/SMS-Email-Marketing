@@ -1,0 +1,144 @@
+@{
+    ViewData["Title"] = "Message Preview"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-eye"></i> Message Preview & Testing</h2>
+        <a href="@Url.Action("Compose", "Messages")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Compose
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Message Preview</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary active" data-preview-mode="mobile">
+                            <i class="bi bi-phone"></i> Mobile
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" data-preview-mode="desktop">
+                            <i class="bi bi-laptop"></i> Desktop
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" id="previewContainer">
+                    <div id="mobilePreview" class="mx-auto" style="max-width: 375px; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background: #f8f9fa;">
+                        <div class="bg-white rounded p-3 shadow-sm">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-phone-fill text-primary me-2" style="font-size: 1.5rem;"></i>
+                                <div>
+                                    <strong id="previewFrom">Company Name</strong><br>
+                                    <small class="text-muted" id="previewSender">+1 (234) 567-890</small>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="previewContent">
+                                <p class="mb-0">Your message preview will appear here...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="desktopPreview" style="display: none;">
+                        <div class="border rounded p-4 bg-white">
+                            <h5 id="previewSubject">Email Subject Line</h5>
+                            <p class="text-muted small mb-3">
+                                From: <span id="previewEmailFrom">noreply@company.com</span> | 
+                                To: <span id="previewRecipients">Recipients</span>
+                            </p>
+                            <hr>
+                            <div id="previewEmailContent">
+                                <p>Your email preview will appear here...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-send-check"></i> Send Test Message</h5>
+                </div>
+                <div class="card-body">
+                    <form id="testForm">
+                        <div class="mb-3">
+                            <label for="testRecipient" class="form-label">Test Recipient <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="testRecipient" placeholder="Enter phone number or email" required>
+                            <div class="form-text">Send a test message to verify formatting and delivery</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Send Test Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check"></i> Preview Checklist</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="check1" checked disabled>
+                        <label class="form-check-label small" for="check1">
+                            Message content is clear and concise
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="check2" checked disabled>
+                        <label class="form-check-label small" for="check2">
+                            All tokens are properly formatted
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="check3" checked disabled>
+                        <label class="form-check-label small" for="check3">
+                            Links are working correctly
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="check4" checked disabled>
+                        <label class="form-check-label small" for="check4">
+                            Unsubscribe link is present
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="check5" disabled>
+                        <label class="form-check-label small" for="check5">
+                            Test message sent successfully
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Best Practices</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="small mb-0">
+                        <li>Always send a test message before launching</li>
+                        <li>Check message rendering on multiple devices</li>
+                        <li>Verify all links and images load correctly</li>
+                        <li>Ensure personalization tokens display properly</li>
+                        <li>Review message for spelling and grammar</li>
+                        <li>Confirm compliance with messaging regulations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        window.messagesPreviewConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/messages-preview.js" asp-append-version="true"></script>
+}

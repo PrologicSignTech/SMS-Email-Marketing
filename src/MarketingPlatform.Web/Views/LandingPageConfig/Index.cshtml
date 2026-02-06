@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Landing Page Configuration";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-layout-text-window"></i> Landing Page Configuration</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="@Url.Action("HeroSection", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-images"></i> Hero Section
+                </a>
+                <a href="@Url.Action("MenuConfig", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-list"></i> Navigation Menu
+                </a>
+                <a href="@Url.Action("Features", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-stars"></i> Features
+                </a>
+                <a href="@Url.Action("PricingDisplay", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-tag"></i> Pricing Display
+                </a>
+                <a href="@Url.Action("Footer", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-layout-bottom"></i> Footer
+                </a>
+                <a href="@Url.Action("Preview", "LandingPageConfig")" class="list-group-item list-group-item-action">
+                    <i class="bi bi-eye"></i> Preview
+                </a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Configuration Overview</h5>
+                </div>
+                <div class="card-body">
+                    <p>Configure your landing page sections using the menu on the left.</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-images"></i> Hero Section</h6>
+                                    <p class="small mb-0">Main banner with headline and CTA</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-stars"></i> Features</h6>
+                                    <p class="small mb-0">Showcase platform capabilities</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-tag"></i> Pricing</h6>
+                                    <p class="small mb-0">Display pricing plans</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="bi bi-layout-bottom"></i> Footer</h6>
+                                    <p class="small mb-0">Links and contact information</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

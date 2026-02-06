@@ -1,0 +1,254 @@
+@{
+    ViewData["Title"] = "Footer Settings";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-layout-text-window-reverse"></i> Footer Settings</h2>
+        <button type="button" class="btn btn-primary" id="saveBtn">
+            <i class="bi bi-save"></i> Save Changes
+        </button>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Configure the footer content displayed on the public landing page. Changes will be visible immediately after saving.
+    </div>
+
+    <form id="footerSettingsForm">
+        <div class="row">
+            <!-- Company Info -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-building"></i> Company Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="companyName" name="companyName" placeholder="Marketing Platform">
+                        </div>
+                        <div class="mb-3">
+                            <label for="companyDescription" class="form-label">Company Description</label>
+                            <textarea class="form-control" id="companyDescription" name="companyDescription" rows="3" placeholder="Brief description of your company..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="copyrightText" class="form-label">Copyright Text</label>
+                            <input type="text" class="form-control" id="copyrightText" name="copyrightText" placeholder="&copy; 2024 Marketing Platform. All rights reserved.">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Contact Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="addressLine1" class="form-label">Address Line 1</label>
+                            <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="123 Main Street">
+                        </div>
+                        <div class="mb-3">
+                            <label for="addressLine2" class="form-label">Address Line 2</label>
+                            <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Suite 100, City, State 12345">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="info@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="businessHours" class="form-label">Business Hours</label>
+                            <input type="text" class="form-control" id="businessHours" name="businessHours" placeholder="Mon-Fri: 9AM-6PM EST">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Social Media Links -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-share"></i> Social Media Links</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="facebookUrl" class="form-label"><i class="bi bi-facebook text-primary"></i> Facebook URL</label>
+                            <input type="url" class="form-control" id="facebookUrl" name="facebookUrl" placeholder="https://facebook.com/yourpage">
+                        </div>
+                        <div class="mb-3">
+                            <label for="twitterUrl" class="form-label"><i class="bi bi-twitter-x"></i> Twitter/X URL</label>
+                            <input type="url" class="form-control" id="twitterUrl" name="twitterUrl" placeholder="https://twitter.com/yourhandle">
+                        </div>
+                        <div class="mb-3">
+                            <label for="linkedInUrl" class="form-label"><i class="bi bi-linkedin text-primary"></i> LinkedIn URL</label>
+                            <input type="url" class="form-control" id="linkedInUrl" name="linkedInUrl" placeholder="https://linkedin.com/company/yourcompany">
+                        </div>
+                        <div class="mb-3">
+                            <label for="instagramUrl" class="form-label"><i class="bi bi-instagram text-danger"></i> Instagram URL</label>
+                            <input type="url" class="form-control" id="instagramUrl" name="instagramUrl" placeholder="https://instagram.com/yourhandle">
+                        </div>
+                        <div class="mb-3">
+                            <label for="youTubeUrl" class="form-label"><i class="bi bi-youtube text-danger"></i> YouTube URL</label>
+                            <input type="url" class="form-control" id="youTubeUrl" name="youTubeUrl" placeholder="https://youtube.com/c/yourchannel">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter & Map Settings -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-envelope-paper"></i> Newsletter Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 form-check form-switch">
+                            <input type="checkbox" class="form-check-input" id="showNewsletter" name="showNewsletter" checked>
+                            <label class="form-check-label" for="showNewsletter">Show Newsletter Signup</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newsletterTitle" class="form-label">Newsletter Title</label>
+                            <input type="text" class="form-control" id="newsletterTitle" name="newsletterTitle" placeholder="Subscribe to Our Newsletter">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newsletterDescription" class="form-label">Newsletter Description</label>
+                            <textarea class="form-control" id="newsletterDescription" name="newsletterDescription" rows="2" placeholder="Get the latest updates and news..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-map"></i> Map Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 form-check form-switch">
+                            <input type="checkbox" class="form-check-input" id="showMap" name="showMap" checked>
+                            <label class="form-check-label" for="showMap">Show Map in Footer</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mapEmbedUrl" class="form-label">Google Maps Embed URL</label>
+                            <input type="url" class="form-control" id="mapEmbedUrl" name="mapEmbedUrl" placeholder="https://www.google.com/maps/embed?...">
+                            <div class="form-text">Get embed URL from Google Maps Share option</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-toggle-on"></i> Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" id="isActive" name="isActive" checked>
+                            <label class="form-check-label" for="isActive">Footer Settings Active</label>
+                        </div>
+                        <div class="form-text">When inactive, the default hardcoded footer will be displayed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        let currentSettings = null;
+
+        $(document).ready(function() {
+            loadSettings();
+
+            $('#saveBtn').on('click', saveSettings);
+        });
+
+        function loadSettings() {
+            $.ajax({
+                url: '/FooterSettings/GetSettings',
+                method: 'POST',
+                success: function(response) {
+                    if (response.success && response.data) {
+                        currentSettings = response.data;
+                        populateForm(response.data);
+                    }
+                },
+                error: function() {
+                    console.log('No existing footer settings found, using defaults');
+                }
+            });
+        }
+
+        function populateForm(data) {
+            $('#companyName').val(data.companyName || '');
+            $('#companyDescription').val(data.companyDescription || '');
+            $('#copyrightText').val(data.copyrightText || '');
+            $('#addressLine1').val(data.addressLine1 || '');
+            $('#addressLine2').val(data.addressLine2 || '');
+            $('#phone').val(data.phone || '');
+            $('#email').val(data.email || '');
+            $('#businessHours').val(data.businessHours || '');
+            $('#facebookUrl').val(data.facebookUrl || '');
+            $('#twitterUrl').val(data.twitterUrl || '');
+            $('#linkedInUrl').val(data.linkedInUrl || '');
+            $('#instagramUrl').val(data.instagramUrl || '');
+            $('#youTubeUrl').val(data.youTubeUrl || '');
+            $('#showNewsletter').prop('checked', data.showNewsletter !== false);
+            $('#newsletterTitle').val(data.newsletterTitle || '');
+            $('#newsletterDescription').val(data.newsletterDescription || '');
+            $('#showMap').prop('checked', data.showMap !== false);
+            $('#mapEmbedUrl').val(data.mapEmbedUrl || '');
+            $('#isActive').prop('checked', data.isActive !== false);
+        }
+
+        function saveSettings() {
+            const settings = {
+                id: currentSettings?.id || 0,
+                companyName: $('#companyName').val(),
+                companyDescription: $('#companyDescription').val(),
+                copyrightText: $('#copyrightText').val(),
+                addressLine1: $('#addressLine1').val(),
+                addressLine2: $('#addressLine2').val(),
+                phone: $('#phone').val(),
+                email: $('#email').val(),
+                businessHours: $('#businessHours').val(),
+                facebookUrl: $('#facebookUrl').val() || null,
+                twitterUrl: $('#twitterUrl').val() || null,
+                linkedInUrl: $('#linkedInUrl').val() || null,
+                instagramUrl: $('#instagramUrl').val() || null,
+                youTubeUrl: $('#youTubeUrl').val() || null,
+                showNewsletter: $('#showNewsletter').is(':checked'),
+                newsletterTitle: $('#newsletterTitle').val(),
+                newsletterDescription: $('#newsletterDescription').val(),
+                showMap: $('#showMap').is(':checked'),
+                mapEmbedUrl: $('#mapEmbedUrl').val() || null,
+                isActive: $('#isActive').is(':checked')
+            };
+
+            $.ajax({
+                url: '/FooterSettings/Save',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(settings),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Footer settings saved successfully!', 'success');
+                        loadSettings(); // Reload to get updated data
+                    } else {
+                        showNotification(response.message || 'Failed to save settings', 'danger');
+                    }
+                },
+                error: function() {
+                    showNotification('An error occurred while saving', 'danger');
+                }
+            });
+        }
+    </script>
+}

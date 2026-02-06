@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Analytics";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4"><i class="bi bi-graph-up"></i> Analytics Dashboard</h2>
+
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="bi bi-envelope"></i> Total Sent</h6>
+                    <h2 class="mb-0">125,432</h2>
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> +12% vs last month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="bi bi-envelope-open"></i> Open Rate</h6>
+                    <h2 class="mb-0">42.5%</h2>
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> +3.2%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="bi bi-cursor"></i> Click Rate</h6>
+                    <h2 class="mb-0">18.7%</h2>
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> +1.8%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2"><i class="bi bi-x-circle"></i> Bounce Rate</h6>
+                    <h2 class="mb-0">2.3%</h2>
+                    <small class="text-danger"><i class="bi bi-arrow-up"></i> +0.3%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-bar-chart"></i> Campaign Performance (Last 30 Days)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-pie-chart"></i> Channel Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="channelChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Campaigns Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-table"></i> Top Performing Campaigns</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Campaign</th>
+                                    <th>Sent</th>
+                                    <th>Delivered</th>
+                                    <th>Opens</th>
+                                    <th>Clicks</th>
+                                    <th>Conversions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Summer Sale 2024</strong></td>
+                                    <td>12,456</td>
+                                    <td>12,234 (98.2%)</td>
+                                    <td>5,432 (44.4%)</td>
+                                    <td>2,345 (19.2%)</td>
+                                    <td>456 (3.7%)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Newsletter July</strong></td>
+                                    <td>25,678</td>
+                                    <td>25,345 (98.7%)</td>
+                                    <td>10,234 (40.4%)</td>
+                                    <td>4,567 (18.0%)</td>
+                                    <td>789 (3.1%)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Flash Sale Alert</strong></td>
+                                    <td>8,901</td>
+                                    <td>8,756 (98.4%)</td>
+                                    <td>4,123 (47.1%)</td>
+                                    <td>1,890 (21.6%)</td>
+                                    <td>345 (3.9%)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script nonce="@Context.GetCspNonce()">
+        window.analyticsConfig = {
+            apiBaseUrl: '@ViewBag.ApiBaseUrl'
+        };
+    </script>
+    <script src="~/js/analytics-index.js" asp-append-version="true"></script>
+}

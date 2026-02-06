@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Channel Routing"; Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-signpost-split"></i> Channel Routing Configuration</h2>
+        <a href="@Url.Action("Index", "Providers")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Providers
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form id="routingForm">
+                <div class="mb-4">
+                    <h5>SMS Routing</h5>
+                    <div class="mb-2">
+                        <label>Primary Provider</label>
+                        <select class="form-select"><option>Twilio SMS</option></select>
+                    </div>
+                    <div class="mb-2">
+                        <label>Fallback Provider</label>
+                        <select class="form-select"><option>MessageBird SMS</option></select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Email Routing</h5>
+                    <div class="mb-2">
+                        <label>Primary Provider</label>
+                        <select class="form-select"><option>SendGrid</option></select>
+                    </div>
+                    <div class="mb-2">
+                        <label>Fallback Provider</label>
+                        <select class="form-select"><option>AWS SES</option></select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Save Routing Configuration
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        document.getElementById('routingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Routing configuration saved! (Demo)');
+        });
+    </script>
+}
