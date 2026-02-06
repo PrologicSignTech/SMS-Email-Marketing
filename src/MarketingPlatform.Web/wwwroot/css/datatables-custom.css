@@ -1,0 +1,232 @@
+/**
+ * DataTables Custom Styles for Marketing Platform
+ * Enhances the default DataTables Bootstrap 5 theme
+ */
+
+/* Table styling improvements */
+.dataTables_wrapper .table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dataTables_wrapper .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.dataTables_wrapper .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.dataTables_wrapper .table tbody tr:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dataTables_wrapper .table tbody td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+/* DataTables controls */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    min-width: 70px;
+    margin: 0 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Pagination styling */
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 1rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination {
+    margin: 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .page-link {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    margin: 0 0.125rem;
+}
+
+/* Info text */
+.dataTables_wrapper .dataTables_info {
+    padding-top: 1rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Processing indicator */
+.dataTables_wrapper .dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    margin-top: -26px;
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Export buttons */
+.dataTables_wrapper .dt-buttons {
+    margin-bottom: 1rem;
+    float: right;
+}
+
+.dataTables_wrapper .dt-buttons .btn {
+    margin-left: 0.25rem;
+}
+
+/* Empty table message */
+.dataTables_wrapper .dataTables_empty {
+    padding: 3rem 1rem !important;
+    text-align: center;
+    color: #6c757d;
+}
+
+/* Responsive features */
+@media screen and (max-width: 767px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .dataTables_wrapper .dt-buttons {
+        float: none;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+    
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        text-align: center;
+        margin-top: 0.75rem;
+    }
+}
+
+/* Sorting icons */
+.dataTables_wrapper table.dataTable thead .sorting,
+.dataTables_wrapper table.dataTable thead .sorting_asc,
+.dataTables_wrapper table.dataTable thead .sorting_desc {
+    cursor: pointer;
+    position: relative;
+}
+
+.dataTables_wrapper table.dataTable thead .sorting:before,
+.dataTables_wrapper table.dataTable thead .sorting:after,
+.dataTables_wrapper table.dataTable thead .sorting_asc:before,
+.dataTables_wrapper table.dataTable thead .sorting_asc:after,
+.dataTables_wrapper table.dataTable thead .sorting_desc:before,
+.dataTables_wrapper table.dataTable thead .sorting_desc:after {
+    opacity: 0.3;
+}
+
+.dataTables_wrapper table.dataTable thead .sorting_asc:before,
+.dataTables_wrapper table.dataTable thead .sorting_desc:after {
+    opacity: 1;
+}
+
+/* Row selection */
+.dataTables_wrapper table.dataTable tbody tr.selected {
+    background-color: #e7f3ff;
+}
+
+/* Badge and button spacing in tables */
+.dataTables_wrapper table.dataTable .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.dataTables_wrapper table.dataTable .btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Loading spinner */
+.dataTables_wrapper .spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* No export column */
+.dataTables_wrapper table.dataTable .no-export {
+    white-space: nowrap;
+}
+
+/* Select checkbox column */
+.dataTables_wrapper table.dataTable .select-checkbox {
+    width: 40px;
+    text-align: center;
+}
+
+.dataTables_wrapper table.dataTable .select-checkbox input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* Improve spacing for stat cards with DataTables */
+.stat-card {
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Filter buttons styling */
+.filter-btn {
+    transition: all 0.2s ease;
+}
+
+.filter-btn:not(.active):hover {
+    background-color: #f8f9fa;
+}
+
+/* Card shadow for tables */
+.card.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;
+}
+
+/* Improve button groups in action columns */
+.dataTables_wrapper table.dataTable .btn-group .btn {
+    border-radius: 0.25rem;
+}
+
+.dataTables_wrapper table.dataTable .btn-group .btn + .btn {
+    margin-left: 0.125rem;
+}
+
+/* Tab styling integration with DataTables */
+.card-header-tabs {
+    margin-bottom: -1px;
+}
+
+.card-header-tabs .nav-link {
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.card-header-tabs .nav-link.active {
+    border-bottom-color: #0d6efd;
+    font-weight: 600;
+}

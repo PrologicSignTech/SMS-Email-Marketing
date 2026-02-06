@@ -1,0 +1,147 @@
+/**
+ * Authentication Pages Stylesheet
+ * Styles for Login and Register pages
+ * Uses scoped class names to avoid conflicts with custom.css
+ * Note: This file should only be loaded on authentication pages (Login/Register)
+ */
+
+/* Body styles - Only applies when this CSS is loaded (auth pages) */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Login Card Styles */
+.login-card {
+    max-width: 450px;
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+/* Forgot Password Card Styles */
+.forgot-card {
+    max-width: 450px;
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+/* Register Card Styles */
+.register-card {
+    max-width: 600px;
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    margin: 20px auto;
+}
+
+/* Logo Section */
+.logo-section {
+    text-align: center;
+    padding: 2rem 2rem 1rem;
+}
+
+.logo-section i {
+    font-size: 3rem;
+    color: #667eea;
+}
+
+/* Registration Step Indicator 
+ * Note: Using different structure than custom.css step-indicator
+ * to avoid conflicts when both files are loaded
+ */
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.step-indicator .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.step-indicator .step .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.step-indicator .step.active .step-number {
+    background: #667eea;
+    color: white;
+}
+
+.step-indicator .step.completed .step-number {
+    background: #28a745;
+    color: white;
+}
+
+.step-indicator .step .step-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.step-indicator .step.active .step-label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Form Steps */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+/* reCAPTCHA Container */
+.g-recaptcha {
+    margin-bottom: 1rem;
+}
+
+.register-card .g-recaptcha {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+/* OTP Input Styles */
+.otp-inputs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.otp-input:focus {
+    border-color: #667eea;
+    outline: none;
+}
