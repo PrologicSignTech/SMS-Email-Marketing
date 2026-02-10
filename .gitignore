@@ -3,3 +3,6 @@
 ################################################################################
 
 /docs
+/src/MarketingPlatform.API/appsettings.json
+/src/MarketingPlatform.Web/appsettings.json
+/src/MarketingPlatform.Web/bin/Release/net8.0
