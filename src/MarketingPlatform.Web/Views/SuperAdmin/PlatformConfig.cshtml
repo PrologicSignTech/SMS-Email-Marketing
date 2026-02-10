@@ -123,17 +123,35 @@
                 const result = await response.json();
 
                 if (result.success && result.data) {
-                    const config = result.data;
-                    document.getElementById('platformName').value = config.platformName || 'Marketing Platform';
-                    document.getElementById('supportEmail').value = config.supportEmail || '';
-                    document.getElementById('maintenanceMode').checked = config.maintenanceMode || false;
-                    document.getElementById('smtpServer').value = config.smtpServer || '';
-                    document.getElementById('smtpPort').value = config.smtpPort || 587;
-                    document.getElementById('smtpUseSsl').value = config.smtpUseSsl ? 'true' : 'false';
-                    document.getElementById('smsProvider').value = config.smsProvider || 'Twilio';
-                    document.getElementById('requestsPerMinute').value = config.requestsPerMinute || 60;
-                    document.getElementById('requestsPerHour').value = config.requestsPerHour || 1000;
-                    document.getElementById('requestsPerDay').value = config.requestsPerDay || 10000;
+                    var config = result.data;
+                    // Handle both flat object and array of key-value config items
+                    if (Array.isArray(config)) {
+                        // Config is array of {key, value} items
+                        config.forEach(function(item) {
+                            var key = item.key || item.configKey || '';
+                            var val = item.value || item.configValue || '';
+                            var el = document.getElementById(key);
+                            if (el) {
+                                if (el.type === 'checkbox') {
+                                    el.checked = val === 'true' || val === true;
+                                } else {
+                                    el.value = val;
+                                }
+                            }
+                        });
+                    } else {
+                        // Flat object
+                        document.getElementById('platformName').value = config.platformName || 'Marketing Platform';
+                        document.getElementById('supportEmail').value = config.supportEmail || '';
+                        document.getElementById('maintenanceMode').checked = config.maintenanceMode || false;
+                        document.getElementById('smtpServer').value = config.smtpServer || '';
+                        document.getElementById('smtpPort').value = config.smtpPort || 587;
+                        document.getElementById('smtpUseSsl').value = config.smtpUseSsl ? 'true' : 'false';
+                        document.getElementById('smsProvider').value = config.smsProvider || 'Twilio';
+                        document.getElementById('requestsPerMinute').value = config.requestsPerMinute || 60;
+                        document.getElementById('requestsPerHour').value = config.requestsPerHour || 1000;
+                        document.getElementById('requestsPerDay').value = config.requestsPerDay || 10000;
+                    }
                 }
             } catch (error) {
                 console.error('Error loading configuration:', error);

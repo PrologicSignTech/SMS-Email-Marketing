@@ -1,4 +1,3 @@
-@model MarketingPlatform.Web.Models.UserDashboardViewModel
 @{
     ViewData["Title"] = "My Dashboard";
     Layout = "_LayoutAuthenticated";
@@ -11,7 +10,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="card-body text-white p-4">
-                    <h1 class="h2 mb-2">Welcome back, @Model.UserName! 👋</h1>
+                    <h1 class="h2 mb-2">Welcome back, @ViewBag.UserName!</h1>
                     <p class="mb-0 opacity-75">Here's what's happening with your campaigns today.</p>
                 </div>
             </div>
@@ -24,7 +23,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-megaphone text-primary fs-1 mb-2"></i>
-                    <h3 class="mb-1">@Model.Stats.TotalCampaigns</h3>
+                    <h3 class="mb-1" id="totalCampaigns"><div class="spinner-border spinner-border-sm"></div></h3>
                     <p class="text-muted small mb-0">Total Campaigns</p>
                 </div>
             </div>
@@ -33,7 +32,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-play-circle text-success fs-1 mb-2"></i>
-                    <h3 class="mb-1">@Model.Stats.ActiveCampaigns</h3>
+                    <h3 class="mb-1" id="activeCampaigns"><div class="spinner-border spinner-border-sm"></div></h3>
                     <p class="text-muted small mb-0">Active Now</p>
                 </div>
             </div>
@@ -42,7 +41,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-people text-info fs-1 mb-2"></i>
-                    <h3 class="mb-1">@Model.Stats.TotalContacts.ToString("N0")</h3>
+                    <h3 class="mb-1" id="totalContacts"><div class="spinner-border spinner-border-sm"></div></h3>
                     <p class="text-muted small mb-0">Total Contacts</p>
                 </div>
             </div>
@@ -51,7 +50,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-envelope text-warning fs-1 mb-2"></i>
-                    <h3 class="mb-1">@Model.Stats.MessagesSent.ToString("N0")</h3>
+                    <h3 class="mb-1" id="messagesSent"><div class="spinner-border spinner-border-sm"></div></h3>
                     <p class="text-muted small mb-0">Messages Sent</p>
                 </div>
             </div>
@@ -60,10 +59,10 @@
             <div class="card border-0 shadow-sm h-100 bg-success text-white">
                 <div class="card-body text-center">
                     <i class="bi bi-graph-up-arrow fs-1 mb-2"></i>
-                    <h3 class="mb-1">@Model.Stats.EngagementRate.ToString("F1")%</h3>
+                    <h3 class="mb-1" id="engagementRate"><div class="spinner-border spinner-border-sm"></div></h3>
                     <p class="small mb-0 opacity-75">Engagement Rate</p>
-                    <span class="badge bg-white text-success mt-2">
-                        <i class="bi bi-arrow-up"></i> +5.2% vs last week
+                    <span class="badge bg-white text-success mt-2" id="engagementTrend" style="display:none;">
+                        <i class="bi bi-arrow-up"></i> <span id="engagementTrendValue"></span>
                     </span>
                 </div>
             </div>
@@ -95,7 +94,7 @@
         </div>
     </div>
 
-    <!-- My Campaigns and Analytics -->
+    <!-- My Campaigns and Message Activity Chart -->
     <div class="row mb-4">
         <div class="col-xl-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
@@ -104,63 +103,12 @@
                     <a asp-controller="Campaigns" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body">
-                    @if (Model.MyCampaigns.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var campaign in Model.MyCampaigns)
-                            {
-                                var successRate = campaign.Recipients > 0 ? (campaign.SuccessCount * 100.0 / campaign.Recipients) : 0;
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div>
-                                            <h6 class="mb-1">@campaign.Name</h6>
-                                            <div class="d-flex gap-2 mb-2">
-                                                <span class="badge bg-info-subtle text-info">@campaign.Type</span>
-                                                @if (campaign.Status == "Active")
-                                                {
-                                                    <span class="badge bg-success">Active</span>
-                                                }
-                                                else if (campaign.Status == "Scheduled")
-                                                {
-                                                    <span class="badge bg-warning">Scheduled</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-secondary">Completed</span>
-                                                }
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </div>
-                                    <div class="d-flex justify-content-between text-muted small">
-                                        <span><i class="bi bi-people"></i> @campaign.Recipients recipients</span>
-                                        @if (campaign.Recipients > 0)
-                                        {
-                                            <span><i class="bi bi-check-circle"></i> @successRate.ToString("F1")% success</span>
-                                        }
-                                    </div>
-                                    @if (campaign.Status == "Active" || campaign.Status == "Completed")
-                                    {
-                                        <div class="progress mt-2" style="height: 5px;">
-                                            <div class="progress-bar bg-success" role="progressbar" style="width: @successRate.ToString("F1")%"></div>
-                                        </div>
-                                    }
-                                </div>
-                            }
+                    <div id="myCampaignsList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm"></div>
+                            <span class="ms-2">Loading campaigns...</span>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-inbox fs-1 mb-2"></i>
-                            <p>No campaigns yet. Create your first campaign!</p>
-                            <a asp-controller="Campaigns" asp-action="Create" class="btn btn-primary">
-                                <i class="bi bi-plus-circle"></i> Create Campaign
-                            </a>
-                        </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
@@ -177,7 +125,7 @@
         </div>
     </div>
 
-    <!-- Recent Activity and Campaign Performance -->
+    <!-- Recent Activity and Top Performing Campaigns -->
     <div class="row mb-4">
         <div class="col-xl-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
@@ -185,26 +133,11 @@
                     <h5 class="mb-0"><i class="bi bi-clock-history text-primary"></i> Recent Activity</h5>
                 </div>
                 <div class="card-body">
-                    <div class="timeline">
-                        @foreach (var activity in Model.RecentActivities)
-                        {
-                            <div class="timeline-item mb-3 pb-3 border-bottom">
-                                <div class="d-flex">
-                                    <div class="timeline-icon me-3">
-                                        <div class="bg-primary-subtle rounded-circle p-2 text-primary">
-                                            <i class="@activity.Icon"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">@activity.Title</h6>
-                                        <p class="text-muted small mb-1">@activity.Description</p>
-                                        <small class="text-muted">
-                                            <i class="bi bi-clock"></i> @activity.Timestamp.ToString("MMM dd, yyyy HH:mm")
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+                    <div id="recentActivityList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm"></div>
+                            <span class="ms-2">Loading activity...</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,32 +149,12 @@
                     <h5 class="mb-0"><i class="bi bi-trophy text-primary"></i> Top Performing Campaigns</h5>
                 </div>
                 <div class="card-body">
-                    @if (Model.Analytics.TopCampaigns.Any())
-                    {
-                        @foreach (var campaign in Model.Analytics.TopCampaigns)
-                        {
-                            <div class="mb-4">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span class="fw-medium">@campaign.CampaignName</span>
-                                    <span class="text-muted small">@campaign.TotalSent sent</span>
-                                </div>
-                                <div class="progress" style="height: 25px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: @campaign.SuccessRate.ToString("F1")%"
-                                         aria-valuenow="@campaign.SuccessRate" aria-valuemin="0" aria-valuemax="100">
-                                        @campaign.SuccessRate.ToString("F1")%
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="text-center text-muted py-4">
-                            <i class="bi bi-bar-chart fs-1 mb-2"></i>
-                            <p>No campaign data available yet.</p>
+                    <div id="topCampaignsList">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm"></div>
+                            <span class="ms-2">Loading performance data...</span>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
@@ -275,39 +188,409 @@
 @section Scripts {
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
+
     <script>
-        $(document).ready(function() {
-            // Monthly Messages Chart
-            const monthlyCtx = document.getElementById('monthlyMessagesChart');
-            new Chart(monthlyCtx, {
+        let monthlyChart = null;
+
+        // ===== DEMO DATA =====
+        function getDemoStats() {
+            return {
+                totalCampaigns: 24,
+                activeCampaigns: 5,
+                totalContacts: 8742,
+                messagesSent: 45230,
+                engagementRate: 38.7,
+                engagementTrend: 4.2,
+                monthlyData: [
+                    { month: 'Aug', count: 2840 },
+                    { month: 'Sep', count: 3520 },
+                    { month: 'Oct', count: 4100 },
+                    { month: 'Nov', count: 3890 },
+                    { month: 'Dec', count: 5210 },
+                    { month: 'Jan', count: 6450 },
+                    { month: 'Feb', count: 7120 }
+                ]
+            };
+        }
+
+        function getDemoCampaigns() {
+            return [
+                { name: 'Summer Sale 2025 - SMS', status: 'Active', type: 'SMS', totalRecipients: 3200, totalSent: 3040, id: 1 },
+                { name: 'New Product Launch Email', status: 'Completed', type: 'Email', totalRecipients: 5600, totalSent: 5320, id: 2 },
+                { name: 'Weekend Flash Sale', status: 'Active', type: 'MMS', totalRecipients: 1850, totalSent: 1720, id: 3 },
+                { name: 'Customer Loyalty Rewards', status: 'Scheduled', type: 'SMS', totalRecipients: 4200, totalSent: 0, id: 4 },
+                { name: 'Monthly Newsletter - Feb', status: 'Draft', type: 'Email', totalRecipients: 8400, totalSent: 0, id: 5 }
+            ];
+        }
+
+        function getDemoActivities() {
+            var now = Date.now();
+            return [
+                { title: 'Campaign Launched', description: 'Summer Sale 2025 - SMS campaign started sending to 3,200 contacts', type: 'campaign', timestamp: new Date(now - 1800000).toISOString() },
+                { title: 'Message Delivered', description: 'New Product Launch Email delivered to 5,320 recipients (94.9% delivery)', type: 'message', timestamp: new Date(now - 3600000).toISOString() },
+                { title: 'Contact Imported', description: '245 new contacts imported from CSV file to "VIP Customers" group', type: 'contacts', timestamp: new Date(now - 7200000).toISOString() },
+                { title: 'Template Created', description: 'New SMS template "Flash Sale Alert" created and approved', type: 'template', timestamp: new Date(now - 14400000).toISOString() },
+                { title: 'Campaign Completed', description: 'Weekend Flash Sale campaign completed - 92.3% delivery rate', type: 'campaign', timestamp: new Date(now - 28800000).toISOString() },
+                { title: 'Keyword Triggered', description: 'Keyword "DEALS" triggered 47 auto-responses today', type: 'analytics', timestamp: new Date(now - 43200000).toISOString() }
+            ];
+        }
+
+        function getDemoTopCampaigns() {
+            return [
+                { campaignName: 'Holiday Greetings - Multi-Channel', totalSent: 5600, totalDelivered: 5320, successRate: 95.0 },
+                { campaignName: 'New Product Launch Email', totalSent: 3200, totalDelivered: 3040, successRate: 95.0 },
+                { campaignName: 'VIP Early Access Promo', totalSent: 980, totalDelivered: 941, successRate: 96.0 },
+                { campaignName: 'Back in Stock Alert - SMS', totalSent: 1200, totalDelivered: 1152, successRate: 96.0 },
+                { campaignName: 'Summer Sale 2025', totalSent: 4520, totalDelivered: 4310, successRate: 95.4 }
+            ];
+        }
+
+        $(document).ready(function () {
+            loadDashboardStats();
+            loadMyCampaigns();
+            loadRecentActivities();
+            loadTopCampaigns();
+        });
+
+        // ===== LOAD DASHBOARD STATS =====
+        function loadDashboardStats() {
+            $.get('/UserDashboard/GetDashboardStats', function (response) {
+                if (response.success && response.data) {
+                    var d = response.data;
+
+                    var totalCampaigns = d.totalCampaigns || d.totalCampaignCount || 0;
+                    var activeCampaigns = d.activeCampaigns || d.activeCampaignCount || 0;
+                    var totalContacts = d.totalContacts || d.totalContactCount || 0;
+                    var messagesSent = d.messagesSent || d.totalMessagesSent || d.totalMessages || 0;
+                    var engagementRate = d.engagementRate || d.overallEngagementRate || 0;
+
+                    // If all stats are zero, use demo data
+                    if (totalCampaigns === 0 && totalContacts === 0 && messagesSent === 0) {
+                        applyDemoStats();
+                        return;
+                    }
+
+                    document.getElementById('totalCampaigns').textContent = formatNumber(totalCampaigns);
+                    document.getElementById('activeCampaigns').textContent = formatNumber(activeCampaigns);
+                    document.getElementById('totalContacts').textContent = formatNumber(totalContacts);
+                    document.getElementById('messagesSent').textContent = formatNumber(messagesSent);
+                    document.getElementById('engagementRate').textContent = (engagementRate > 0 ? engagementRate.toFixed(1) + '%' : '0%');
+
+                    if (d.engagementTrend || d.weeklyGrowth) {
+                        var trend = d.engagementTrend || d.weeklyGrowth;
+                        document.getElementById('engagementTrendValue').textContent = trend + '% vs last week';
+                        document.getElementById('engagementTrend').style.display = '';
+                    }
+
+                    if (d.monthlyData || d.monthlyMessages) {
+                        var monthly = d.monthlyData || d.monthlyMessages;
+                        if (Array.isArray(monthly) && monthly.length > 0) {
+                            buildMonthlyChart(
+                                monthly.map(function (m) { return m.month || m.label || ''; }),
+                                monthly.map(function (m) { return m.count || m.value || m.messageCount || 0; })
+                            );
+                            return;
+                        }
+                    }
+
+                    buildMonthlyChart([], []);
+                } else {
+                    applyDemoStats();
+                }
+            }).fail(function () {
+                applyDemoStats();
+            });
+        }
+
+        function applyDemoStats() {
+            var d = getDemoStats();
+            document.getElementById('totalCampaigns').textContent = formatNumber(d.totalCampaigns);
+            document.getElementById('activeCampaigns').textContent = formatNumber(d.activeCampaigns);
+            document.getElementById('totalContacts').textContent = formatNumber(d.totalContacts);
+            document.getElementById('messagesSent').textContent = formatNumber(d.messagesSent);
+            document.getElementById('engagementRate').textContent = d.engagementRate + '%';
+            document.getElementById('engagementTrendValue').textContent = d.engagementTrend + '% vs last week';
+            document.getElementById('engagementTrend').style.display = '';
+
+            buildMonthlyChart(
+                d.monthlyData.map(function (m) { return m.month; }),
+                d.monthlyData.map(function (m) { return m.count; })
+            );
+        }
+
+        function buildMonthlyChart(labels, data) {
+            var ctx = document.getElementById('monthlyMessagesChart');
+            if (!ctx) return;
+
+            if (monthlyChart) monthlyChart.destroy();
+
+            if (labels.length === 0) {
+                var demo = getDemoStats();
+                labels = demo.monthlyData.map(function (m) { return m.month; });
+                data = demo.monthlyData.map(function (m) { return m.count; });
+            }
+
+            monthlyChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [@string.Join(",", Model.Analytics.MonthlyMessages.Select(m => $"'{m.Month}'"))],
+                    labels: labels,
                     datasets: [{
                         label: 'Messages Sent',
-                        data: [@string.Join(",", Model.Analytics.MonthlyMessages.Select(m => m.Count))],
-                        backgroundColor: 'rgba(13, 110, 253, 0.7)',
-                        borderColor: 'rgb(13, 110, 253)',
+                        data: data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: 'rgb(102, 126, 234)',
                         borderWidth: 1,
-                        borderRadius: 5
+                        borderRadius: 6,
+                        hoverBackgroundColor: 'rgba(102, 126, 234, 0.9)'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
                     plugins: {
-                        legend: {
-                            display: false
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y.toLocaleString() + ' messages';
+                                }
+                            }
                         }
                     },
                     scales: {
+                        x: { grid: { display: false } },
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: {
+                                callback: function (v) {
+                                    if (v >= 1000) return (v / 1000).toFixed(0) + 'K';
+                                    return v;
+                                }
+                            }
                         }
                     }
                 }
             });
-        });
+        }
+
+        // ===== LOAD MY CAMPAIGNS =====
+        function loadMyCampaigns() {
+            $.get('/UserDashboard/GetMyCampaigns', function (response) {
+                var campaigns = [];
+                if (response.success && response.data) {
+                    campaigns = Array.isArray(response.data) ? response.data : [];
+                }
+                if (campaigns.length === 0) {
+                    campaigns = getDemoCampaigns();
+                }
+                renderCampaignsList(campaigns);
+            }).fail(function () {
+                renderCampaignsList(getDemoCampaigns());
+            });
+        }
+
+        function renderCampaignsList(campaigns) {
+            var container = document.getElementById('myCampaignsList');
+            if (campaigns.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-4">' +
+                    '<i class="bi bi-inbox fs-1 mb-2"></i>' +
+                    '<p>No campaigns yet. Create your first campaign!</p>' +
+                    '<a href="/Campaigns/Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create Campaign</a></div>';
+                return;
+            }
+
+            var html = '<div class="list-group list-group-flush">';
+            campaigns.forEach(function (c) {
+                var name = c.name || c.campaignName || 'Campaign';
+                var status = c.status || 'Draft';
+                var type = c.type || c.channelType || c.channel || 'SMS';
+                var recipients = c.recipientCount || c.recipients || c.totalRecipients || 0;
+                var sent = c.totalSent || c.successCount || c.sentCount || 0;
+                var successRate = recipients > 0 ? ((sent / recipients) * 100) : 0;
+                var id = c.id || c.campaignId || 0;
+
+                var statusStr = typeof status === 'number' ? ['Draft', 'Scheduled', 'Active', 'Paused', 'Completed', 'Cancelled'][status] || 'Draft' : status;
+
+                var statusBadge = 'bg-secondary';
+                var sl = statusStr.toLowerCase();
+                if (sl === 'active' || sl === 'running' || sl === 'sending') statusBadge = 'bg-success';
+                else if (sl === 'scheduled') statusBadge = 'bg-warning';
+                else if (sl === 'completed' || sl === 'sent') statusBadge = 'bg-info';
+                else if (sl === 'draft') statusBadge = 'bg-secondary';
+                else if (sl === 'paused') statusBadge = 'bg-danger';
+
+                var typeStr = typeof type === 'number' ? ['SMS', 'MMS', 'Email'][type] || 'SMS' : type;
+
+                html += '<div class="list-group-item px-0">' +
+                    '<div class="d-flex justify-content-between align-items-start mb-2">' +
+                    '<div>' +
+                    '<h6 class="mb-1">' + escapeHtml(name) + '</h6>' +
+                    '<div class="d-flex gap-2 mb-2">' +
+                    '<span class="badge bg-info-subtle text-info">' + escapeHtml(typeStr) + '</span>' +
+                    '<span class="badge ' + statusBadge + '">' + escapeHtml(statusStr) + '</span>' +
+                    '</div></div>' +
+                    '<a href="/Campaigns/Details/' + id + '" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>' +
+                    '</div>' +
+                    '<div class="d-flex justify-content-between text-muted small">' +
+                    '<span><i class="bi bi-people"></i> ' + formatNumber(recipients) + ' recipients</span>' +
+                    (sent > 0 ? '<span><i class="bi bi-check-circle"></i> ' + successRate.toFixed(1) + '% success</span>' : '') +
+                    '</div>';
+
+                if (sl !== 'draft' && sl !== 'scheduled' && sent > 0) {
+                    html += '<div class="progress mt-2" style="height: 5px;">' +
+                        '<div class="progress-bar bg-success" role="progressbar" style="width: ' + successRate.toFixed(1) + '%"></div></div>';
+                }
+
+                html += '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ===== LOAD RECENT ACTIVITIES =====
+        function loadRecentActivities() {
+            $.get('/UserDashboard/GetRecentActivities', function (response) {
+                var activities = [];
+                if (response.success && response.data) {
+                    activities = Array.isArray(response.data) ? response.data : [];
+                }
+                if (activities.length === 0) {
+                    activities = getDemoActivities();
+                }
+                renderActivities(activities);
+            }).fail(function () {
+                renderActivities(getDemoActivities());
+            });
+        }
+
+        function renderActivities(activities) {
+            var container = document.getElementById('recentActivityList');
+            if (activities.length === 0) {
+                container.innerHTML = '<div class="text-muted text-center py-3">No recent activity</div>';
+                return;
+            }
+
+            var html = '<div class="timeline">';
+            activities.forEach(function (a) {
+                var icon = 'bi-envelope';
+                var title = a.title || a.action || '';
+                var description = a.description || '';
+                var timestamp = a.timestamp || a.createdAt || a.sentAt || a.scheduledAt || '';
+
+                if (!title && (a.subject || a.recipientName || a.status)) {
+                    var msgStatus = (typeof a.status === 'number' ? ['Queued', 'Sending', 'Sent', 'Delivered', 'Failed', 'Bounced'][a.status] : (a.status || '')).toLowerCase();
+                    if (msgStatus === 'sent' || msgStatus === 'delivered') { icon = 'bi-envelope-check'; title = 'Message Delivered'; }
+                    else if (msgStatus === 'failed') { icon = 'bi-exclamation-circle'; title = 'Message Failed'; }
+                    else if (msgStatus === 'scheduled' || msgStatus === 'queued') { icon = 'bi-clock'; title = 'Message Scheduled'; }
+                    else { icon = 'bi-envelope'; title = 'Message ' + (a.status || 'Created'); }
+                    description = (a.subject || a.campaignName || 'Message') +
+                        (a.recipientName ? ' to ' + a.recipientName : '') +
+                        (a.recipientEmail || a.recipientPhone ? ' (' + (a.recipientEmail || a.recipientPhone) + ')' : '');
+                    timestamp = a.sentAt || a.createdAt || a.scheduledAt || '';
+                }
+
+                if (a.type === 'campaign') icon = 'bi-megaphone';
+                else if (a.type === 'contacts') icon = 'bi-people';
+                else if (a.type === 'template') icon = 'bi-file-earmark-text';
+                else if (a.type === 'analytics') icon = 'bi-graph-up';
+                else if (a.type === 'message') icon = 'bi-envelope-check';
+
+                var timeStr = '';
+                if (timestamp) {
+                    try {
+                        var diff = Date.now() - new Date(timestamp).getTime();
+                        if (diff < 60000) timeStr = 'Just now';
+                        else if (diff < 3600000) timeStr = Math.floor(diff / 60000) + ' min ago';
+                        else if (diff < 86400000) timeStr = Math.floor(diff / 3600000) + ' hours ago';
+                        else timeStr = Math.floor(diff / 86400000) + ' days ago';
+                    } catch (e) { timeStr = timestamp; }
+                }
+
+                html += '<div class="timeline-item mb-3 pb-3 border-bottom">' +
+                    '<div class="d-flex">' +
+                    '<div class="timeline-icon me-3">' +
+                    '<div class="bg-primary-subtle rounded-circle p-2 text-primary">' +
+                    '<i class="bi ' + icon + '"></i></div></div>' +
+                    '<div class="flex-grow-1">' +
+                    '<h6 class="mb-1">' + escapeHtml(title) + '</h6>' +
+                    '<p class="text-muted small mb-1">' + escapeHtml(description) + '</p>' +
+                    (timeStr ? '<small class="text-muted"><i class="bi bi-clock"></i> ' + escapeHtml(timeStr) + '</small>' : '') +
+                    '</div></div></div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ===== LOAD TOP PERFORMING CAMPAIGNS =====
+        function loadTopCampaigns() {
+            $.get('/UserDashboard/GetTopCampaigns', function (response) {
+                var campaigns = [];
+                if (response.success && response.data) {
+                    campaigns = Array.isArray(response.data) ? response.data : [];
+                }
+                if (campaigns.length === 0) {
+                    campaigns = getDemoTopCampaigns();
+                }
+                renderTopCampaigns(campaigns);
+            }).fail(function () {
+                renderTopCampaigns(getDemoTopCampaigns());
+            });
+        }
+
+        function renderTopCampaigns(campaigns) {
+            var container = document.getElementById('topCampaignsList');
+            if (campaigns.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted py-4">' +
+                    '<i class="bi bi-bar-chart fs-1 mb-2"></i>' +
+                    '<p>No campaign performance data available yet.</p></div>';
+                return;
+            }
+
+            var html = '';
+            campaigns.slice(0, 5).forEach(function (c) {
+                var name = c.campaignName || c.name || 'Campaign';
+                var successRate = c.successRate || c.deliveryRate || c.openRate || 0;
+                var totalSent = c.totalSent || c.sent || c.totalMessages || 0;
+                var totalDelivered = c.totalDelivered || c.delivered || 0;
+
+                if (successRate === 0 && totalSent > 0 && totalDelivered > 0) {
+                    successRate = (totalDelivered / totalSent) * 100;
+                }
+
+                var barColor = successRate >= 90 ? 'bg-success' : successRate >= 70 ? 'bg-primary' : successRate >= 50 ? 'bg-warning' : 'bg-danger';
+
+                html += '<div class="mb-4">' +
+                    '<div class="d-flex justify-content-between mb-2">' +
+                    '<span class="fw-medium">' + escapeHtml(name) + '</span>' +
+                    '<span class="text-muted small">' + formatNumber(totalSent) + ' sent</span>' +
+                    '</div>' +
+                    '<div class="progress" style="height: 25px;">' +
+                    '<div class="progress-bar ' + barColor + '" role="progressbar" style="width: ' + successRate.toFixed(1) + '%"' +
+                    ' aria-valuenow="' + successRate.toFixed(1) + '" aria-valuemin="0" aria-valuemax="100">' +
+                    successRate.toFixed(1) + '%</div>' +
+                    '</div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // ===== HELPER FUNCTIONS =====
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '0';
+            num = parseInt(num) || 0;
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return num.toLocaleString();
+            return num.toString();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 }

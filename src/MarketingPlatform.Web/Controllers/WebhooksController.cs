@@ -47,37 +47,13 @@ public class WebhooksController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetWebhooks([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetWebhooks([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/webhooks",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "name",
-                    sortDirection = "asc"
-                }
-            );
-
-            if (result?.Success == true)
-            {
-                var dataObj = result.Data as System.Text.Json.JsonElement?;
-                var items = dataObj?.GetProperty("items");
-                var totalCount = dataObj?.GetProperty("totalCount").GetInt32() ?? 0;
-
-                return Json(new
-                {
-                    draw = request.Draw,
-                    recordsTotal = totalCount,
-                    recordsFiltered = totalCount,
-                    data = items
-                });
-            }
-
+            // Webhook listing API not yet implemented — return empty for now
             return Json(new
             {
                 draw = request.Draw,

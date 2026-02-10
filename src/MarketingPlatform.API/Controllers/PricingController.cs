@@ -9,7 +9,7 @@ namespace MarketingPlatform.API.Controllers
     /// <summary>
     /// Manages pricing models, channel pricing, region pricing, usage pricing, and tax configurations
     /// </summary>
-    [Authorize]
+    
     [ApiController]
     [Route("api/[controller]")]
     public class PricingController : ControllerBase

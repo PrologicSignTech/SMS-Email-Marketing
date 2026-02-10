@@ -140,7 +140,22 @@ public class ApiClient : IApiClient
             _logger.LogWarning("API request failed with status {StatusCode}: {Content}",
                 response.StatusCode, content);
 
-            // Try to deserialize error response
+            // For 4xx client errors, try to return the deserialized ApiResponse (Success=false)
+            // so callers can read the error message instead of catching a generic exception
+            if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 500 && !string.IsNullOrWhiteSpace(content))
+            {
+                try
+                {
+                    var result = JsonSerializer.Deserialize<T>(content, _jsonOptions);
+                    if (result != null) return result;
+                }
+                catch (JsonException)
+                {
+                    // Fall through to throw
+                }
+            }
+
+            // For 5xx or undeserializable errors, throw
             try
             {
                 var errorResponse = JsonSerializer.Deserialize<ApiResponse<object>>(content, _jsonOptions);

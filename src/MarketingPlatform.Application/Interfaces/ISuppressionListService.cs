@@ -6,7 +6,7 @@ namespace MarketingPlatform.Application.Interfaces
     public interface ISuppressionListService
     {
         Task<SuppressionListDto?> GetByIdAsync(string userId, int id);
-        Task<PaginatedResult<SuppressionListDto>> GetAllAsync(string userId, PagedRequest request);
+        Task<PaginatedResult<SuppressionListDto>> GetAllAsync(string userId, PagedRequest request, int? type = null);
         Task<SuppressionListDto> CreateAsync(string userId, CreateSuppressionListDto dto);
         Task<bool> DeleteAsync(string userId, int id);
         Task<int> BulkCreateAsync(string userId, BulkSuppressionDto dto);

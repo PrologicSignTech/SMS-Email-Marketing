@@ -47,23 +47,20 @@ public class UsersController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetUsers([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetUsers([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/users",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "createdAt",
-                    sortDirection = "desc",
-                    roleId = request.RoleId,
-                    status = request.Status
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/users?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=createdAt&sortDescending=true";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -124,6 +121,78 @@ public class UsersController : Controller
     }
 
     /// <summary>
+    /// Get user details (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetUser(string id)
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/users/{id}");
+            return Json(new { success = result?.Success ?? false, data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching user {UserId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Activate user (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Activate(string id)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>($"/api/users/{id}/activate", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "User activated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error activating user {UserId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Deactivate user (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Deactivate(string id)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>($"/api/users/{id}/deactivate", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "User deactivated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deactivating user {UserId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Update user profile (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateUser(string id, [FromBody] object userData)
+    {
+        try
+        {
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>($"/api/users/profile", userData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "User updated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating user {UserId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
     /// User dashboard
     /// </summary>
     public IActionResult Dashboard()
@@ -158,5 +227,25 @@ public class UsersController : Controller
     public IActionResult Settings()
     {
         return View();
+    }
+
+    /// <summary>
+    /// Get list of agents (users) for conversation assignment
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetAgents()
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/users?pageNumber=1&pageSize=50&role=User");
+            if (result?.Success == true)
+                return Json(new { success = true, data = result.Data });
+            return Json(new { success = false, data = new object[] { } });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching agents");
+            return Json(new { success = false, data = new object[] { } });
+        }
     }
 }

@@ -1,70 +1,184 @@
 @{
-    ViewData["Title"] = "Create Suppression List"; Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Add Suppression Entry"; Layout = "_LayoutAuthenticated";
 }
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-shield-plus"></i> Create Suppression List</h2>
+        <h2><i class="bi bi-shield-plus"></i> Add Suppression Entry</h2>
         <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back to Lists
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h5>List Configuration</h5>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Suppression Entry Details</h5>
+                </div>
+                <div class="card-body">
+                    <form id="suppressionForm">
+                        <div class="mb-3">
+                            <label for="phoneOrEmail" class="form-label">Phone Number or Email <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="phoneOrEmail" required placeholder="e.g. +1234567890 or user@example.com">
+                            <div class="form-text">Enter the phone number or email address to suppress</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="suppressionType" class="form-label">Suppression Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="suppressionType" required>
+                                <option value="">Select Type</option>
+                                <option value="0">Opt-Out</option>
+                                <option value="1">Bounce</option>
+                                <option value="2">Complaint</option>
+                                <option value="3">Manual</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason</label>
+                            <textarea class="form-control" id="reason" rows="3" placeholder="Optional reason for suppression"></textarea>
+                        </div>
+
+                        <hr>
+                        <h6 class="mb-3"><i class="bi bi-upload me-1"></i> Or Bulk Import</h6>
+                        <div class="mb-3">
+                            <label for="bulkEntries" class="form-label">Bulk Entries</label>
+                            <textarea class="form-control" id="bulkEntries" rows="5" placeholder="Enter one phone number or email per line"></textarea>
+                            <div class="form-text">Each line will be added with the selected type above</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">Cancel</a>
+                            <button type="button" class="btn btn-outline-primary" id="bulkAddBtn" onclick="bulkAdd()" style="display:none">
+                                <i class="bi bi-upload me-1"></i> Add Bulk Entries
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> Add Entry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form id="listForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="listName" class="form-label">List Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="listName" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="listType" class="form-label">Type <span class="text-danger">*</span></label>
-                        <select class="form-select" id="listType" required>
-                            <option value="">Select Type</option>
-                            <option value="OptOut">Opt-Out</option>
-                            <option value="Bounced">Bounced</option>
-                            <option value="Complained">Complained</option>
-                            <option value="Invalid">Invalid</option>
-                            <option value="Custom">Custom</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" rows="3"></textarea>
+        <div class="col-lg-4">
+            <div class="card shadow-sm bg-light">
+                <div class="card-body">
+                    <h6><i class="bi bi-info-circle me-1"></i> Suppression Types</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><span class="badge bg-danger">Opt-Out</span> Contact requested removal</li>
+                        <li class="mb-2"><span class="badge bg-warning text-dark">Bounce</span> Email/SMS bounced back</li>
+                        <li class="mb-2"><span class="badge bg-danger">Complaint</span> Reported as spam</li>
+                        <li><span class="badge bg-info">Manual</span> Manually added by admin</li>
+                    </ul>
                 </div>
-
-                <div class="mb-3">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="isActive" checked>
-                        <label class="form-check-label" for="isActive">
-                            <strong>Active List</strong>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end gap-2">
-                    <a href="@Url.Action("Index", "Suppression")" class="btn btn-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Create List
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script nonce="@Context.GetCspNonce()">
-        document.getElementById('listForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Suppression list created! (Demo)');
-            window.location.href = '/Suppression/Index';
+        // Show/hide bulk button when bulk entries have content
+        document.getElementById('bulkEntries').addEventListener('input', function() {
+            document.getElementById('bulkAddBtn').style.display = this.value.trim() ? '' : 'none';
         });
+
+        document.getElementById('suppressionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const phoneOrEmail = document.getElementById('phoneOrEmail').value.trim();
+            const type = document.getElementById('suppressionType').value;
+            const reason = document.getElementById('reason').value.trim();
+
+            if (!phoneOrEmail) {
+                showNotification('Phone number or email is required', 'error');
+                return;
+            }
+            if (type === '') {
+                showNotification('Please select a suppression type', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Adding...';
+
+            try {
+                const response = await fetch('/Suppression/CreateEntry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneOrEmail: phoneOrEmail,
+                        type: parseInt(type),
+                        reason: reason || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification(result.message || 'Suppression entry added successfully!', 'success');
+                    setTimeout(() => { window.location.href = '/Suppression'; }, 1000);
+                } else {
+                    showNotification(result.message || 'Failed to add entry', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Add Entry';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Add Entry';
+            }
+        });
+
+        async function bulkAdd() {
+            const entries = document.getElementById('bulkEntries').value.trim().split('\n').filter(e => e.trim());
+            const type = document.getElementById('suppressionType').value;
+            const reason = document.getElementById('reason').value.trim();
+
+            if (entries.length === 0) {
+                showNotification('Please enter at least one entry', 'error');
+                return;
+            }
+            if (type === '') {
+                showNotification('Please select a suppression type', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('bulkAddBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Adding...';
+
+            try {
+                const response = await fetch('/Suppression/BulkCreateEntries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneOrEmails: entries.map(e => e.trim()),
+                        type: parseInt(type),
+                        reason: reason || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification(result.message || `${entries.length} entries added successfully!`, 'success');
+                    setTimeout(() => { window.location.href = '/Suppression'; }, 1000);
+                } else {
+                    showNotification(result.message || 'Failed to add entries', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-upload me-1"></i> Add Bulk Entries';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-upload me-1"></i> Add Bulk Entries';
+            }
+        }
     </script>
 }

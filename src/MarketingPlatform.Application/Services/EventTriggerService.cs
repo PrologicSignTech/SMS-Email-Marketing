@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 
 namespace MarketingPlatform.Application.Services
 {
+    /// <summary>
+    /// Event trigger service — ALL workflow matching is scoped to the contact's UserId.
+    /// User A's workflows will NEVER fire for User B's contacts.
+    /// </summary>
     public class EventTriggerService : IEventTriggerService
     {
         private readonly IRepository<Workflow> _workflowRepository;
@@ -39,34 +43,76 @@ namespace MarketingPlatform.Application.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Trigger workflows based on an event.
+        /// CRITICAL: Only triggers workflows belonging to the same user who owns the contact.
+        /// </summary>
         public async Task TriggerEventAsync(EventType eventType, int contactId, Dictionary<string, object>? eventData = null)
         {
             _logger.LogInformation("Triggering event {EventType} for contact {ContactId}", eventType, contactId);
 
-            // Find all active workflows that match this trigger type
-            var workflows = await _workflowRepository.FindAsync(w =>
+            // ── Resolve the contact's owner (UserId) — this is the isolation boundary ──
+            var contact = await _contactRepository.FirstOrDefaultAsync(c => c.Id == contactId && !c.IsDeleted);
+            if (contact == null)
+            {
+                _logger.LogWarning("Contact {ContactId} not found — cannot trigger workflows", contactId);
+                return;
+            }
+
+            var userId = contact.UserId;
+            _logger.LogInformation("Contact {ContactId} belongs to user {UserId} — searching only their workflows", contactId, userId);
+
+            // ── 1. Match workflows with TriggerType = Event for THIS user only ──
+            var eventWorkflows = await _workflowRepository.FindAsync(w =>
+                w.UserId == userId &&
                 w.TriggerType == TriggerType.Event &&
                 w.IsActive &&
                 !w.IsDeleted);
 
-            foreach (var workflow in workflows)
+            foreach (var workflow in eventWorkflows)
             {
-                // Parse trigger criteria to check if this event matches
                 if (DoesEventMatchCriteria(workflow.TriggerCriteria, eventType, eventData))
                 {
-                    // Execute workflow asynchronously using Hangfire to avoid blocking
                     BackgroundJob.Enqueue(() => _workflowService.ExecuteWorkflowAsync(workflow.Id, contactId));
-                    _logger.LogInformation("Queued workflow {WorkflowId} for contact {ContactId} due to event {EventType}",
-                        workflow.Id, contactId, eventType);
+                    _logger.LogInformation("Queued Event-workflow {WorkflowId} (user {UserId}) for contact {ContactId} due to {EventType}",
+                        workflow.Id, userId, contactId, eventType);
+                }
+            }
+
+            // ── 2. Match workflows with TriggerType = Keyword for THIS user only ──
+            if (eventType == EventType.KeywordReceived && eventData != null)
+            {
+                var incomingKeyword = eventData.TryGetValue("keyword", out var kwObj) ? kwObj?.ToString() : null;
+
+                if (!string.IsNullOrEmpty(incomingKeyword))
+                {
+                    var keywordWorkflows = await _workflowRepository.FindAsync(w =>
+                        w.UserId == userId &&
+                        w.TriggerType == TriggerType.Keyword &&
+                        w.IsActive &&
+                        !w.IsDeleted);
+
+                    foreach (var workflow in keywordWorkflows)
+                    {
+                        if (DoesKeywordMatch(workflow.TriggerCriteria, incomingKeyword))
+                        {
+                            BackgroundJob.Enqueue(() => _workflowService.ExecuteWorkflowAsync(workflow.Id, contactId));
+                            _logger.LogInformation(
+                                "Queued Keyword-workflow {WorkflowId} (user {UserId}) for contact {ContactId} — keyword '{Keyword}' matched",
+                                workflow.Id, userId, contactId, incomingKeyword);
+                        }
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Check inactivity triggers — already scoped: each workflow only queries its own user's contacts.
+        /// </summary>
         public async Task CheckInactivityTriggersAsync()
         {
             _logger.LogInformation("Checking inactivity triggers");
 
-            // Find all active inactivity workflows
             var workflows = await _workflowRepository.FindAsync(w =>
                 w.TriggerType == TriggerType.Event &&
                 w.IsActive &&
@@ -75,7 +121,7 @@ namespace MarketingPlatform.Application.Services
             foreach (var workflow in workflows)
             {
                 var criteria = DeserializeTriggerCriteria(workflow.TriggerCriteria);
-                
+
                 if (!criteria.TryGetValue("eventType", out var eventTypeObj) || eventTypeObj == null)
                     continue;
 
@@ -83,48 +129,58 @@ namespace MarketingPlatform.Application.Services
                 if (eventType != EventType.Inactivity.ToString())
                     continue;
 
-                // Get inactivity threshold in days
                 if (!criteria.TryGetValue("inactiveDays", out var inactiveDaysObj) || inactiveDaysObj == null)
                     continue;
 
                 var inactiveDays = Convert.ToInt32(inactiveDaysObj);
                 var thresholdDate = DateTime.UtcNow.AddDays(-inactiveDays);
 
-                // Find contacts who haven't been messaged since threshold
-                // Use AsNoTracking and process in batches to avoid DB locks
+                // Only query contacts belonging to this workflow's owner
                 var contacts = await _contactRepository.FindAsync(c =>
                     c.UserId == workflow.UserId &&
                     c.IsActive &&
                     !c.IsDeleted);
 
-                // Process in batches to avoid DB load
                 var batchSize = 100;
                 var contactList = contacts.ToList();
-                
+
                 for (int i = 0; i < contactList.Count; i += batchSize)
                 {
                     var batch = contactList.Skip(i).Take(batchSize).ToList();
-                    
+
                     foreach (var contact in batch)
                     {
-                        // Check if contact has been inactive
                         if (contact.UpdatedAt < thresholdDate)
                         {
-                            // Queue workflow execution without blocking
                             BackgroundJob.Enqueue(() => _workflowService.ExecuteWorkflowAsync(workflow.Id, contact.Id));
-                            _logger.LogInformation("Queued workflow {WorkflowId} for inactive contact {ContactId}", workflow.Id, contact.Id);
+                            _logger.LogInformation("Queued workflow {WorkflowId} for inactive contact {ContactId} (user {UserId})",
+                                workflow.Id, contact.Id, workflow.UserId);
                         }
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Process keyword trigger — scoped: finds keyword for the contact's user, then triggers workflows.
+        /// </summary>
         public async Task ProcessKeywordTriggerAsync(string keyword, int contactId)
         {
             _logger.LogInformation("Processing keyword trigger '{Keyword}' for contact {ContactId}", keyword, contactId);
 
-            // Find the keyword (case-insensitive)
+            // Resolve the contact's owner
+            var contact = await _contactRepository.FirstOrDefaultAsync(c => c.Id == contactId && !c.IsDeleted);
+            if (contact == null)
+            {
+                _logger.LogWarning("Contact {ContactId} not found — cannot process keyword trigger", contactId);
+                return;
+            }
+
+            var userId = contact.UserId;
+
+            // Find keyword belonging to the same user (case-insensitive)
             var keywords = await _keywordRepository.FindAsync(k =>
+                k.UserId == userId &&
                 k.KeywordText.ToLower() == keyword.ToLower() &&
                 k.Status == KeywordStatus.Active &&
                 !k.IsDeleted);
@@ -132,15 +188,15 @@ namespace MarketingPlatform.Application.Services
             var keywordEntity = keywords.FirstOrDefault();
             if (keywordEntity == null)
             {
-                _logger.LogWarning("Keyword '{Keyword}' not found or not active", keyword);
+                _logger.LogInformation("Keyword '{Keyword}' not found for user {UserId}", keyword, userId);
                 return;
             }
 
-            // Log keyword activity (non-blocking)
+            // Log keyword activity
             var activity = new KeywordActivity
             {
                 KeywordId = keywordEntity.Id,
-                PhoneNumber = "", // Will be filled by caller
+                PhoneNumber = contact.PhoneNumber ?? "",
                 IncomingMessage = keyword,
                 ResponseSent = keywordEntity.ResponseMessage,
                 ReceivedAt = DateTime.UtcNow
@@ -168,27 +224,24 @@ namespace MarketingPlatform.Application.Services
                     await _groupMemberRepository.AddAsync(member);
                     await _unitOfWork.SaveChangesAsync();
 
-                    _logger.LogInformation("Added contact {ContactId} to opt-in group {GroupId}",
-                        contactId, keywordEntity.OptInGroupId.Value);
+                    _logger.LogInformation("Added contact {ContactId} to opt-in group {GroupId} (user {UserId})",
+                        contactId, keywordEntity.OptInGroupId.Value, userId);
                 }
             }
 
-            // Trigger workflows that listen for keyword events
+            // Trigger workflows — TriggerEventAsync already scopes to contact's UserId
             var eventData = new Dictionary<string, object>
             {
                 { "keyword", keyword },
                 { "keywordId", keywordEntity.Id }
             };
 
-            // Use background job to avoid blocking
             BackgroundJob.Enqueue(() => TriggerEventAsync(EventType.KeywordReceived, contactId, eventData));
 
-            // Start linked campaign if specified
             if (keywordEntity.LinkedCampaignId.HasValue)
             {
-                _logger.LogInformation("Keyword '{Keyword}' linked to campaign {CampaignId}",
-                    keyword, keywordEntity.LinkedCampaignId.Value);
-                // Campaign will be started by the workflow or separately
+                _logger.LogInformation("Keyword '{Keyword}' linked to campaign {CampaignId} (user {UserId})",
+                    keyword, keywordEntity.LinkedCampaignId.Value, userId);
             }
         }
 
@@ -199,9 +252,12 @@ namespace MarketingPlatform.Application.Services
             var data = eventData ?? new Dictionary<string, object>();
             data["customEventName"] = eventName;
 
-            // Use background job to avoid blocking
             BackgroundJob.Enqueue(() => TriggerEventAsync(EventType.Custom, contactId, data));
         }
+
+        // ───────────────────────────────────────────────────────────
+        //  Private matching logic
+        // ───────────────────────────────────────────────────────────
 
         private bool DoesEventMatchCriteria(string? triggerCriteria, EventType eventType, Dictionary<string, object>? eventData)
         {
@@ -210,22 +266,89 @@ namespace MarketingPlatform.Application.Services
 
             var criteria = DeserializeTriggerCriteria(triggerCriteria);
 
-            // Check if event type matches
             if (criteria.TryGetValue("eventType", out var expectedEventTypeObj) && expectedEventTypeObj != null)
             {
                 var expectedEventType = expectedEventTypeObj.ToString();
-                if (expectedEventType != eventType.ToString())
+                if (!string.Equals(expectedEventType, eventType.ToString(), StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            // Optional: keyword filter within Event workflow
+            if (eventType == EventType.KeywordReceived &&
+                criteria.TryGetValue("keyword", out var criteriaKeyword) && criteriaKeyword != null &&
+                eventData != null &&
+                eventData.TryGetValue("keyword", out var incomingKeyword) && incomingKeyword != null)
+            {
+                if (!string.Equals(criteriaKeyword.ToString(), incomingKeyword.ToString(), StringComparison.OrdinalIgnoreCase))
                     return false;
             }
 
-            // Check custom criteria if present
-            if (eventData != null && criteria.TryGetValue("customCriteria", out var customCriteriaObj) && customCriteriaObj != null)
+            // Optional: groupId filter
+            if (criteria.TryGetValue("groupId", out var criteriaGroupId) && criteriaGroupId != null &&
+                eventData != null &&
+                eventData.TryGetValue("groupId", out var incomingGroupId) && incomingGroupId != null)
             {
-                // Custom criteria matching logic can be extended here
-                // For now, we just check if the event type matches
+                if (criteriaGroupId.ToString() != incomingGroupId.ToString())
+                    return false;
+            }
+
+            // Optional: tagId filter
+            if (criteria.TryGetValue("tagId", out var criteriaTagId) && criteriaTagId != null &&
+                eventData != null &&
+                eventData.TryGetValue("tagId", out var incomingTagId) && incomingTagId != null)
+            {
+                if (criteriaTagId.ToString() != incomingTagId.ToString())
+                    return false;
             }
 
             return true;
+        }
+
+        private bool DoesKeywordMatch(string? triggerCriteria, string incomingKeyword)
+        {
+            if (string.IsNullOrEmpty(triggerCriteria) || string.IsNullOrEmpty(incomingKeyword))
+                return false;
+
+            var trimmedCriteria = triggerCriteria.Trim();
+
+            if (trimmedCriteria.StartsWith("{"))
+            {
+                try
+                {
+                    var criteria = JsonConvert.DeserializeObject<Dictionary<string, object>>(trimmedCriteria);
+                    if (criteria == null)
+                        return false;
+
+                    if (criteria.TryGetValue("keyword", out var singleKw) && singleKw != null)
+                    {
+                        if (string.Equals(singleKw.ToString(), incomingKeyword, StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    }
+
+                    if (criteria.TryGetValue("keywords", out var multiKw) && multiKw != null)
+                    {
+                        var keywordList = JsonConvert.DeserializeObject<List<string>>(multiKw.ToString()!);
+                        if (keywordList != null && keywordList.Any(k =>
+                            string.Equals(k, incomingKeyword, StringComparison.OrdinalIgnoreCase)))
+                            return true;
+                    }
+
+                    return false;
+                }
+                catch
+                {
+                    // Not valid JSON, fall through
+                }
+            }
+
+            var keywordTexts = trimmedCriteria
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            return keywordTexts.Any(k => string.Equals(k, incomingKeyword, StringComparison.OrdinalIgnoreCase));
         }
 
         private Dictionary<string, object> DeserializeTriggerCriteria(string? json)

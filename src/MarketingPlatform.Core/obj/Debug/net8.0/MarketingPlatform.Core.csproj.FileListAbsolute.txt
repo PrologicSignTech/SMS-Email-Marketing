@@ -11,3 +11,16 @@ E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Core\obj\Debug\net8.0\Market
 E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Core\obj\Debug\net8.0\refint\MarketingPlatform.Core.dll
 E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.pdb
 E:\pLOGIC\Projects\TextingPro\src\MarketingPlatform.Core\obj\Debug\net8.0\ref\MarketingPlatform.Core.dll
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\bin\Debug\net8.0\MarketingPlatform.Core.deps.json
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\bin\Debug\net8.0\MarketingPlatform.Core.dll
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\bin\Debug\net8.0\MarketingPlatform.Core.pdb
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.csproj.AssemblyReference.cache
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.GeneratedMSBuildEditorConfig.editorconfig
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.AssemblyInfoInputs.cache
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.AssemblyInfo.cs
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.csproj.CoreCompileInputs.cache
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.sourcelink.json
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.dll
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\refint\MarketingPlatform.Core.dll
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\MarketingPlatform.Core.pdb
+E:\pLOGIC\Projects\GitProject\src\MarketingPlatform.Core\obj\Debug\net8.0\ref\MarketingPlatform.Core.dll

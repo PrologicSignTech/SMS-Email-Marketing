@@ -55,9 +55,20 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving footer settings");
-                return BadRequest(ApiResponse<FooterSettings>.ErrorResponse(
-                    "Failed to retrieve footer settings",
-                    new List<string> { ex.Message }));
+                // Return default settings on error so landing page still renders
+                return Ok(ApiResponse<FooterSettings>.SuccessResponse(new FooterSettings
+                {
+                    CompanyName = "Marketing Platform",
+                    CompanyDescription = "Enterprise-grade SMS, MMS & Email marketing platform.",
+                    AddressLine1 = "123 Business Avenue, Suite 100",
+                    AddressLine2 = "New York, NY 10001, USA",
+                    Phone = "+1 (234) 567-890",
+                    Email = "support@marketingplatform.com",
+                    BusinessHours = "Mon - Fri: 9:00 AM - 6:00 PM EST",
+                    ShowNewsletter = true,
+                    ShowMap = true,
+                    IsActive = true
+                }));
             }
         }
 

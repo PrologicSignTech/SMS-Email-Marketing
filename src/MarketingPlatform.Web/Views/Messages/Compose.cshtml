@@ -6,40 +6,42 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="bi bi-pencil-square"></i> Compose Message</h2>
-        <a href="@Url.Action("Index", "Messages")" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to Messages
-        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-info" id="previewBtn">
+                <i class="bi bi-eye"></i> Preview
+            </button>
+            <a href="@Url.Action("Index", "Messages")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Messages
+            </a>
+        </div>
     </div>
 
     <div class="row">
         <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Message Composition</h5>
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Message Composition</h5>
                 </div>
                 <div class="card-body">
                     <form id="messageForm">
                         <div class="mb-3">
                             <label class="form-label">Channel <span class="text-danger">*</span></label>
-                            <div class="btn-group w-100" role="group" id="channelSelector">
-                                <input type="radio" class="btn-check" name="channel" id="channelSMS" value="SMS" autocomplete="off">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="channel" id="channelSMS" value="0" autocomplete="off">
                                 <label class="btn btn-outline-success" for="channelSMS"><i class="bi bi-chat-dots"></i> SMS</label>
-                                
-                                <input type="radio" class="btn-check" name="channel" id="channelMMS" value="MMS" autocomplete="off">
+
+                                <input type="radio" class="btn-check" name="channel" id="channelMMS" value="1" autocomplete="off">
                                 <label class="btn btn-outline-info" for="channelMMS"><i class="bi bi-image"></i> MMS</label>
-                                
-                                <input type="radio" class="btn-check" name="channel" id="channelEmail" value="Email" autocomplete="off" checked>
+
+                                <input type="radio" class="btn-check" name="channel" id="channelEmail" value="2" autocomplete="off" checked>
                                 <label class="btn btn-outline-primary" for="channelEmail"><i class="bi bi-envelope"></i> Email</label>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="recipients" class="form-label">Recipients <span class="text-danger">*</span></label>
-                            <select class="form-select" id="recipients" required multiple size="3">
-                                <option value="all">All Contacts (12,450)</option>
-                                <option value="group1">VIP Customers (1,245)</option>
-                                <option value="group2">Newsletter Subscribers (8,920)</option>
-                                <option value="group3">Recent Purchasers (543)</option>
+                            <select class="form-select" id="recipients" required multiple size="4">
+                                <option disabled>Loading groups...</option>
                             </select>
                             <div class="form-text">Select one or more recipient groups</div>
                         </div>
@@ -49,67 +51,94 @@
                                 <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="subject" placeholder="Enter email subject">
                             </div>
-                            
-                            <div class="mb-3">
-                                <label for="fromName" class="form-label">From Name</label>
-                                <input type="text" class="form-control" id="fromName" value="Your Company">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="fromEmail" class="form-label">From Email</label>
-                                <input type="email" class="form-control" id="fromEmail" value="noreply@yourcompany.com">
-                            </div>
                         </div>
 
                         <div id="smsFields" style="display: none;">
                             <div class="mb-3">
-                                <label for="fromPhone" class="form-label">From Number</label>
+                                <label for="fromPhone" class="form-label">From Number <span class="text-danger">*</span></label>
                                 <select class="form-select" id="fromPhone">
-                                    <option value="+1234567890">+1 (234) 567-890</option>
-                                    <option value="+1987654321">+1 (987) 654-321</option>
+                                    <option value="">Loading numbers...</option>
                                 </select>
+                                <div class="form-text">
+                                    Select an assigned phone number.
+                                    <a href="@Url.Action("Buy", "PhoneNumbers")">Buy a number</a>
+                                </div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label for="messageBody" class="form-label mb-0">Message Content <span class="text-danger">*</span></label>
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-secondary" data-action="load-template">
-                                        <i class="bi bi-file-earmark-text"></i> Load Template
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-action="insert-token">
-                                        <i class="bi bi-code-square"></i> Insert Token
-                                    </button>
-                                </div>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="loadTemplateBtn">
+                                    <i class="bi bi-file-earmark-text"></i> Load Template
+                                </button>
                             </div>
-                            <textarea class="form-control" id="messageBody" rows="10" required></textarea>
+                            <textarea class="form-control" id="messageBody" rows="8" required></textarea>
                             <div class="d-flex justify-content-between">
-                                <small class="text-muted" id="bodyHelp">Compose your message here</small>
-                                <small class="text-muted" id="charCounter">0 characters</small>
+                                <small class="text-muted" id="bodyHelp">Email message content</small>
+                                <div>
+                                    <small class="text-muted" id="charCounter">0 characters</small>
+                                    <small class="text-info ms-2" id="segmentCounter" style="display:none;">1 segment</small>
+                                </div>
                             </div>
                         </div>
 
                         <div id="htmlEditor" style="display: none;">
                             <div class="mb-3">
                                 <label class="form-label">HTML Content (Optional)</label>
-                                <div class="btn-group btn-group-sm mb-2" role="group">
-                                    <button type="button" class="btn btn-outline-secondary" data-editor-mode="text">
-                                        <i class="bi bi-type"></i> Text
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary active" data-editor-mode="html">
-                                        <i class="bi bi-code-slash"></i> HTML
-                                    </button>
-                                </div>
-                                <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                                <textarea class="form-control" id="htmlContent" rows="6"></textarea>
                             </div>
                         </div>
 
                         <div id="mmsFields" style="display: none;">
                             <div class="mb-3">
-                                <label for="mediaFile" class="form-label">Media File</label>
-                                <input type="file" class="form-control" id="mediaFile" accept="image/*,video/*">
-                                <div class="form-text">Supported: JPG, PNG, GIF, MP4 (Max 5MB)</div>
+                                <label for="mediaUrl" class="form-label">Media URL</label>
+                                <input type="url" class="form-control" id="mediaUrl" placeholder="https://example.com/image.jpg">
+                                <div class="form-text">URL to media file for MMS</div>
+                            </div>
+                        </div>
+
+                        <!-- A/B Testing Section -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body py-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="bi bi-shuffle text-primary me-1"></i> A/B Testing</h6>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="enableABTest">
+                                        <label class="form-check-label small" for="enableABTest">Enable</label>
+                                    </div>
+                                </div>
+                                <div id="abTestSection" style="display:none;" class="mt-2">
+                                    <div class="mb-2">
+                                        <label class="form-label small">Variant B Message</label>
+                                        <textarea class="form-control form-control-sm" id="variantBBody" rows="3" placeholder="Alternative message content for variant B"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Test Size (%)</label>
+                                            <input type="range" class="form-range" id="abTestSize" min="10" max="50" value="20">
+                                            <small class="text-muted" id="abTestSizeLabel">20% of recipients will receive test variants</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Winner Criteria</label>
+                                            <select class="form-select form-select-sm" id="abWinnerCriteria">
+                                                <option value="clicks">Click Rate</option>
+                                                <option value="opens">Open Rate</option>
+                                                <option value="replies">Reply Rate</option>
+                                                <option value="conversions">Conversion Rate</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mt-1">
+                                        <label class="form-label small">Auto-select winner after</label>
+                                        <select class="form-select form-select-sm" id="abWaitTime" style="width: auto; display: inline-block;">
+                                            <option value="1">1 hour</option>
+                                            <option value="4" selected>4 hours</option>
+                                            <option value="24">24 hours</option>
+                                            <option value="48">48 hours</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -117,15 +146,11 @@
                             <label class="form-label">Scheduling</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="scheduling" id="sendNow" value="now" checked>
-                                <label class="form-check-label" for="sendNow">
-                                    Send Immediately
-                                </label>
+                                <label class="form-check-label" for="sendNow">Send Immediately</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="scheduling" id="sendLater" value="later">
-                                <label class="form-check-label" for="sendLater">
-                                    Schedule for Later
-                                </label>
+                                <label class="form-check-label" for="sendLater">Schedule for Later</label>
                             </div>
                             <div id="schedulingFields" style="display: none; margin-top: 10px;">
                                 <input type="datetime-local" class="form-control" id="scheduledTime">
@@ -133,13 +158,10 @@
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-secondary" data-action="save-draft">
-                                <i class="bi bi-save"></i> Save Draft
+                            <button type="button" class="btn btn-outline-secondary" id="testSendBtn">
+                                <i class="bi bi-send-check"></i> Test Send
                             </button>
-                            <button type="button" class="btn btn-outline-primary" data-action="preview-message">
-                                <i class="bi bi-eye"></i> Preview
-                            </button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="sendBtn">
                                 <i class="bi bi-send"></i> Send Message
                             </button>
                         </div>
@@ -149,36 +171,64 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="card bg-light mb-3">
+            <!-- Message Tokens -->
+            <div class="card shadow-sm bg-light mb-3">
                 <div class="card-body">
-                    <h6 class="card-title"><i class="bi bi-info-circle"></i> Message Tokens</h6>
+                    <h6 class="card-title"><i class="bi bi-braces"></i> Personalization Tokens</h6>
                     <div class="d-flex flex-wrap gap-1 mb-2">
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{Email}">{Email}</span>
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{Phone}">{Phone}</span>
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
-                        <span class="badge bg-secondary" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Email}">{Email}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Phone}">{Phone}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{ShortLink}">{ShortLink}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{Date}">{Date}</span>
                     </div>
                     <small class="text-muted">Click to insert into message</small>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title"><i class="bi bi-bar-chart"></i> Estimated Reach</h6>
-                    <div id="estimatedReach">
-                        <h3 class="text-primary mb-0">-</h3>
-                        <p class="text-muted small mb-0">Recipients selected</p>
+            <!-- Live Preview -->
+            <div class="card shadow-sm mb-3" id="messagePreviewCard">
+                <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-phone"></i> Message Preview</h6>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary active btn-sm" id="previewMobile"><i class="bi bi-phone"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" id="previewDesktop"><i class="bi bi-laptop"></i></button>
+                    </div>
+                </div>
+                <div class="card-body p-2" style="background: #f0f0f0;">
+                    <div id="previewFrame" class="bg-white rounded p-3 mx-auto" style="max-width: 300px; min-height: 200px; border: 2px solid #ccc; border-radius: 20px !important;">
+                        <div class="text-center text-muted small mb-2" id="previewChannel">SMS Preview</div>
+                        <div class="bg-primary bg-opacity-10 rounded p-2 mb-2" id="previewSubject" style="display:none;">
+                            <small class="fw-bold" id="previewSubjectText">Subject line here</small>
+                        </div>
+                        <div id="previewBody" style="font-size: 0.85rem; word-wrap: break-word;">
+                            <span class="text-muted fst-italic">Start typing to see preview...</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card mt-3">
+            <!-- Estimated Reach -->
+            <div class="card shadow-sm mb-3">
                 <div class="card-body">
-                    <h6 class="card-title"><i class="bi bi-shield-check"></i> Compliance Check</h6>
-                    <div id="complianceCheck">
-                        <p class="text-muted small mb-0">Select recipients to check compliance</p>
+                    <h6 class="card-title"><i class="bi bi-bar-chart"></i> Estimated Reach</h6>
+                    <h3 class="text-primary mb-0" id="reachCount">-</h3>
+                    <p class="text-muted small mb-0">Recipients selected</p>
+                </div>
+            </div>
+
+            <!-- Template Picker -->
+            <div class="card shadow-sm mt-3" id="templateList" style="display:none">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Select Template</h6>
+                    <button type="button" class="btn-close btn-sm" onclick="document.getElementById('templateList').style.display='none'"></button>
+                </div>
+                <div class="card-body p-0" style="max-height:300px;overflow-y:auto">
+                    <div class="list-group list-group-flush" id="templateListItems">
+                        <span class="text-muted p-3">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -187,10 +237,121 @@
 </div>
 
 @section Scripts {
-    <script nonce="@Context.GetCspNonce()">
-        window.messagesComposeConfig = {
-            apiBaseUrl: '@ViewBag.ApiBaseUrl'
-        };
-    </script>
     <script src="~/js/messages-compose.js" asp-append-version="true"></script>
+    <script nonce="@Context.GetCspNonce()">
+        $(document).ready(function() {
+            // A/B Test toggle
+            $('#enableABTest').on('change', function() {
+                $('#abTestSection').toggle(this.checked);
+            });
+
+            // A/B Test size slider
+            $('#abTestSize').on('input', function() {
+                $('#abTestSizeLabel').text(this.value + '% of recipients will receive test variants');
+            });
+
+            // Preview button
+            $('#previewBtn').on('click', function() {
+                updateMessagePreview();
+                $('html, body').animate({ scrollTop: $('#messagePreviewCard').offset().top - 100 }, 300);
+            });
+
+            // Live preview on typing
+            $('#messageBody').on('input', updateMessagePreview);
+            $('#subject').on('input', updateMessagePreview);
+
+            // Preview mode toggle
+            $('#previewMobile').on('click', function() {
+                $(this).addClass('active');
+                $('#previewDesktop').removeClass('active');
+                $('#previewFrame').css('max-width', '300px');
+            });
+            $('#previewDesktop').on('click', function() {
+                $(this).addClass('active');
+                $('#previewMobile').removeClass('active');
+                $('#previewFrame').css('max-width', '100%');
+            });
+
+            // Channel change updates preview
+            $('input[name="channel"]').on('change', function() {
+                var channel = $('input[name="channel"]:checked').val();
+                var names = {0: 'SMS', 1: 'MMS', 2: 'Email'};
+                $('#previewChannel').text(names[channel] + ' Preview');
+                $('#previewSubject').toggle(channel === '2');
+                updateMessagePreview();
+            });
+
+            // SMS segment counter
+            $('#messageBody').on('input', function() {
+                var len = this.value.length;
+                var channel = $('input[name="channel"]:checked').val();
+                if (channel === '0') {
+                    var segments = len <= 160 ? 1 : Math.ceil(len / 153);
+                    $('#segmentCounter').text(segments + ' segment' + (segments > 1 ? 's' : '')).show();
+                } else {
+                    $('#segmentCounter').hide();
+                }
+            });
+
+            // Test Send
+            $('#testSendBtn').on('click', function() {
+                var email = prompt('Enter email or phone number for test send:');
+                if (!email) return;
+                var btn = $(this);
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Sending...');
+
+                $.ajax({
+                    url: '/Messages/SendMessage',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        channel: parseInt($('input[name="channel"]:checked').val()),
+                        testRecipient: email,
+                        subject: $('#subject').val(),
+                        messageBody: $('#messageBody').val(),
+                        isTest: true
+                    }),
+                    success: function(r) {
+                        if (typeof showNotification === 'function')
+                            showNotification(r.success ? 'Test message sent!' : (r.message || 'Failed'), r.success ? 'success' : 'error');
+                    },
+                    error: function() {
+                        if (typeof showNotification === 'function')
+                            showNotification('Test send failed', 'error');
+                    },
+                    complete: function() {
+                        btn.prop('disabled', false).html('<i class="bi bi-send-check"></i> Test Send');
+                    }
+                });
+            });
+        });
+
+        function updateMessagePreview() {
+            var body = $('#messageBody').val() || '';
+            if (!body) {
+                $('#previewBody').html('<span class="text-muted fst-italic">Start typing to see preview...</span>');
+                return;
+            }
+
+            // Replace tokens with sample data
+            var preview = body
+                .replace(/\{FirstName\}/g, '<span class="text-primary fw-bold">John</span>')
+                .replace(/\{LastName\}/g, '<span class="text-primary fw-bold">Smith</span>')
+                .replace(/\{Email\}/g, '<span class="text-primary">john@example.com</span>')
+                .replace(/\{Phone\}/g, '<span class="text-primary">+1 555-123-4567</span>')
+                .replace(/\{CompanyName\}/g, '<span class="text-primary">Your Company</span>')
+                .replace(/\{UnsubscribeLink\}/g, '<a href="#" class="text-decoration-underline">Unsubscribe</a>')
+                .replace(/\{ShortLink\}/g, '<a href="#" class="text-decoration-underline">sho.rt/abc</a>')
+                .replace(/\{Date\}/g, '<span class="text-primary">' + new Date().toLocaleDateString() + '</span>')
+                .replace(/\n/g, '<br>');
+
+            $('#previewBody').html(preview);
+
+            // Update subject preview
+            var subject = $('#subject').val() || '';
+            if (subject) {
+                $('#previewSubjectText').text(subject);
+            }
+        }
+    </script>
 }

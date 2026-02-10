@@ -9,5 +9,7 @@ namespace MarketingPlatform.Application.Interfaces
         Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request);
         Task<bool> LogoutAsync(string userId);
         Task<bool> ChangePasswordAsync(string userId, ChangePasswordDto request);
+        Task<bool> VerifyEmailAsync(VerifyEmailRequestDto request);
+        Task<bool> ResendOtpAsync(ResendOtpRequestDto request);
     }
 }

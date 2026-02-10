@@ -46,22 +46,20 @@ public class JourneysController : Controller
     /// Get journeys data for DataTables (SERVER-SIDE AJAX)
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetJourneys([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetJourneys([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/journeys",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "createdAt",
-                    sortDirection = "desc",
-                    status = request.Status
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/journeys?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=createdAt&sortDescending=true";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -312,6 +310,161 @@ public class JourneysController : Controller
         {
             _logger.LogError(ex, "Error fetching journey {JourneyId}", id);
             return Json(new { success = false, message = "An error occurred while fetching the journey" });
+        }
+    }
+
+    /// <summary>
+    /// Get journey statistics (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetJourneyStats(int id)
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/journeys/{id}/stats");
+
+            if (result?.Success == true)
+            {
+                return Json(new { success = true, data = result.Data });
+            }
+
+            return Json(new { success = false, message = result?.Message ?? "Stats not found" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching journey stats {JourneyId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Get journey executions (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> GetJourneyExecutions(int id, [FromBody] DataTablesRequest? request)
+    {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
+        try
+        {
+            var pageNumber = (request.Start / pageSize) + 1;
+            var queryString = $"/api/journeys/{id}/executions?pageNumber={pageNumber}&pageSize={pageSize}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
+
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                var items = dataObj?.GetProperty("items");
+                var totalCount = dataObj?.GetProperty("totalCount").GetInt32() ?? 0;
+
+                return Json(new
+                {
+                    draw = request.Draw,
+                    recordsTotal = totalCount,
+                    recordsFiltered = totalCount,
+                    data = items
+                });
+            }
+
+            return Json(new
+            {
+                draw = request.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = new object[] { }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching journey executions {JourneyId}", id);
+            return Json(new
+            {
+                draw = request.Draw,
+                recordsTotal = 0,
+                recordsFiltered = 0,
+                data = new object[] { }
+            });
+        }
+    }
+
+    /// <summary>
+    /// Duplicate journey (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> Duplicate(int id)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                $"/api/journeys/{id}/duplicate",
+                new { }
+            );
+
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed", data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error duplicating journey {JourneyId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Pause an execution (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> PauseExecution(int executionId)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                $"/api/journeys/executions/{executionId}/pause", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Done" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error pausing execution {ExecutionId}", executionId);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Resume an execution (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> ResumeExecution(int executionId)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                $"/api/journeys/executions/{executionId}/resume", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Done" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resuming execution {ExecutionId}", executionId);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Cancel an execution (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CancelExecution(int executionId)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                $"/api/journeys/executions/{executionId}/cancel", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Done" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error cancelling execution {ExecutionId}", executionId);
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 }

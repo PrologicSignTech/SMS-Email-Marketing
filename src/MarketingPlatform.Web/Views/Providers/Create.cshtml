@@ -22,9 +22,9 @@
                         <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
                         <select class="form-select" id="type" required>
                             <option value="">Select Type</option>
-                            <option value="SMS">SMS</option>
-                            <option value="MMS">MMS</option>
-                            <option value="Email">Email</option>
+                            <option value="0">SMS</option>
+                            <option value="1">MMS</option>
+                            <option value="2">Email</option>
                         </select>
                     </div>
                 </div>
@@ -40,14 +40,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="endpoint" class="form-label">API Endpoint</label>
-                    <input type="url" class="form-control" id="endpoint" placeholder="https://api.provider.com">
+                    <label for="configuration" class="form-label">Configuration (JSON)</label>
+                    <textarea class="form-control" id="configuration" rows="3" placeholder='{"endpoint": "https://api.provider.com"}'></textarea>
                 </div>
 
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isDefault">
-                        <label class="form-check-label" for="isDefault">Set as default provider for this type</label>
+                        <input class="form-check-input" type="checkbox" id="isPrimary">
+                        <label class="form-check-label" for="isPrimary">Set as default provider for this type</label>
                     </div>
                 </div>
 
@@ -60,8 +60,7 @@
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="@Url.Action("Index", "Providers")" class="btn btn-secondary">Cancel</a>
-                    <button type="button" class="btn btn-outline-primary" onclick="testConnection()"><i class="bi bi-play"></i> Test Connection</button>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Add Provider</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn"><i class="bi bi-check-circle"></i> Add Provider</button>
                 </div>
             </form>
         </div>
@@ -69,15 +68,44 @@
 </div>
 
 @section Scripts {
-    <script nonce="@Context.GetCspNonce()">
-        function testConnection() {
-            alert('Testing connection... (Demo)');
-        }
-
+    <script>
         document.getElementById('providerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Provider added! (Demo)');
-            window.location.href = '/Providers/Index';
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+            var data = {
+                name: document.getElementById('name').value.trim(),
+                type: parseInt(document.getElementById('type').value),
+                apiKey: document.getElementById('apiKey').value,
+                apiSecret: document.getElementById('apiSecret').value || null,
+                configuration: document.getElementById('configuration').value.trim() || null,
+                isPrimary: document.getElementById('isPrimary').checked,
+                isActive: document.getElementById('isActive').checked
+            };
+
+            $.ajax({
+                url: '/Providers/CreateProvider',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Provider created successfully!', 'success');
+                        setTimeout(function() { window.location.href = '/Providers/Index'; }, 1000);
+                    } else {
+                        showNotification(response.message || 'Failed to create provider', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-circle"></i> Add Provider';
+                    }
+                },
+                error: function() {
+                    showNotification('An error occurred', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Add Provider';
+                }
+            });
         });
     </script>
 }

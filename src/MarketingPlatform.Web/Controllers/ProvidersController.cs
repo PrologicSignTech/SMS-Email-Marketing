@@ -47,22 +47,22 @@ public class ProvidersController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetProviders([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetProviders([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/providers",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "name",
-                    sortDirection = "asc",
-                    type = request.Type
-                }
-            );
+            // API endpoint is [HttpGet] with [FromQuery] PagedRequest
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+
+            var queryString = $"/api/providers?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=name&sortDescending=false";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -145,72 +145,73 @@ public class ProvidersController : Controller
     }
 
     /// <summary>
-    /// Create new provider
+    /// Create new provider page
     /// </summary>
-    public async Task<IActionResult> Create()
-    {
-        try
-        {
-            // Load channel types for dropdown (SMS, Email, WhatsApp, etc.)
-            var channelTypes = await _apiClient.GetAsync<ApiResponse<object>>("/api/providers/channeltypes");
-            ViewBag.ChannelTypes = channelTypes?.Data;
-
-            return View();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error loading provider creation data");
-            TempData["Error"] = "Failed to load required data for provider creation";
-            return RedirectToAction(nameof(Index));
-        }
-    }
-
-    /// <summary>
-    /// Edit provider configuration
-    /// </summary>
-    public async Task<IActionResult> Edit(int id)
-    {
-        try
-        {
-            var providerTask = _apiClient.GetAsync<ApiResponse<object>>($"/api/providers/{id}");
-            var channelTypesTask = _apiClient.GetAsync<ApiResponse<object>>("/api/providers/channeltypes");
-
-            await Task.WhenAll(providerTask, channelTypesTask);
-
-            var provider = await providerTask;
-            var channelTypes = await channelTypesTask;
-
-            if (provider?.Success == true && provider.Data != null)
-            {
-                ViewBag.ProviderId = id;
-                ViewBag.ChannelTypes = channelTypes?.Data;
-                return View(provider.Data);
-            }
-
-            TempData["Error"] = "Provider not found";
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error loading provider {ProviderId}", id);
-            TempData["Error"] = "Failed to load provider";
-            return RedirectToAction(nameof(Index));
-        }
-    }
-
-    /// <summary>
-    /// Provider health monitoring
-    /// </summary>
-    public IActionResult Health()
+    public IActionResult Create()
     {
         return View();
     }
 
     /// <summary>
-    /// Routing configuration
+    /// Save new provider (SERVER-SIDE)
     /// </summary>
-    public IActionResult Routing()
+    [HttpPost]
+    public async Task<IActionResult> CreateProvider([FromBody] object providerData)
     {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/providers", providerData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Provider created" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating provider");
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Edit provider page
+    /// </summary>
+    public IActionResult Edit(int id)
+    {
+        ViewBag.ProviderId = id;
         return View();
+    }
+
+    /// <summary>
+    /// Get provider details for edit form (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetProvider(int id)
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/providers/{id}");
+            return Json(new { success = result?.Success ?? false, data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching provider {ProviderId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Update provider (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateProvider(int id, [FromBody] object providerData)
+    {
+        try
+        {
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>($"/api/providers/{id}", providerData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Provider updated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating provider {ProviderId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
     }
 }

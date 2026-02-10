@@ -109,6 +109,36 @@ namespace MarketingPlatform.API.Controllers
             }
         }
 
+        [HttpPost("verify-email")]
+        public async Task<ActionResult<ApiResponse<bool>>> VerifyEmail([FromBody] VerifyEmailRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.VerifyEmailAsync(request);
+                return Ok(ApiResponse<bool>.SuccessResponse(result, "Email verified successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Email verification failed");
+                return BadRequest(ApiResponse<bool>.ErrorResponse(ex.Message));
+            }
+        }
+
+        [HttpPost("resend-otp")]
+        public async Task<ActionResult<ApiResponse<bool>>> ResendOtp([FromBody] ResendOtpRequestDto request)
+        {
+            try
+            {
+                var result = await _authService.ResendOtpAsync(request);
+                return Ok(ApiResponse<bool>.SuccessResponse(result, "Verification code resent successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Resend OTP failed");
+                return BadRequest(ApiResponse<bool>.ErrorResponse(ex.Message));
+            }
+        }
+
         [Authorize]
         [HttpGet("me")]
         public ActionResult<ApiResponse<object>> GetCurrentUser()

@@ -16,13 +16,20 @@ namespace MarketingPlatform.Infrastructure.Services.FileStorageProviders
         {
             _configuration = configuration;
             _logger = logger;
-            _basePath = _configuration["FileStorage:Local:BasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-            
+            _basePath = _configuration["FileStorage:Local:BasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
             // Ensure base directory exists
-            if (!Directory.Exists(_basePath))
+            try
             {
-                Directory.CreateDirectory(_basePath);
-                _logger.LogInformation("Created local file storage directory: {BasePath}", _basePath);
+                if (!Directory.Exists(_basePath))
+                {
+                    Directory.CreateDirectory(_basePath);
+                    _logger.LogInformation("Created local file storage directory: {BasePath}", _basePath);
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Cannot create upload directory at {BasePath}. File uploads may not work until the directory is created manually.", _basePath);
             }
         }
 

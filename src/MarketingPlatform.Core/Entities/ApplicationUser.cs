@@ -9,7 +9,12 @@ namespace MarketingPlatform.Core.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
         public bool IsActive { get; set; } = true;
-        
+
+        // Email verification OTP
+        public string? EmailOtp { get; set; }
+        public DateTime? EmailOtpExpiresAt { get; set; }
+        public int EmailOtpAttempts { get; set; } = 0;
+
         // Chat-related properties
         public bool IsOnline { get; set; } = false;
         public DateTime? LastSeenAt { get; set; }

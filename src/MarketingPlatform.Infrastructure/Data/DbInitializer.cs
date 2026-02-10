@@ -25,6 +25,19 @@ namespace MarketingPlatform.Infrastructure.Data
                 await SeedPricingModelsAsync(context, logger);
                 await SeedLandingPageSettingsAsync(context, logger);
                 await SeedPageContentAsync(context, logger);
+                await SeedLandingFeaturesAsync(context, logger);
+                await SeedLandingFaqsAsync(context, logger);
+                await SeedTestimonialsAsync(context, logger);
+                await SeedTrustedCompaniesAsync(context, logger);
+                await SeedSecurityBadgesAsync(context, logger);
+                await SeedUseCasesAsync(context, logger);
+                await SeedLandingStatsAsync(context, logger);
+                await SeedFooterSettingsAsync(context, logger);
+                await SeedComplianceRulesAsync(context, logger);
+                await SeedFeatureTogglesAsync(context, logger);
+                await SeedPlatformConfigurationsAsync(context, logger);
+                await SeedFileStorageSettingsAsync(context, logger);
+                await SeedTaxConfigurationsAsync(context, logger);
 
                 logger?.LogInformation("Database seeding completed successfully.");
             }
@@ -42,7 +55,7 @@ namespace MarketingPlatform.Infrastructure.Data
             try
             {
                 // Seed Identity Roles
-                string[] identityRoles = { "Admin", "User", "Manager", "SuperAdmin" };
+                string[] identityRoles = { "Admin", "User", "Manager", "SuperAdmin", "Analyst", "Viewer" };
                 foreach (var role in identityRoles)
                 {
                     if (!await roleManager.RoleExistsAsync(role))
@@ -110,8 +123,11 @@ namespace MarketingPlatform.Infrastructure.Data
                             Permission.ViewSettings | Permission.ManageSettings |
                             Permission.ViewCompliance | Permission.ManageCompliance |
                             Permission.ViewAuditLogs |
-                            Permission.ViewUsers | Permission.CreateUsers | 
-                            Permission.EditUsers | Permission.ViewRoles),
+                            Permission.ViewUsers | Permission.CreateUsers |
+                            Permission.EditUsers | Permission.ViewRoles |
+                            Permission.ViewMessages | Permission.CreateMessages |
+                            Permission.ManageProviders | Permission.ViewBilling |
+                            Permission.ViewProfile),
                         IsSystemRole = true,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
@@ -127,10 +143,12 @@ namespace MarketingPlatform.Infrastructure.Data
                             Permission.ViewTemplates | Permission.CreateTemplates | 
                             Permission.EditTemplates |
                             Permission.ViewAnalytics | Permission.ViewDetailedAnalytics |
-                            Permission.ViewWorkflows | Permission.CreateWorkflows | 
+                            Permission.ViewWorkflows | Permission.CreateWorkflows |
                             Permission.EditWorkflows |
                             Permission.ViewCompliance |
-                            Permission.ViewUsers),
+                            Permission.ViewUsers |
+                            Permission.ViewMessages | Permission.CreateMessages |
+                            Permission.ViewProfile),
                         IsSystemRole = true,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
@@ -140,8 +158,9 @@ namespace MarketingPlatform.Infrastructure.Data
                         Name = "User",
                         Description = "Standard user with basic campaign and contact management",
                         Permissions = (long)(Permission.ViewCampaigns | Permission.CreateCampaigns |
-                            Permission.ViewContacts | Permission.CreateContacts | 
-                            Permission.ViewTemplates | Permission.ViewAnalytics),
+                            Permission.ViewContacts | Permission.CreateContacts |
+                            Permission.ViewTemplates | Permission.ViewAnalytics |
+                            Permission.ViewMessages | Permission.ViewProfile),
                         IsSystemRole = true,
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
@@ -1517,6 +1536,1708 @@ namespace MarketingPlatform.Infrastructure.Data
             catch (Exception ex)
             {
                 logger?.LogError(ex, "Error seeding page content.");
+                throw;
+            }
+        }
+        private static async Task SeedLandingFeaturesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding landing features...");
+
+            try
+            {
+                if (!await context.LandingFeatures.AnyAsync())
+                {
+                    logger?.LogInformation("Creating landing features...");
+
+                    var landingFeatures = new List<LandingFeature>
+                    {
+                        new LandingFeature
+                        {
+                            Title = "Multi-Channel Campaigns",
+                            ShortDescription = "Send SMS, MMS, and Email campaigns from one unified platform.",
+                            DetailedDescription = "Reach your audience on their preferred channels with our integrated multi-channel campaign builder. Create, schedule, and manage SMS, MMS, and email campaigns from a single dashboard. Use smart routing to automatically select the best channel for each contact based on engagement history and preferences.",
+                            IconClass = "bi-broadcast",
+                            ColorClass = "primary",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "Start Sending",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Channels",
+                            StatValue1 = "3+",
+                            StatTitle2 = "Delivery Rate",
+                            StatValue2 = "98.5%",
+                            StatTitle3 = "Avg. Open Rate",
+                            StatValue3 = "89%",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFeature
+                        {
+                            Title = "Advanced Analytics",
+                            ShortDescription = "Track campaign performance in real-time with detailed analytics.",
+                            DetailedDescription = "Make data-driven decisions with our comprehensive analytics dashboard. Monitor delivery rates, open rates, click-through rates, and conversions in real-time. Generate custom reports, compare campaign performance, and identify trends to optimize your marketing strategy.",
+                            IconClass = "bi-graph-up-arrow",
+                            ColorClass = "success",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "See Analytics",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Metrics",
+                            StatValue1 = "50+",
+                            StatTitle2 = "Report Types",
+                            StatValue2 = "12",
+                            StatTitle3 = "Real-time",
+                            StatValue3 = "Yes",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFeature
+                        {
+                            Title = "Automation & Scheduling",
+                            ShortDescription = "Automate your marketing workflows and schedule campaigns in advance.",
+                            DetailedDescription = "Save time and improve efficiency with powerful automation tools. Set up trigger-based campaigns, drip sequences, and scheduled sends. Create complex workflows with conditional logic, A/B testing, and automatic follow-ups. Let your marketing run on autopilot while you focus on strategy.",
+                            IconClass = "bi-clock-history",
+                            ColorClass = "info",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "Automate Now",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Time Saved",
+                            StatValue1 = "70%",
+                            StatTitle2 = "Workflow Steps",
+                            StatValue2 = "20+",
+                            StatTitle3 = "Triggers",
+                            StatValue3 = "15+",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFeature
+                        {
+                            Title = "Contact Management",
+                            ShortDescription = "Organize your contacts with dynamic groups and smart segmentation.",
+                            DetailedDescription = "Build and manage your contact database with ease. Import contacts from CSV, API, or manual entry. Create dynamic segments based on demographics, behavior, and engagement. Use tags and custom fields to organize your audience. Maintain compliance with built-in consent management and suppression lists.",
+                            IconClass = "bi-people",
+                            ColorClass = "warning",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "Manage Contacts",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Import Sources",
+                            StatValue1 = "5+",
+                            StatTitle2 = "Custom Fields",
+                            StatValue2 = "Unlimited",
+                            StatTitle3 = "Segments",
+                            StatValue3 = "Dynamic",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFeature
+                        {
+                            Title = "Template Library",
+                            ShortDescription = "Create reusable message templates with dynamic personalization.",
+                            DetailedDescription = "Build professional messages quickly with our template library. Choose from pre-designed templates or create your own. Use dynamic variables for personalized content at scale. Preview messages across different devices and channels before sending. Share templates across your team for consistent brand messaging.",
+                            IconClass = "bi-file-earmark-text",
+                            ColorClass = "danger",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "Browse Templates",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Templates",
+                            StatValue1 = "100+",
+                            StatTitle2 = "Variables",
+                            StatValue2 = "Dynamic",
+                            StatTitle3 = "Preview",
+                            StatValue3 = "Multi-device",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFeature
+                        {
+                            Title = "Compliance & Security",
+                            ShortDescription = "Stay compliant with GDPR, CAN-SPAM, and TCPA regulations.",
+                            DetailedDescription = "Enterprise-grade security and built-in compliance tools to protect your data and your customers. Automatic consent tracking, opt-out management, and suppression list handling. SOC 2 Type II certified infrastructure with end-to-end encryption. Regular security audits and penetration testing ensure your data stays safe.",
+                            IconClass = "bi-shield-check",
+                            ColorClass = "secondary",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CallToActionText = "Learn More",
+                            CallToActionUrl = "/Auth/Register",
+                            StatTitle1 = "Compliance",
+                            StatValue1 = "GDPR/TCPA",
+                            StatTitle2 = "Encryption",
+                            StatValue2 = "256-bit",
+                            StatTitle3 = "Uptime",
+                            StatValue3 = "99.9%",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.LandingFeatures.AddRange(landingFeatures);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} landing features.", landingFeatures.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Landing features already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding landing features.");
+                throw;
+            }
+        }
+
+        private static async Task SeedLandingFaqsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding landing FAQs...");
+
+            try
+            {
+                if (!await context.LandingFaqs.AnyAsync())
+                {
+                    logger?.LogInformation("Creating landing FAQs...");
+
+                    var faqs = new List<LandingFaq>
+                    {
+                        new LandingFaq
+                        {
+                            Question = "How do I get started with the platform?",
+                            Answer = "Getting started is easy! Simply create a free account, verify your email, and you'll have immediate access to our dashboard. From there, you can import your contacts, create your first campaign, and start sending messages. We also offer a guided onboarding tour and comprehensive documentation to help you every step of the way.",
+                            IconClass = "bi-rocket-takeoff",
+                            IconColor = "#667eea",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Getting Started",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "What messaging channels are supported?",
+                            Answer = "Our platform supports SMS (text messages), MMS (multimedia messages with images, videos, and files), and Email campaigns. You can use all three channels from a single dashboard, create multi-channel campaigns, and let our smart routing system choose the best channel for each contact based on their preferences and engagement history.",
+                            IconClass = "bi-chat-dots",
+                            IconColor = "#764ba2",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Features",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "Can I try the platform for free?",
+                            Answer = "Yes! We offer a free trial that includes 100 SMS messages, 50 MMS messages, and 500 emails. No credit card is required to sign up. You'll have full access to all features during the trial period so you can experience the full power of our platform before committing to a paid plan.",
+                            IconClass = "bi-gift",
+                            IconColor = "#f093fb",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Pricing",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "How does pricing work?",
+                            Answer = "We offer three flexible pricing plans: Starter ($29.99/month), Professional ($79.99/month), and Enterprise ($249.99/month). Each plan includes different message limits and features. You can also save up to 17% with annual billing. All plans include core features like contact management, basic analytics, and template access. Upgrade or downgrade at any time.",
+                            IconClass = "bi-currency-dollar",
+                            IconColor = "#28a745",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Pricing",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "Is my data secure and compliant?",
+                            Answer = "Absolutely. We take security and compliance very seriously. Our platform is SOC 2 Type II certified, uses 256-bit encryption for all data, and is fully compliant with GDPR, CAN-SPAM, and TCPA regulations. We provide built-in tools for consent management, opt-out handling, and suppression lists. Regular security audits and penetration testing ensure your data stays protected.",
+                            IconClass = "bi-shield-lock",
+                            IconColor = "#dc3545",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Security",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "Do you offer API access for developers?",
+                            Answer = "Yes! Our RESTful API provides programmatic access to all platform features including sending messages, managing contacts, creating campaigns, and retrieving analytics. We offer SDKs for popular programming languages, comprehensive API documentation, and webhook support for real-time event notifications. API access is available on Professional and Enterprise plans.",
+                            IconClass = "bi-code-slash",
+                            IconColor = "#17a2b8",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Features",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "What kind of support do you offer?",
+                            Answer = "We offer multiple levels of support depending on your plan. All plans include email support with a 24-hour response time. Professional plans get priority support with a 4-hour response time. Enterprise plans include 24/7 phone support and a dedicated account manager. We also provide extensive documentation, video tutorials, and a community forum for self-service help.",
+                            IconClass = "bi-headset",
+                            IconColor = "#6f42c1",
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Support",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingFaq
+                        {
+                            Question = "Can I import my existing contacts?",
+                            Answer = "Yes, you can easily import contacts from CSV files, Excel spreadsheets, or via our API. We also support direct integrations with popular CRM platforms like Salesforce, HubSpot, and Zoho. During import, our system automatically validates phone numbers and email addresses, removes duplicates, and checks against suppression lists to ensure compliance.",
+                            IconClass = "bi-cloud-upload",
+                            IconColor = "#fd7e14",
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            Category = "Getting Started",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.LandingFaqs.AddRange(faqs);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} landing FAQs.", faqs.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Landing FAQs already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding landing FAQs.");
+                throw;
+            }
+        }
+
+        private static async Task SeedTestimonialsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding testimonials...");
+
+            try
+            {
+                if (!await context.Testimonials.AnyAsync())
+                {
+                    logger?.LogInformation("Creating testimonials...");
+
+                    var testimonials = new List<Testimonial>
+                    {
+                        new Testimonial
+                        {
+                            CustomerName = "John Smith",
+                            CustomerTitle = "Marketing Director",
+                            CompanyName = "TechCorp Inc.",
+                            AvatarUrl = "/images/testimonials/avatar1.jpg",
+                            Rating = 5,
+                            TestimonialText = "This platform has completely transformed how we communicate with our customers. The automation features alone have saved us countless hours every week, and our campaign engagement rates have increased by 45% since we switched.",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new Testimonial
+                        {
+                            CustomerName = "Sarah Johnson",
+                            CustomerTitle = "CEO",
+                            CompanyName = "E-commerce Plus",
+                            AvatarUrl = "/images/testimonials/avatar2.jpg",
+                            Rating = 5,
+                            TestimonialText = "Outstanding service and support. Our email campaigns have never performed better, and the SMS integration has opened up an entirely new channel for customer engagement. Highly recommended for any growing business!",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new Testimonial
+                        {
+                            CustomerName = "Michael Chen",
+                            CustomerTitle = "Operations Manager",
+                            CompanyName = "Retail Solutions",
+                            AvatarUrl = "/images/testimonials/avatar3.jpg",
+                            Rating = 5,
+                            TestimonialText = "The multi-channel approach is exactly what we needed. We can now reach our customers on their preferred platforms seamlessly. The analytics dashboard gives us clear insights into what's working and what needs improvement.",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new Testimonial
+                        {
+                            CustomerName = "Emily Davis",
+                            CustomerTitle = "Digital Marketing Lead",
+                            CompanyName = "HealthFirst Clinic",
+                            AvatarUrl = "/images/testimonials/avatar4.jpg",
+                            Rating = 5,
+                            TestimonialText = "We reduced our patient no-show rate by 60% using the automated SMS reminders. The HIPAA-compliant messaging gives us peace of mind, and the scheduling features are incredibly intuitive. A must-have for healthcare marketing.",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new Testimonial
+                        {
+                            CustomerName = "David Park",
+                            CustomerTitle = "VP of Sales",
+                            CompanyName = "PropTech Realty",
+                            AvatarUrl = "/images/testimonials/avatar5.jpg",
+                            Rating = 4,
+                            TestimonialText = "The platform has been a game-changer for our real estate business. We use it for property alerts, open house invitations, and follow-up sequences. Our showing appointments increased by 35% within the first month.",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new Testimonial
+                        {
+                            CustomerName = "Lisa Martinez",
+                            CustomerTitle = "Founder",
+                            CompanyName = "FitLife Studios",
+                            AvatarUrl = "/images/testimonials/avatar6.jpg",
+                            Rating = 5,
+                            TestimonialText = "As a small business owner, I needed something powerful yet easy to use. This platform delivers on both fronts. The template library saved me so much time, and the pricing is very competitive compared to other solutions we evaluated.",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.Testimonials.AddRange(testimonials);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} testimonials.", testimonials.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Testimonials already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding testimonials.");
+                throw;
+            }
+        }
+
+        private static async Task SeedTrustedCompaniesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding trusted companies...");
+
+            try
+            {
+                if (!await context.TrustedCompanies.AnyAsync())
+                {
+                    logger?.LogInformation("Creating trusted companies...");
+
+                    var companies = new List<TrustedCompany>
+                    {
+                        new TrustedCompany
+                        {
+                            CompanyName = "Microsoft",
+                            LogoUrl = "/images/logos/microsoft.svg",
+                            WebsiteUrl = "https://microsoft.com",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Google",
+                            LogoUrl = "/images/logos/google.svg",
+                            WebsiteUrl = "https://google.com",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Salesforce",
+                            LogoUrl = "/images/logos/salesforce.svg",
+                            WebsiteUrl = "https://salesforce.com",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Shopify",
+                            LogoUrl = "/images/logos/shopify.svg",
+                            WebsiteUrl = "https://shopify.com",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "HubSpot",
+                            LogoUrl = "/images/logos/hubspot.svg",
+                            WebsiteUrl = "https://hubspot.com",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Slack",
+                            LogoUrl = "/images/logos/slack.svg",
+                            WebsiteUrl = "https://slack.com",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Stripe",
+                            LogoUrl = "/images/logos/stripe.svg",
+                            WebsiteUrl = "https://stripe.com",
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Zoom",
+                            LogoUrl = "/images/logos/zoom.svg",
+                            WebsiteUrl = "https://zoom.us",
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Adobe",
+                            LogoUrl = "/images/logos/adobe.svg",
+                            WebsiteUrl = "https://adobe.com",
+                            DisplayOrder = 9,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Cisco",
+                            LogoUrl = "/images/logos/cisco.svg",
+                            WebsiteUrl = "https://cisco.com",
+                            DisplayOrder = 10,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "IBM",
+                            LogoUrl = "/images/logos/ibm.svg",
+                            WebsiteUrl = "https://ibm.com",
+                            DisplayOrder = 11,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new TrustedCompany
+                        {
+                            CompanyName = "Intel",
+                            LogoUrl = "/images/logos/intel.svg",
+                            WebsiteUrl = "https://intel.com",
+                            DisplayOrder = 12,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.TrustedCompanies.AddRange(companies);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} trusted companies.", companies.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Trusted companies already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding trusted companies.");
+                throw;
+            }
+        }
+
+        private static async Task SeedSecurityBadgesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding security badges...");
+
+            try
+            {
+                if (!await context.SecurityBadges.AnyAsync())
+                {
+                    logger?.LogInformation("Creating security badges...");
+
+                    var badges = new List<SecurityBadge>
+                    {
+                        new SecurityBadge
+                        {
+                            Title = "GDPR Compliant",
+                            Subtitle = "EU Data Protection",
+                            IconUrl = "/images/badges/gdpr.svg",
+                            Description = "Fully compliant with the General Data Protection Regulation. We ensure your data is processed lawfully, transparently, and for specific purposes.",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new SecurityBadge
+                        {
+                            Title = "SOC 2 Type II",
+                            Subtitle = "Security Certified",
+                            IconUrl = "/images/badges/soc2.svg",
+                            Description = "SOC 2 Type II certified, demonstrating our commitment to security, availability, processing integrity, confidentiality, and privacy of customer data.",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new SecurityBadge
+                        {
+                            Title = "CCPA Compliant",
+                            Subtitle = "California Privacy",
+                            IconUrl = "/images/badges/ccpa.svg",
+                            Description = "Compliant with the California Consumer Privacy Act, ensuring California residents' rights to know, delete, and opt-out of the sale of their personal information.",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new SecurityBadge
+                        {
+                            Title = "TCPA Compliant",
+                            Subtitle = "Telecom Regulation",
+                            IconUrl = "/images/badges/tcpa.svg",
+                            Description = "Full compliance with the Telephone Consumer Protection Act. Built-in consent management, opt-out handling, and calling hour restrictions.",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new SecurityBadge
+                        {
+                            Title = "256-bit Encryption",
+                            Subtitle = "Data Protection",
+                            IconUrl = "/images/badges/encryption.svg",
+                            Description = "All data is encrypted at rest and in transit using industry-standard AES-256 encryption. Your sensitive information is always protected.",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new SecurityBadge
+                        {
+                            Title = "99.9% Uptime",
+                            Subtitle = "Service Reliability",
+                            IconUrl = "/images/badges/uptime.svg",
+                            Description = "Enterprise-grade infrastructure with 99.9% uptime SLA. Redundant systems, automatic failover, and 24/7 monitoring ensure your campaigns always get delivered.",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.SecurityBadges.AddRange(badges);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} security badges.", badges.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Security badges already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding security badges.");
+                throw;
+            }
+        }
+
+        private static async Task SeedUseCasesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding use cases...");
+
+            try
+            {
+                if (!await context.UseCases.AnyAsync())
+                {
+                    logger?.LogInformation("Creating use cases...");
+
+                    var useCases = new List<UseCase>
+                    {
+                        // E-Commerce
+                        new UseCase
+                        {
+                            Title = "Abandoned Cart Recovery",
+                            Description = "Recover lost sales with automated SMS and email reminders.\nSend personalized product recommendations based on browsing history.\nOffer time-sensitive discounts to encourage purchase completion.\nTrack recovery rates and optimize messaging for maximum ROI.",
+                            IconClass = "bi-cart-check",
+                            Industry = "E-Commerce",
+                            ImageUrl = "/images/use-cases/e-commerce.svg",
+                            ResultsText = "45% increase in recovered revenue",
+                            ColorClass = "primary",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new UseCase
+                        {
+                            Title = "Order Status Updates",
+                            Description = "Keep customers informed with real-time order tracking via SMS.\nAutomate shipping notifications and delivery confirmations.\nReduce support inquiries with proactive status updates.\nImprove customer satisfaction with timely communication.",
+                            IconClass = "bi-box-seam",
+                            Industry = "E-Commerce",
+                            ImageUrl = "/images/use-cases/e-commerce.svg",
+                            ResultsText = "30% reduction in support tickets",
+                            ColorClass = "info",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        // Healthcare
+                        new UseCase
+                        {
+                            Title = "Appointment Reminders",
+                            Description = "Reduce no-shows with automated appointment reminders via SMS.\nAllow patients to confirm or reschedule with simple text replies.\nSend pre-visit instructions and required documentation reminders.\nHIPAA-compliant messaging ensures patient privacy.",
+                            IconClass = "bi-calendar-check",
+                            Industry = "Healthcare",
+                            ImageUrl = "/images/use-cases/healthcare.svg",
+                            ResultsText = "60% reduction in no-show rates",
+                            ColorClass = "success",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new UseCase
+                        {
+                            Title = "Patient Engagement",
+                            Description = "Send wellness tips and preventive care reminders.\nFollow up after visits with care instructions and satisfaction surveys.\nPromote health screenings and vaccination campaigns.\nBuild lasting patient relationships through consistent communication.",
+                            IconClass = "bi-heart-pulse",
+                            Industry = "Healthcare",
+                            ImageUrl = "/images/use-cases/healthcare.svg",
+                            ResultsText = "40% improvement in patient engagement",
+                            ColorClass = "danger",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        // Real Estate
+                        new UseCase
+                        {
+                            Title = "Property Alerts",
+                            Description = "Send instant property alerts matching buyer preferences.\nShare virtual tour links and high-quality property images via MMS.\nSchedule open house invitations with one-click RSVP.\nAutomate follow-ups after property viewings.",
+                            IconClass = "bi-house-door",
+                            Industry = "Real Estate",
+                            ImageUrl = "/images/use-cases/real-estate.svg",
+                            ResultsText = "35% increase in property showings",
+                            ColorClass = "warning",
+                            DisplayOrder = 5,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        // Retail
+                        new UseCase
+                        {
+                            Title = "Promotional Campaigns",
+                            Description = "Drive foot traffic with location-based SMS promotions.\nSend flash sale alerts and exclusive member-only offers.\nCreate urgency with limited-time discount codes.\nTrack coupon redemption rates and campaign ROI.",
+                            IconClass = "bi-shop",
+                            Industry = "Retail",
+                            ImageUrl = "/images/use-cases/retail.svg",
+                            ResultsText = "50% increase in foot traffic during campaigns",
+                            ColorClass = "primary",
+                            DisplayOrder = 6,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        // SaaS
+                        new UseCase
+                        {
+                            Title = "User Onboarding",
+                            Description = "Guide new users through product setup with automated drip campaigns.\nSend helpful tips and tutorials based on user activity.\nReduce churn with engagement-triggered re-activation messages.\nCollect feedback with in-app survey links via SMS.",
+                            IconClass = "bi-cloud-check",
+                            Industry = "SaaS",
+                            ImageUrl = "/images/use-cases/saas.svg",
+                            ResultsText = "25% improvement in user activation rates",
+                            ColorClass = "info",
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        // Education
+                        new UseCase
+                        {
+                            Title = "Student Communication",
+                            Description = "Send class schedule updates and assignment reminders.\nNotify students about enrollment deadlines and campus events.\nShare emergency alerts and campus safety notifications.\nFacilitate parent-teacher communication for K-12 schools.",
+                            IconClass = "bi-mortarboard",
+                            Industry = "Education",
+                            ImageUrl = "/images/use-cases/education.svg",
+                            ResultsText = "55% increase in event attendance",
+                            ColorClass = "success",
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            IsDeleted = false,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.UseCases.AddRange(useCases);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} use cases.", useCases.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Use cases already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding use cases.");
+                throw;
+            }
+        }
+
+        private static async Task SeedLandingStatsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding landing stats...");
+
+            try
+            {
+                if (!await context.LandingStats.AnyAsync())
+                {
+                    logger?.LogInformation("Creating landing stats...");
+
+                    var stats = new List<LandingStat>
+                    {
+                        new LandingStat
+                        {
+                            Value = "10M+",
+                            Label = "Messages Sent",
+                            Description = "Over 10 million messages delivered successfully across all channels",
+                            IconClass = "bi-send-check",
+                            ColorClass = "primary",
+                            CounterTarget = 10000000,
+                            CounterSuffix = "+",
+                            CounterPrefix = "",
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingStat
+                        {
+                            Value = "98.5%",
+                            Label = "Delivery Rate",
+                            Description = "Industry-leading delivery rate across SMS, MMS, and Email channels",
+                            IconClass = "bi-check-circle",
+                            ColorClass = "success",
+                            CounterTarget = 98,
+                            CounterSuffix = ".5%",
+                            CounterPrefix = "",
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingStat
+                        {
+                            Value = "5,000+",
+                            Label = "Active Users",
+                            Description = "Trusted by over 5,000 businesses worldwide",
+                            IconClass = "bi-people",
+                            ColorClass = "info",
+                            CounterTarget = 5000,
+                            CounterSuffix = "+",
+                            CounterPrefix = "",
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new LandingStat
+                        {
+                            Value = "24/7",
+                            Label = "Support Available",
+                            Description = "Round-the-clock customer support for enterprise customers",
+                            IconClass = "bi-headset",
+                            ColorClass = "warning",
+                            CounterTarget = 24,
+                            CounterSuffix = "/7",
+                            CounterPrefix = "",
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            ShowOnLanding = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.LandingStats.AddRange(stats);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} landing stats.", stats.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Landing stats already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding landing stats.");
+                throw;
+            }
+        }
+
+        private static async Task SeedFooterSettingsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding footer settings...");
+
+            try
+            {
+                if (!await context.FooterSettings.AnyAsync())
+                {
+                    logger?.LogInformation("Creating footer settings...");
+
+                    var footerSettings = new FooterSettings
+                    {
+                        CompanyName = "Marketing Platform",
+                        CompanyDescription = "A powerful, enterprise-grade marketing platform for SMS, MMS, and Email campaigns. Reach your customers where they are and grow your business.",
+                        AddressLine1 = "123 Marketing Street",
+                        AddressLine2 = "San Francisco, CA 94102",
+                        Phone = "+1 (555) 123-4567",
+                        Email = "support@marketingplatform.com",
+                        BusinessHours = "Mon - Fri: 9:00 AM - 6:00 PM PST",
+                        MapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0977731692825!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDQ2JzI5LjYiTiAxMjLCsDI1JzA5LjgiVw!5e0!3m2!1sen!2sus!4v1234567890",
+                        FacebookUrl = "https://facebook.com/marketingplatform",
+                        TwitterUrl = "https://twitter.com/marketingplatform",
+                        LinkedInUrl = "https://linkedin.com/company/marketingplatform",
+                        InstagramUrl = "https://instagram.com/marketingplatform",
+                        YouTubeUrl = "https://youtube.com/@marketingplatform",
+                        CopyrightText = "\u00a9 2024 Marketing Platform. All rights reserved.",
+                        ShowNewsletter = true,
+                        NewsletterTitle = "Stay Updated",
+                        NewsletterDescription = "Subscribe to our newsletter for the latest marketing tips, product updates, and industry insights.",
+                        ShowMap = true,
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    context.FooterSettings.Add(footerSettings);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created footer settings.");
+                }
+                else
+                {
+                    logger?.LogInformation("Footer settings already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding footer settings.");
+                throw;
+            }
+        }
+
+        private static async Task SeedComplianceRulesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding compliance rules...");
+
+            try
+            {
+                if (!await context.ComplianceRules.IgnoreQueryFilters().AnyAsync())
+                {
+                    logger?.LogInformation("Creating compliance rules...");
+
+                    var complianceRules = new List<ComplianceRule>
+                    {
+                        new ComplianceRule
+                        {
+                            Name = "TCPA Consent Requirement",
+                            Description = "Requires prior express written consent before sending SMS/MMS marketing messages to US phone numbers, as mandated by the Telephone Consumer Protection Act.",
+                            RuleType = ComplianceRuleType.ConsentManagement,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"region\":\"US\",\"channels\":[\"SMS\",\"MMS\"],\"consentType\":\"express_written\",\"requireDoubleOptIn\":true}",
+                            Priority = 100,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = "US",
+                            ApplicableServices = "SMS,MMS",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "CAN-SPAM Unsubscribe Requirement",
+                            Description = "All commercial email must include a clear unsubscribe mechanism, and opt-out requests must be honored within 10 business days, as required by the CAN-SPAM Act.",
+                            RuleType = ComplianceRuleType.OptOutEnforcement,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"region\":\"US\",\"channels\":[\"Email\"],\"maxOptOutProcessingDays\":10,\"requireUnsubscribeLink\":true,\"requirePhysicalAddress\":true}",
+                            Priority = 95,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = "US",
+                            ApplicableServices = "Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "GDPR Data Protection",
+                            Description = "Ensures lawful processing of personal data for EU residents, including explicit consent, right to erasure, data portability, and breach notification within 72 hours.",
+                            RuleType = ComplianceRuleType.RegionalCompliance,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"region\":\"EU\",\"channels\":[\"SMS\",\"MMS\",\"Email\"],\"requireExplicitConsent\":true,\"rightToErasure\":true,\"dataPortability\":true,\"breachNotificationHours\":72}",
+                            Priority = 100,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = "EU,EEA,UK",
+                            ApplicableServices = "SMS,MMS,Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "CCPA Consumer Rights",
+                            Description = "California Consumer Privacy Act compliance ensuring California residents' right to know, delete, and opt-out of the sale of personal information.",
+                            RuleType = ComplianceRuleType.RegionalCompliance,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"region\":\"US-CA\",\"channels\":[\"SMS\",\"MMS\",\"Email\"],\"rightToKnow\":true,\"rightToDelete\":true,\"rightToOptOut\":true,\"doNotSellLink\":true}",
+                            Priority = 90,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = "US-CA",
+                            ApplicableServices = "SMS,MMS,Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "Data Retention Policy",
+                            Description = "Default data retention policy. Campaign message logs retained for 2 years, consent records for 7 years, analytics data for 3 years.",
+                            RuleType = ComplianceRuleType.DataRetention,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"messageLogRetentionDays\":730,\"consentRetentionDays\":2555,\"analyticsRetentionDays\":1095,\"auditLogRetentionDays\":2555,\"autoDeleteExpired\":false}",
+                            Priority = 80,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = null,
+                            ApplicableServices = "SMS,MMS,Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "Message Rate Limiting",
+                            Description = "Default rate limiting rule to prevent spam. Limits the number of messages per contact per channel within a time window.",
+                            RuleType = ComplianceRuleType.RateLimiting,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"smsMaxPerDay\":5,\"smsMaxPerWeek\":15,\"emailMaxPerDay\":3,\"emailMaxPerWeek\":10,\"mmsMaxPerDay\":3,\"mmsMaxPerWeek\":10,\"cooldownMinutes\":60}",
+                            Priority = 70,
+                            IsMandatory = false,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = null,
+                            ApplicableServices = "SMS,MMS,Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new ComplianceRule
+                        {
+                            Name = "Message Content Standards",
+                            Description = "Ensures message content meets platform standards. Prohibits spam, misleading content, and enforces required disclaimers.",
+                            RuleType = ComplianceRuleType.MessageContent,
+                            Status = ComplianceRuleStatus.Active,
+                            Configuration = "{\"requireSenderIdentification\":true,\"prohibitMisleadingSubjects\":true,\"requireOptOutInstructions\":true,\"maxSmsLength\":1600,\"prohibitedContentKeywords\":[\"guaranteed\",\"free money\",\"act now\"]}",
+                            Priority = 75,
+                            IsMandatory = true,
+                            EffectiveFrom = DateTime.UtcNow,
+                            ApplicableRegions = null,
+                            ApplicableServices = "SMS,MMS,Email",
+                            CreatedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.ComplianceRules.AddRange(complianceRules);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} compliance rules.", complianceRules.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Compliance rules already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding compliance rules.");
+                throw;
+            }
+        }
+
+        private static async Task SeedFeatureTogglesAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding feature toggles...");
+
+            try
+            {
+                if (!await context.FeatureToggles.IgnoreQueryFilters().AnyAsync())
+                {
+                    logger?.LogInformation("Creating feature toggles...");
+
+                    var featureToggles = new List<FeatureToggle>
+                    {
+                        new FeatureToggle
+                        {
+                            Name = "sms_campaigns",
+                            DisplayName = "SMS Campaigns",
+                            Description = "Enable SMS campaign creation and sending",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Messaging",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "mms_campaigns",
+                            DisplayName = "MMS Campaigns",
+                            Description = "Enable MMS multimedia campaign creation and sending",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Messaging",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "email_campaigns",
+                            DisplayName = "Email Campaigns",
+                            Description = "Enable email campaign creation and sending",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Messaging",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "automation_workflows",
+                            DisplayName = "Automation Workflows",
+                            Description = "Enable workflow automation engine for trigger-based campaigns",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Automation",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "ab_testing",
+                            DisplayName = "A/B Testing",
+                            Description = "Enable A/B testing for campaigns with variant analytics",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Campaigns",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "advanced_analytics",
+                            DisplayName = "Advanced Analytics",
+                            Description = "Enable detailed analytics, custom reports, and export functionality",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            EnabledForRoles = "SuperAdmin,Admin,Manager,Analyst",
+                            Category = "Analytics",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "api_access",
+                            DisplayName = "API Access",
+                            Description = "Enable REST API access for programmatic platform usage",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Integration",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "live_chat",
+                            DisplayName = "Live Chat Support",
+                            Description = "Enable real-time chat support for customers",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Support",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "contact_import",
+                            DisplayName = "Contact Import",
+                            Description = "Enable bulk contact import from CSV, Excel, and API",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Contacts",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "dynamic_groups",
+                            DisplayName = "Dynamic Contact Groups",
+                            Description = "Enable rule-based dynamic contact group segmentation",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Contacts",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "url_shortening",
+                            DisplayName = "URL Shortening & Tracking",
+                            Description = "Enable automatic URL shortening and click tracking in campaigns",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Campaigns",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        },
+                        new FeatureToggle
+                        {
+                            Name = "two_factor_auth",
+                            DisplayName = "Two-Factor Authentication",
+                            Description = "Enable two-factor authentication for user accounts",
+                            Status = FeatureToggleStatus.Enabled,
+                            IsEnabled = true,
+                            Category = "Security",
+                            ModifiedBy = "System",
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.FeatureToggles.AddRange(featureToggles);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} feature toggles.", featureToggles.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Feature toggles already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding feature toggles.");
+                throw;
+            }
+        }
+
+        private static async Task SeedPlatformConfigurationsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding platform configurations...");
+
+            try
+            {
+                if (!await context.PlatformConfigurations.AnyAsync())
+                {
+                    logger?.LogInformation("Creating platform configurations...");
+
+                    var configs = new List<PlatformConfiguration>
+                    {
+                        // General Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Platform.Name",
+                            Value = "Marketing Platform",
+                            Category = ConfigurationCategory.General,
+                            DataType = "string",
+                            Description = "Platform display name",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Platform.SupportEmail",
+                            Value = "support@marketingplatform.com",
+                            Category = ConfigurationCategory.General,
+                            DataType = "string",
+                            Description = "Support email address displayed to users",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Platform.DefaultTimezone",
+                            Value = "America/New_York",
+                            Category = ConfigurationCategory.General,
+                            DataType = "string",
+                            Description = "Default timezone for new users and scheduled campaigns",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Platform.MaxFileUploadSizeMB",
+                            Value = "25",
+                            Category = ConfigurationCategory.General,
+                            DataType = "int",
+                            Description = "Maximum file upload size in megabytes",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+
+                        // Security Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Security.PasswordMinLength",
+                            Value = "8",
+                            Category = ConfigurationCategory.Security,
+                            DataType = "int",
+                            Description = "Minimum password length requirement",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Security.MaxLoginAttempts",
+                            Value = "5",
+                            Category = ConfigurationCategory.Security,
+                            DataType = "int",
+                            Description = "Maximum failed login attempts before account lockout",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Security.LockoutDurationMinutes",
+                            Value = "30",
+                            Category = ConfigurationCategory.Security,
+                            DataType = "int",
+                            Description = "Account lockout duration in minutes",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Security.SessionTimeoutMinutes",
+                            Value = "60",
+                            Category = ConfigurationCategory.Security,
+                            DataType = "int",
+                            Description = "User session timeout in minutes",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Security.RefreshTokenExpirationDays",
+                            Value = "7",
+                            Category = ConfigurationCategory.Security,
+                            DataType = "int",
+                            Description = "JWT refresh token expiration in days",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+
+                        // Messaging Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Messaging.DefaultSMSSenderId",
+                            Value = "+15551234567",
+                            Category = ConfigurationCategory.Messaging,
+                            DataType = "string",
+                            Description = "Default SMS sender ID / phone number",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Messaging.DefaultEmailFrom",
+                            Value = "noreply@marketingplatform.com",
+                            Category = ConfigurationCategory.Messaging,
+                            DataType = "string",
+                            Description = "Default from email address for campaigns",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Messaging.MaxSMSPerBatch",
+                            Value = "1000",
+                            Category = ConfigurationCategory.Messaging,
+                            DataType = "int",
+                            Description = "Maximum number of SMS messages per batch send",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Messaging.MaxEmailPerBatch",
+                            Value = "5000",
+                            Category = ConfigurationCategory.Messaging,
+                            DataType = "int",
+                            Description = "Maximum number of emails per batch send",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Messaging.RetryMaxAttempts",
+                            Value = "3",
+                            Category = ConfigurationCategory.Messaging,
+                            DataType = "int",
+                            Description = "Maximum retry attempts for failed message delivery",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+
+                        // Compliance Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Compliance.QuietHoursStart",
+                            Value = "21:00",
+                            Category = ConfigurationCategory.Compliance,
+                            DataType = "string",
+                            Description = "Default quiet hours start time (no SMS/MMS sending)",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Compliance.QuietHoursEnd",
+                            Value = "08:00",
+                            Category = ConfigurationCategory.Compliance,
+                            DataType = "string",
+                            Description = "Default quiet hours end time",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Compliance.DefaultOptOutKeywords",
+                            Value = "STOP,UNSUBSCRIBE,CANCEL,END,QUIT",
+                            Category = ConfigurationCategory.Compliance,
+                            DataType = "string",
+                            Description = "Default opt-out keywords for SMS (comma-separated)",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Compliance.DefaultOptInKeywords",
+                            Value = "START,SUBSCRIBE,YES,JOIN",
+                            Category = ConfigurationCategory.Compliance,
+                            DataType = "string",
+                            Description = "Default opt-in keywords for SMS (comma-separated)",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+
+                        // Performance Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Performance.CacheDurationMinutes",
+                            Value = "15",
+                            Category = ConfigurationCategory.Performance,
+                            DataType = "int",
+                            Description = "Default cache duration for frequently accessed data",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Performance.MaxConcurrentCampaigns",
+                            Value = "10",
+                            Category = ConfigurationCategory.Performance,
+                            DataType = "int",
+                            Description = "Maximum concurrent campaign processing threads",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+
+                        // Billing Settings
+                        new PlatformConfiguration
+                        {
+                            Key = "Billing.Currency",
+                            Value = "USD",
+                            Category = ConfigurationCategory.Billing,
+                            DataType = "string",
+                            Description = "Default billing currency",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Billing.InvoicePrefix",
+                            Value = "INV",
+                            Category = ConfigurationCategory.Billing,
+                            DataType = "string",
+                            Description = "Invoice number prefix",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new PlatformConfiguration
+                        {
+                            Key = "Billing.GracePeriodDays",
+                            Value = "7",
+                            Category = ConfigurationCategory.Billing,
+                            DataType = "int",
+                            Description = "Number of grace period days after subscription expires",
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.PlatformConfigurations.AddRange(configs);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} platform configurations.", configs.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Platform configurations already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding platform configurations.");
+                throw;
+            }
+        }
+
+        private static async Task SeedFileStorageSettingsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding file storage settings...");
+
+            try
+            {
+                if (!await context.FileStorageSettings.AnyAsync())
+                {
+                    logger?.LogInformation("Creating file storage settings...");
+
+                    var storageSettings = new FileStorageSettings
+                    {
+                        ProviderName = "Local",
+                        LocalBasePath = "wwwroot/uploads",
+                        IsEnabled = true,
+                        IsDefault = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        ConfigurationJson = "{\"maxFileSizeMB\":25,\"allowedExtensions\":[\".jpg\",\".jpeg\",\".png\",\".gif\",\".svg\",\".pdf\",\".csv\",\".xlsx\",\".mp4\",\".webp\"],\"createThumbnails\":true,\"thumbnailWidth\":200,\"thumbnailHeight\":200}"
+                    };
+
+                    context.FileStorageSettings.Add(storageSettings);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created file storage settings.");
+                }
+                else
+                {
+                    logger?.LogInformation("File storage settings already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding file storage settings.");
+                throw;
+            }
+        }
+
+        private static async Task SeedTaxConfigurationsAsync(ApplicationDbContext context, ILogger? logger)
+        {
+            logger?.LogInformation("Seeding tax configurations...");
+
+            try
+            {
+                if (!await context.TaxConfigurations.AnyAsync())
+                {
+                    logger?.LogInformation("Creating tax configurations...");
+
+                    var taxConfigs = new List<TaxConfiguration>
+                    {
+                        new TaxConfiguration
+                        {
+                            Name = "US Federal - Communications Tax",
+                            Type = TaxType.ServiceFee,
+                            RegionCode = "US",
+                            Rate = 5.82m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 1,
+                            Configuration = "{\"description\":\"Federal Universal Service Fund fee applied to messaging services\",\"appliesTo\":[\"SMS\",\"MMS\"]}",
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new TaxConfiguration
+                        {
+                            Name = "US - Standard Sales Tax",
+                            Type = TaxType.SalesTax,
+                            RegionCode = "US",
+                            Rate = 0m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 2,
+                            Configuration = "{\"description\":\"Default US sales tax rate - varies by state, set to 0 as placeholder\",\"note\":\"Override per state as needed\"}",
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new TaxConfiguration
+                        {
+                            Name = "EU VAT - Standard Rate",
+                            Type = TaxType.VAT,
+                            RegionCode = "EU",
+                            Rate = 20.0m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 1,
+                            Configuration = "{\"description\":\"Standard EU VAT rate for digital services\",\"reverseChargeEligible\":true}",
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new TaxConfiguration
+                        {
+                            Name = "UK VAT - Standard Rate",
+                            Type = TaxType.VAT,
+                            RegionCode = "UK",
+                            Rate = 20.0m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 1,
+                            Configuration = "{\"description\":\"UK VAT standard rate for digital services\"}",
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new TaxConfiguration
+                        {
+                            Name = "Canada GST",
+                            Type = TaxType.GST,
+                            RegionCode = "CA",
+                            Rate = 5.0m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 1,
+                            Configuration = "{\"description\":\"Canadian Goods and Services Tax\"}",
+                            CreatedAt = DateTime.UtcNow
+                        },
+                        new TaxConfiguration
+                        {
+                            Name = "Platform Processing Fee",
+                            Type = TaxType.ProcessingFee,
+                            RegionCode = null,
+                            Rate = 2.9m,
+                            FlatAmount = 0.30m,
+                            IsPercentage = true,
+                            IsActive = true,
+                            Priority = 10,
+                            Configuration = "{\"description\":\"Payment processing fee (percentage + flat fee per transaction)\",\"appliesTo\":[\"card_payments\"]}",
+                            CreatedAt = DateTime.UtcNow
+                        }
+                    };
+
+                    context.TaxConfigurations.AddRange(taxConfigs);
+                    await context.SaveChangesAsync();
+                    logger?.LogInformation("Successfully created {Count} tax configurations.", taxConfigs.Count);
+                }
+                else
+                {
+                    logger?.LogInformation("Tax configurations already exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error seeding tax configurations.");
                 throw;
             }
         }

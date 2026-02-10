@@ -15,7 +15,9 @@ namespace MarketingPlatform.Application.Services
         private readonly IRepository<CampaignMessage> _messageRepository;
         private readonly IRepository<Contact> _contactRepository;
         private readonly IRepository<SuppressionList> _suppressionRepository;
+        private readonly IRepository<PhoneNumber> _phoneNumberRepository;
         private readonly IKeywordService _keywordService;
+        private readonly IEventTriggerService _eventTriggerService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<WebhookService> _logger;
 
@@ -23,14 +25,18 @@ namespace MarketingPlatform.Application.Services
             IRepository<CampaignMessage> messageRepository,
             IRepository<Contact> contactRepository,
             IRepository<SuppressionList> suppressionRepository,
+            IRepository<PhoneNumber> phoneNumberRepository,
             IKeywordService keywordService,
+            IEventTriggerService eventTriggerService,
             IUnitOfWork unitOfWork,
             ILogger<WebhookService> logger)
         {
             _messageRepository = messageRepository;
             _contactRepository = contactRepository;
             _suppressionRepository = suppressionRepository;
+            _phoneNumberRepository = phoneNumberRepository;
             _keywordService = keywordService;
+            _eventTriggerService = eventTriggerService;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -70,6 +76,28 @@ namespace MarketingPlatform.Application.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation("Updated message {MessageId} status to {Status}", message.Id, message.Status);
+
+                // Trigger workflow events based on delivery status
+                if (message.ContactId > 0)
+                {
+                    var eventData = new Dictionary<string, object>
+                    {
+                        { "messageId", message.Id },
+                        { "externalMessageId", externalMessageId },
+                        { "status", status }
+                    };
+
+                    if (message.Status == MessageStatus.Delivered)
+                    {
+                        await _eventTriggerService.TriggerEventAsync(EventType.MessageDelivered, message.ContactId, eventData);
+                    }
+                    else if (message.Status == MessageStatus.Failed)
+                    {
+                        eventData["errorMessage"] = errorMessage ?? "";
+                        await _eventTriggerService.TriggerEventAsync(EventType.MessageFailed, message.ContactId, eventData);
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -83,19 +111,61 @@ namespace MarketingPlatform.Application.Services
         {
             try
             {
-                _logger.LogInformation("Processing inbound message from {From}: {Body}", from, body);
+                _logger.LogInformation("Processing inbound message from {From} to {To}: {Body}", from, to, body);
 
-                // Check for keywords and process
+                // ── Step 1: Find which user owns the "to" number ──
+                // The "to" number is the platform number assigned to a specific user.
+                // This is the primary isolation mechanism — only that user's workflows trigger.
+                var assignedPhone = await _phoneNumberRepository
+                    .GetQueryable()
+                    .FirstOrDefaultAsync(p => p.Number == to && p.AssignedToUserId != null && !p.IsDeleted);
+
+                if (assignedPhone == null)
+                {
+                    _logger.LogWarning("Inbound to number {To} is not assigned to any user — skipping", to);
+                    return true;
+                }
+
+                var userId = assignedPhone.AssignedToUserId!;
+                _logger.LogInformation("Inbound number {To} belongs to user {UserId}", to, userId);
+
+                // ── Step 2: Process keywords for this user ──
                 await _keywordService.ProcessInboundKeywordAsync(from, body);
 
-                // TODO: Store inbound message in database if needed for future reference
-                // This could be useful for conversation tracking or compliance
+                // ── Step 3: Find the contact with this "from" phone that belongs to the SAME user ──
+                var contact = await _contactRepository
+                    .GetQueryable()
+                    .FirstOrDefaultAsync(c => c.PhoneNumber == from && c.UserId == userId && !c.IsDeleted);
+
+                if (contact == null)
+                {
+                    _logger.LogInformation("No contact found for phone {From} under user {UserId} — skipping workflow triggers", from, userId);
+                    return true;
+                }
+
+                // ── Step 4: Trigger workflows for this specific user's contact ──
+                var keyword = body.Trim().Split(' ')[0].ToUpperInvariant();
+
+                var eventData = new Dictionary<string, object>
+                {
+                    { "keyword", keyword },
+                    { "fullMessage", body },
+                    { "from", from },
+                    { "to", to }
+                };
+
+                // TriggerEventAsync + ProcessKeywordTriggerAsync both verify contact.UserId internally
+                await _eventTriggerService.TriggerEventAsync(EventType.KeywordReceived, contact.Id, eventData);
+                await _eventTriggerService.ProcessKeywordTriggerAsync(keyword, contact.Id);
+
+                _logger.LogInformation("Triggered workflow events for contact {ContactId} (user {UserId}) via number {To}",
+                    contact.Id, userId, to);
 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing inbound message from {From}", from);
+                _logger.LogError(ex, "Error processing inbound message from {From} to {To}", from, to);
                 return false;
             }
         }
@@ -195,8 +265,31 @@ namespace MarketingPlatform.Application.Services
                 _messageRepository.Update(message);
                 await _unitOfWork.SaveChangesAsync();
 
-                _logger.LogInformation("Updated message {MessageId} with delivery status: {Status}", 
+                _logger.LogInformation("Updated message {MessageId} with delivery status: {Status}",
                     message.Id, statusDto.Status);
+
+                // Trigger workflow events for delivery status changes
+                if (message.ContactId > 0)
+                {
+                    var eventData = new Dictionary<string, object>
+                    {
+                        { "messageId", message.Id },
+                        { "externalMessageId", externalMessageId },
+                        { "status", statusDto.Status }
+                    };
+
+                    var mappedStatus = MapProviderStatusToMessageStatus(statusDto.Status);
+                    if (mappedStatus == MessageStatus.Delivered)
+                    {
+                        await _eventTriggerService.TriggerEventAsync(EventType.MessageDelivered, message.ContactId, eventData);
+                    }
+                    else if (mappedStatus == MessageStatus.Failed)
+                    {
+                        eventData["errorMessage"] = statusDto.ErrorMessage ?? "";
+                        await _eventTriggerService.TriggerEventAsync(EventType.MessageFailed, message.ContactId, eventData);
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)

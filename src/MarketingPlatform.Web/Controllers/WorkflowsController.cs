@@ -7,7 +7,7 @@ using MarketingPlatform.Web.Models;
 namespace MarketingPlatform.Web.Controllers;
 
 /// <summary>
-/// Controller for managing automated workflows and journeys
+/// Controller for managing automated workflows
 /// SERVER-SIDE API INTEGRATION - Uses ApiClient for secure, reliable API calls
 /// </summary>
 [Authorize]
@@ -26,42 +26,31 @@ public class WorkflowsController : Controller
         _logger = logger;
         _httpContextAccessor = httpContextAccessor;
 
-        // Set authorization token from user's access_token claim
         var token = _httpContextAccessor.HttpContext?.User?.FindFirst("access_token")?.Value;
         if (!string.IsNullOrEmpty(token))
-        {
             _apiClient.SetAuthorizationToken(token);
-        }
     }
 
-    /// <summary>
-    /// Display workflows list
-    /// </summary>
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public IActionResult Index() => View();
 
     /// <summary>
-    /// Get workflows data for DataTables (SERVER-SIDE AJAX)
-    /// Web server calls API, not browser - more secure
+    /// Get workflows for DataTables (SERVER-SIDE AJAX)
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetWorkflows([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetWorkflows([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/workflows",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "createdAt",
-                    sortDirection = "desc"
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/workflows?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=createdAt&sortDescending=true";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -78,25 +67,113 @@ public class WorkflowsController : Controller
                 });
             }
 
-            return Json(new
-            {
-                draw = request.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
-                data = new object[] { }
-            });
+            return Json(new { draw = request.Draw, recordsTotal = 0, recordsFiltered = 0, data = new object[] { } });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error fetching workflows data");
-            return Json(new
+            return Json(new { draw = request.Draw, recordsTotal = 0, recordsFiltered = 0, data = new object[] { }, error = "Failed to load workflows" });
+        }
+    }
+
+    /// <summary>
+    /// Get single workflow by ID
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetWorkflow(int id)
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/workflows/{id}");
+            return Json(new { success = result?.Success ?? false, data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching workflow {WorkflowId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Create workflow page
+    /// </summary>
+    public async Task<IActionResult> Create()
+    {
+        try
+        {
+            var contactGroups = await _apiClient.GetAsync<ApiResponse<object>>("/api/contactgroups?pageNumber=1&pageSize=200");
+            ViewBag.ContactGroups = contactGroups?.Data;
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading workflow creation data");
+            TempData["Error"] = "Failed to load required data";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    /// <summary>
+    /// Save new workflow (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateWorkflow([FromBody] object workflowData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/workflows", workflowData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow created" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating workflow");
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Edit workflow page
+    /// </summary>
+    public async Task<IActionResult> Edit(int id)
+    {
+        try
+        {
+            var workflow = await _apiClient.GetAsync<ApiResponse<object>>($"/api/workflows/{id}");
+            var contactGroups = await _apiClient.GetAsync<ApiResponse<object>>("/api/contactgroups?pageNumber=1&pageSize=200");
+
+            if (workflow?.Success == true && workflow.Data != null)
             {
-                draw = request.Draw,
-                recordsTotal = 0,
-                recordsFiltered = 0,
-                data = new object[] { },
-                error = "Failed to load workflows"
-            });
+                ViewBag.WorkflowId = id;
+                ViewBag.ContactGroups = contactGroups?.Data;
+                return View(workflow.Data);
+            }
+
+            TempData["Error"] = "Workflow not found";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading workflow {WorkflowId}", id);
+            TempData["Error"] = "Failed to load workflow";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    /// <summary>
+    /// Update workflow (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateWorkflow(int id, [FromBody] object workflowData)
+    {
+        try
+        {
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>($"/api/workflows/{id}", workflowData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow updated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating workflow");
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 
@@ -108,12 +185,8 @@ public class WorkflowsController : Controller
     {
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<string>>(
-                $"/api/workflows/{id}/activate",
-                new { }
-            );
-
-            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed" });
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>($"/api/workflows/{id}/activate", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow activated" });
         }
         catch (Exception ex)
         {
@@ -130,12 +203,8 @@ public class WorkflowsController : Controller
     {
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<string>>(
-                $"/api/workflows/{id}/pause",
-                new { }
-            );
-
-            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed" });
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>($"/api/workflows/{id}/pause", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow paused" });
         }
         catch (Exception ex)
         {
@@ -152,11 +221,8 @@ public class WorkflowsController : Controller
     {
         try
         {
-            var result = await _apiClient.DeleteAsync<ApiResponse<bool>>(
-                $"/api/workflows/{id}"
-            );
-
-            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed" });
+            var result = await _apiClient.DeleteAsync<ApiResponse<bool>>($"/api/workflows/{id}");
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow deleted" });
         }
         catch (Exception ex)
         {
@@ -166,62 +232,20 @@ public class WorkflowsController : Controller
     }
 
     /// <summary>
-    /// Create new workflow page
+    /// Duplicate workflow (SERVER-SIDE)
     /// </summary>
-    public async Task<IActionResult> Create()
+    [HttpPost]
+    public async Task<IActionResult> Duplicate(int id)
     {
         try
         {
-            // Load reference data needed for workflow creation
-            var contactGroupsTask = _apiClient.GetAsync<ApiResponse<object>>("/api/contactgroups");
-            var templatesTask = _apiClient.GetAsync<ApiResponse<object>>("/api/templates");
-            var campaignsTask = _apiClient.GetAsync<ApiResponse<object>>("/api/campaigns");
-
-            await Task.WhenAll(contactGroupsTask, templatesTask, campaignsTask);
-
-            var contactGroups = await contactGroupsTask;
-            var templates = await templatesTask;
-            var campaigns = await campaignsTask;
-
-            ViewBag.ContactGroups = contactGroups?.Data;
-            ViewBag.Templates = templates?.Data;
-            ViewBag.Campaigns = campaigns?.Data;
-
-            return View();
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>($"/api/workflows/{id}/duplicate", new { });
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Workflow duplicated" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading workflow creation data");
-            TempData["Error"] = "Failed to load required data for workflow creation";
-            return RedirectToAction(nameof(Index));
-        }
-    }
-
-    /// <summary>
-    /// Edit workflow page
-    /// </summary>
-    public async Task<IActionResult> Edit(int id)
-    {
-        try
-        {
-            var workflow = await _apiClient.GetAsync<ApiResponse<object>>(
-                $"/api/workflows/{id}"
-            );
-
-            if (workflow?.Success == true && workflow.Data != null)
-            {
-                ViewBag.WorkflowId = id;
-                return View(workflow.Data);
-            }
-
-            TempData["Error"] = "Workflow not found";
-            return RedirectToAction(nameof(Index));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error loading workflow {WorkflowId}", id);
-            TempData["Error"] = "Failed to load workflow";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error duplicating workflow {WorkflowId}", id);
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 
@@ -232,12 +256,10 @@ public class WorkflowsController : Controller
     {
         try
         {
-            var workflow = await _apiClient.GetAsync<ApiResponse<object>>(
-                $"/api/workflows/{id}"
-            );
-
+            var workflow = await _apiClient.GetAsync<ApiResponse<object>>($"/api/workflows/{id}");
             if (workflow?.Success == true && workflow.Data != null)
             {
+                ViewBag.WorkflowId = id;
                 return View(workflow.Data);
             }
 

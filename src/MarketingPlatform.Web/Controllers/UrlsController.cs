@@ -47,21 +47,20 @@ public class UrlsController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetUrls([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetUrls([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/urls",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "createdAt",
-                    sortDirection = "desc"
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/urls?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=createdAt&sortDescending=true";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -122,23 +121,56 @@ public class UrlsController : Controller
     }
 
     /// <summary>
-    /// Create short URL
+    /// Create short URL page
     /// </summary>
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// Get campaigns for dropdown (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetCampaigns()
     {
         try
         {
-            // Load campaigns for URL tracking association
-            var campaigns = await _apiClient.GetAsync<ApiResponse<object>>("/api/campaigns");
-            ViewBag.Campaigns = campaigns?.Data;
-
-            return View();
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/campaigns?pageNumber=1&pageSize=200");
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, items = itemsElement });
+                }
+                return Json(new { success = true, items = result.Data });
+            }
+            return Json(new { success = false, items = new object[] { } });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading URL creation data");
-            TempData["Error"] = "Failed to load required data for URL creation";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error fetching campaigns");
+            return Json(new { success = false, items = new object[] { } });
+        }
+    }
+
+    /// <summary>
+    /// Save new URL (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateUrl([FromBody] object urlData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/urls", urlData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "URL created", data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating URL");
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 

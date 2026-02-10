@@ -22,13 +22,13 @@ namespace MarketingPlatform.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PaginatedResult<ContactDto>>>> GetContacts([FromQuery] PagedRequest request)
+        public async Task<ActionResult<ApiResponse<PaginatedResult<ContactDto>>>> GetContacts([FromQuery] PagedRequest request, [FromQuery] int? groupId = null)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var contacts = await _contactService.GetContactsAsync(userId, request);
+            var contacts = await _contactService.GetContactsAsync(userId, request, groupId);
             return Ok(ApiResponse<PaginatedResult<ContactDto>>.SuccessResponse(contacts));
         }
 

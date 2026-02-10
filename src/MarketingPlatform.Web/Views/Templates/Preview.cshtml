@@ -1,0 +1,210 @@
+@{
+    ViewData["Title"] = "Preview Template";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-eye"></i> Template Preview</h2>
+        <div>
+            <a href="@Url.Action("Edit", "Templates", new { id = ViewBag.TemplateId })" class="btn btn-outline-primary me-2">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Templates
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm" id="previewCard">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0" id="previewName">Loading...</h5>
+                    <span class="badge bg-secondary" id="previewChannel">-</span>
+                </div>
+                <div class="card-body">
+                    <div id="loadingSpinner" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Loading preview...</p>
+                    </div>
+
+                    <div id="previewContent" style="display:none">
+                        <!-- Subject (Email only) -->
+                        <div id="subjectPreview" style="display:none" class="mb-3">
+                            <label class="form-label fw-bold text-muted">Subject</label>
+                            <div class="border rounded p-2 bg-light" id="previewSubject"></div>
+                        </div>
+
+                        <!-- Message Body -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Message Body</label>
+                            <div class="border rounded p-3 bg-light" id="previewBody" style="white-space: pre-wrap; min-height: 100px;"></div>
+                            <small class="text-muted"><span id="previewCharCount">0</span> characters</small>
+                        </div>
+
+                        <!-- HTML Preview (Email only) -->
+                        <div id="htmlPreview" style="display:none" class="mb-3">
+                            <label class="form-label fw-bold text-muted">HTML Preview</label>
+                            <div class="border rounded bg-white" style="min-height: 200px;">
+                                <iframe id="htmlFrame" style="width:100%; min-height:300px; border:none;"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3" id="descriptionPreview" style="display:none">
+                            <label class="form-label fw-bold text-muted">Description</label>
+                            <p id="previewDescription" class="text-muted mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm" id="infoCard" style="display:none">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0"><i class="bi bi-info-circle me-1"></i> Template Info</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Status</small>
+                        <span id="previewStatus" class="badge">-</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Usage Count</small>
+                        <strong id="previewUsage">0</strong> times
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Created</small>
+                        <span id="previewCreated">-</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Last Updated</small>
+                        <span id="previewUpdated">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <h6><i class="bi bi-lightning me-1"></i> Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Edit", "Templates", new { id = ViewBag.TemplateId })" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i> Edit Template
+                        </a>
+                        <button class="btn btn-outline-success btn-sm" onclick="duplicateTemplate()">
+                            <i class="bi bi-copy me-1"></i> Duplicate
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteTemplate()">
+                            <i class="bi bi-trash me-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script nonce="@Context.GetCspNonce()">
+        const templateId = @(ViewBag.TemplateId ?? 0);
+        const channelNames = ['SMS', 'MMS', 'Email'];
+        const channelColors = ['success', 'info', 'primary'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPreview();
+        });
+
+        async function loadPreview() {
+            try {
+                const response = await fetch(`/Templates/GetTemplateById?id=${templateId}`);
+                const result = await response.json();
+
+                if (!result.success || !result.data) {
+                    showNotification(result.message || 'Template not found', 'error');
+                    return;
+                }
+
+                const tpl = result.data;
+
+                // Name & Channel
+                document.getElementById('previewName').textContent = tpl.name || 'Untitled';
+                const ch = tpl.channel || 0;
+                const channelBadge = document.getElementById('previewChannel');
+                channelBadge.textContent = channelNames[ch] || 'Unknown';
+                channelBadge.className = 'badge bg-' + (channelColors[ch] || 'secondary');
+
+                // Body
+                document.getElementById('previewBody').textContent = tpl.messageBody || '(No content)';
+                document.getElementById('previewCharCount').textContent = (tpl.messageBody || '').length;
+
+                // Subject (Email)
+                if (ch === 2 && tpl.subject) {
+                    document.getElementById('previewSubject').textContent = tpl.subject;
+                    document.getElementById('subjectPreview').style.display = '';
+                }
+
+                // HTML (Email)
+                if (ch === 2 && (tpl.htmlContent || tpl.htmlcontent)) {
+                    const iframe = document.getElementById('htmlFrame');
+                    iframe.srcdoc = tpl.htmlContent || tpl.htmlcontent;
+                    document.getElementById('htmlPreview').style.display = '';
+                }
+
+                // Description
+                if (tpl.description) {
+                    document.getElementById('previewDescription').textContent = tpl.description;
+                    document.getElementById('descriptionPreview').style.display = '';
+                }
+
+                // Info card
+                const statusEl = document.getElementById('previewStatus');
+                statusEl.textContent = tpl.isActive !== false ? 'Active' : 'Inactive';
+                statusEl.className = 'badge bg-' + (tpl.isActive !== false ? 'success' : 'secondary');
+                document.getElementById('previewUsage').textContent = tpl.usageCount || 0;
+                document.getElementById('previewCreated').textContent = tpl.createdAt ? new Date(tpl.createdAt).toLocaleDateString() : '-';
+                document.getElementById('previewUpdated').textContent = tpl.updatedAt ? new Date(tpl.updatedAt).toLocaleDateString() : '-';
+                document.getElementById('infoCard').style.display = '';
+
+                // Show content, hide spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('previewContent').style.display = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Failed to load template preview', 'error');
+            }
+        }
+
+        function duplicateTemplate() {
+            fetch(`/Templates/Duplicate?id=${templateId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(result => {
+                    if (result.success) {
+                        showNotification('Template duplicated!', 'success');
+                        setTimeout(() => { window.location.href = '/Templates'; }, 1000);
+                    } else {
+                        showNotification(result.message || 'Failed to duplicate', 'error');
+                    }
+                })
+                .catch(() => showNotification('Failed to duplicate template', 'error'));
+        }
+
+        function deleteTemplate() {
+            if (!confirm('Are you sure you want to delete this template? This cannot be undone.')) return;
+
+            fetch(`/Templates/Delete?id=${templateId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(result => {
+                    if (result.success) {
+                        showNotification('Template deleted!', 'success');
+                        setTimeout(() => { window.location.href = '/Templates'; }, 1000);
+                    } else {
+                        showNotification(result.message || 'Failed to delete', 'error');
+                    }
+                })
+                .catch(() => showNotification('Failed to delete template', 'error'));
+        }
+    </script>
+}

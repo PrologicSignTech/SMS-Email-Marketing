@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,8 @@ namespace MarketingPlatform.Infrastructure.Services
         private readonly ILogger<AuthService> _logger;
         private readonly IConfiguration _configuration;
         private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IEmailProvider _emailProvider;
+        private readonly IRepository<Role> _roleRepository;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
@@ -27,7 +30,9 @@ namespace MarketingPlatform.Infrastructure.Services
             ITokenService tokenService,
             ILogger<AuthService> logger,
             IConfiguration configuration,
-            IUserRoleRepository userRoleRepository)
+            IUserRoleRepository userRoleRepository,
+            IEmailProvider emailProvider,
+            IRepository<Role> roleRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -35,6 +40,8 @@ namespace MarketingPlatform.Infrastructure.Services
             _logger = logger;
             _configuration = configuration;
             _userRoleRepository = userRoleRepository;
+            _emailProvider = emailProvider;
+            _roleRepository = roleRepository;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
@@ -65,10 +72,29 @@ namespace MarketingPlatform.Infrastructure.Services
                 throw new Exception($"Registration failed: {errors}");
             }
 
-            // Assign default role
+            // Assign default Identity role
             await _userManager.AddToRoleAsync(user, "User");
 
-            _logger.LogInformation($"New user registered: {user.Email}");
+            // Assign custom role with permissions so menus and features are visible
+            var customUserRole = await _roleRepository.FirstOrDefaultAsync(r => r.Name == "User" && r.IsActive);
+            if (customUserRole != null)
+            {
+                await _userRoleRepository.AssignRoleToUserAsync(new UserRole
+                {
+                    UserId = user.Id,
+                    RoleId = customUserRole.Id,
+                    AssignedAt = DateTime.UtcNow
+                });
+            }
+            else
+            {
+                _logger.LogWarning("Custom 'User' role not found in database. New user {Email} will have no permissions.", user.Email);
+            }
+
+            // Generate and send OTP for email verification
+            await GenerateAndSendOtpAsync(user);
+
+            _logger.LogInformation("New user registered: {Email}. OTP sent for verification.", user.Email);
 
             var token = await _tokenService.GenerateJwtTokenAsync(user);
             var refreshToken = await _tokenService.GenerateRefreshTokenAsync();
@@ -209,6 +235,111 @@ namespace MarketingPlatform.Infrastructure.Services
 
             _logger.LogInformation($"Password changed for user: {user.Email}");
             return true;
+        }
+
+        public async Task<bool> VerifyEmailAsync(VerifyEmailRequestDto request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (user.EmailConfirmed)
+            {
+                throw new Exception("Email is already verified");
+            }
+
+            if (string.IsNullOrEmpty(user.EmailOtp) || user.EmailOtpExpiresAt == null)
+            {
+                throw new Exception("No verification code found. Please request a new one.");
+            }
+
+            if (DateTime.UtcNow > user.EmailOtpExpiresAt)
+            {
+                throw new Exception("Verification code has expired. Please request a new one.");
+            }
+
+            if (user.EmailOtpAttempts >= 5)
+            {
+                throw new Exception("Too many failed attempts. Please request a new verification code.");
+            }
+
+            if (user.EmailOtp != request.Otp)
+            {
+                user.EmailOtpAttempts++;
+                await _userManager.UpdateAsync(user);
+                throw new Exception("Invalid verification code");
+            }
+
+            // OTP is valid — confirm email
+            user.EmailConfirmed = true;
+            user.EmailOtp = null;
+            user.EmailOtpExpiresAt = null;
+            user.EmailOtpAttempts = 0;
+            await _userManager.UpdateAsync(user);
+
+            _logger.LogInformation("Email verified for user: {Email}", user.Email);
+            return true;
+        }
+
+        public async Task<bool> ResendOtpAsync(ResendOtpRequestDto request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (user.EmailConfirmed)
+            {
+                throw new Exception("Email is already verified");
+            }
+
+            await GenerateAndSendOtpAsync(user);
+
+            _logger.LogInformation("OTP resent for user: {Email}", user.Email);
+            return true;
+        }
+
+        private async Task GenerateAndSendOtpAsync(ApplicationUser user)
+        {
+            // Generate a 6-digit OTP
+            var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+
+            user.EmailOtp = otp;
+            user.EmailOtpExpiresAt = DateTime.UtcNow.AddMinutes(5); // 5 minute expiry
+            user.EmailOtpAttempts = 0;
+            await _userManager.UpdateAsync(user);
+
+            // Send OTP email
+            var subject = "Verify your email - Marketing Platform";
+            var htmlBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;'>
+                    <h2 style='color: #667eea;'>Email Verification</h2>
+                    <p>Hi {user.FirstName ?? "there"},</p>
+                    <p>Your verification code is:</p>
+                    <div style='background: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;'>
+                        <span style='font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #333;'>{otp}</span>
+                    </div>
+                    <p>This code will expire in <strong>5 minutes</strong>.</p>
+                    <p>If you didn't create an account, please ignore this email.</p>
+                    <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;' />
+                    <p style='color: #999; font-size: 12px;'>Marketing Platform</p>
+                </div>";
+            var textBody = $"Your verification code is: {otp}. It will expire in 5 minutes.";
+
+            var (success, _, error, _) = await _emailProvider.SendEmailAsync(user.Email!, subject, textBody, htmlBody);
+
+            if (!success)
+            {
+                _logger.LogWarning("Failed to send OTP email to {Email}: {Error}", user.Email, error);
+                // Don't throw — user is already created, OTP is saved, they can resend
+            }
+            else
+            {
+                _logger.LogInformation("OTP email sent to {Email}: {Otp}", user.Email, otp);
+            }
         }
 
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)

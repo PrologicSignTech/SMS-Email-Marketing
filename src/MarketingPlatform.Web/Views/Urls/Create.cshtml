@@ -37,10 +37,6 @@
                             <label for="campaignId" class="form-label">Associated Campaign</label>
                             <select class="form-select" id="campaignId">
                                 <option value="">None</option>
-                                <option value="1">Summer Sale 2024</option>
-                                <option value="2">Product Launch</option>
-                                <option value="3">Newsletter</option>
-                                <option value="4">Flash Deals</option>
                             </select>
                         </div>
 
@@ -97,43 +93,73 @@
 </div>
 
 @section Scripts {
-    <script nonce="@Context.GetCspNonce()">
-        const apiBaseUrl = '@ViewBag.ApiBaseUrl';
-        
+    <script>
+        $(document).ready(function() {
+            // Load campaigns
+            $.get('/Urls/GetCampaigns', function(response) {
+                var select = document.getElementById('campaignId');
+                if (response.success && response.items) {
+                    var items = Array.isArray(response.items) ? response.items : [];
+                    items.forEach(function(c) {
+                        var opt = document.createElement('option');
+                        opt.value = c.id || '';
+                        opt.textContent = c.name || 'Campaign #' + c.id;
+                        select.appendChild(opt);
+                    });
+                }
+            });
+        });
+
         document.getElementById('customCode').addEventListener('input', function() {
             this.value = this.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
         });
 
-        document.getElementById('urlForm').addEventListener('submit', async function(e) {
+        document.getElementById('urlForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const originalUrl = document.getElementById('originalUrl').value;
+
+            var originalUrl = document.getElementById('originalUrl').value;
             if (!originalUrl.startsWith('http://') && !originalUrl.startsWith('https://')) {
-                alert('Please enter a valid URL starting with http:// or https://');
+                showNotification('Please enter a valid URL starting with http:// or https://', 'error');
                 return;
             }
-            
-            const customCode = document.getElementById('customCode').value;
+
+            var customCode = document.getElementById('customCode').value;
             if (customCode && customCode.length < 3) {
-                alert('Custom code must be at least 3 characters long.');
+                showNotification('Custom code must be at least 3 characters.', 'error');
                 return;
             }
-            
-            try {
-                const data = {
-                    originalUrl: originalUrl,
-                    customCode: customCode || null,
-                    campaignId: document.getElementById('campaignId').value || null,
-                    tags: document.getElementById('tags').value,
-                    expiresAt: document.getElementById('expiresAt').value || null,
-                    trackClicks: document.getElementById('trackClicks').checked
-                };
-                
-                alert('Short URL created successfully! (Demo)');
-                window.location.href = '/Urls/Index';
-            } catch (error) {
-                alert('Failed to create short URL: ' + error.message);
-            }
+
+            var submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Creating...';
+
+            var data = {
+                originalUrl: originalUrl,
+                customShortCode: customCode || null,
+                campaignId: document.getElementById('campaignId').value ? parseInt(document.getElementById('campaignId').value) : null
+            };
+
+            $.ajax({
+                url: '/Urls/CreateUrl',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Short URL created successfully!', 'success');
+                        setTimeout(function() { window.location.href = '/Urls/Index'; }, 1000);
+                    } else {
+                        showNotification(response.message || 'Failed to create URL', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Create Short URL';
+                    }
+                },
+                error: function() {
+                    showNotification('An error occurred', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Create Short URL';
+                }
+            });
         });
     </script>
 }

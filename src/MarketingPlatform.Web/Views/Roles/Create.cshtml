@@ -29,38 +29,38 @@
                     <div class="col-md-6">
                         <h6>Campaign Management</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewCampaigns">
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewCampaigns" id="viewCampaigns">
                             <label class="form-check-label" for="viewCampaigns">View Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="createCampaigns">
+                            <input class="form-check-input perm-check" type="checkbox" value="CreateCampaigns" id="createCampaigns">
                             <label class="form-check-label" for="createCampaigns">Create Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editCampaigns">
+                            <input class="form-check-input perm-check" type="checkbox" value="EditCampaigns" id="editCampaigns">
                             <label class="form-check-label" for="editCampaigns">Edit Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="deleteCampaigns">
+                            <input class="form-check-input perm-check" type="checkbox" value="DeleteCampaigns" id="deleteCampaigns">
                             <label class="form-check-label" for="deleteCampaigns">Delete Campaigns</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <h6>Contact Management</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewContacts">
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewContacts" id="viewContacts">
                             <label class="form-check-label" for="viewContacts">View Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="createContacts">
+                            <input class="form-check-input perm-check" type="checkbox" value="CreateContacts" id="createContacts">
                             <label class="form-check-label" for="createContacts">Create Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editContacts">
+                            <input class="form-check-input perm-check" type="checkbox" value="EditContacts" id="editContacts">
                             <label class="form-check-label" for="editContacts">Edit Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="deleteContacts">
+                            <input class="form-check-input perm-check" type="checkbox" value="DeleteContacts" id="deleteContacts">
                             <label class="form-check-label" for="deleteContacts">Delete Contacts</label>
                         </div>
                     </div>
@@ -70,26 +70,26 @@
                     <div class="col-md-6">
                         <h6>Analytics</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewAnalytics">
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewAnalytics" id="viewAnalytics">
                             <label class="form-check-label" for="viewAnalytics">View Analytics</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="exportReports">
+                            <input class="form-check-input perm-check" type="checkbox" value="ExportReports" id="exportReports">
                             <label class="form-check-label" for="exportReports">Export Reports</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <h6>System Administration</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="manageUsers">
+                            <input class="form-check-input perm-check" type="checkbox" value="ManageUsers" id="manageUsers">
                             <label class="form-check-label" for="manageUsers">Manage Users</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="manageRoles">
+                            <input class="form-check-input perm-check" type="checkbox" value="ManageRoles" id="manageRoles">
                             <label class="form-check-label" for="manageRoles">Manage Roles</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="systemSettings">
+                            <input class="form-check-input perm-check" type="checkbox" value="SystemSettings" id="systemSettings">
                             <label class="form-check-label" for="systemSettings">System Settings</label>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
 
                 <div class="d-flex justify-content-end">
                     <a href="@Url.Action("Index", "Roles")" class="btn btn-secondary me-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
                         <i class="bi bi-check-circle"></i> Create Role
                     </button>
                 </div>
@@ -109,11 +109,45 @@
 </div>
 
 @section Scripts {
-    <script nonce="@Context.GetCspNonce()">
+    <script>
         document.getElementById('roleForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Role created successfully! (Demo)');
-            window.location.href = '/Roles/Index';
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Creating...';
+
+            var permissions = [];
+            document.querySelectorAll('.perm-check:checked').forEach(function(cb) {
+                permissions.push(cb.value);
+            });
+
+            var data = {
+                name: document.getElementById('roleName').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                permissions: permissions
+            };
+
+            $.ajax({
+                url: '/Roles/CreateRole',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Role created successfully!', 'success');
+                        setTimeout(function() { window.location.href = '/Roles/Index'; }, 1000);
+                    } else {
+                        showNotification(response.message || 'Failed to create role', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-circle"></i> Create Role';
+                    }
+                },
+                error: function() {
+                    showNotification('An error occurred', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Create Role';
+                }
+            });
         });
     </script>
 }

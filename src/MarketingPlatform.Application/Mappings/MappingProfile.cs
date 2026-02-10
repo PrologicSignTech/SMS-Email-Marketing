@@ -16,6 +16,8 @@ using MarketingPlatform.Application.DTOs.Configuration;
 using MarketingPlatform.Application.DTOs.Subscription;
 using MarketingPlatform.Application.DTOs.Billing;
 using MarketingPlatform.Application.DTOs.Pricing;
+using MarketingPlatform.Application.DTOs.PhoneNumber;
+using MarketingPlatform.Application.DTOs.SuppressionRule;
 using MarketingPlatform.Core.Entities;
 using MarketingPlatform.Core.Models;
 
@@ -47,9 +49,19 @@ namespace MarketingPlatform.Application.Mappings
             CreateMap<GroupRuleDto, GroupRule>();
 
             // Campaign mappings
-            CreateMap<Campaign, CampaignDto>();
-            CreateMap<CreateCampaignDto, Campaign>();
-            CreateMap<UpdateCampaignDto, Campaign>();
+            CreateMap<Campaign, CampaignDto>()
+                .ForMember(dest => dest.Content, opt => opt.Ignore())
+                .ForMember(dest => dest.Audience, opt => opt.Ignore())
+                .ForMember(dest => dest.Schedule, opt => opt.Ignore())
+                .ForMember(dest => dest.Variants, opt => opt.Ignore());
+            CreateMap<CreateCampaignDto, Campaign>()
+                .ForMember(dest => dest.Content, opt => opt.Ignore())
+                .ForMember(dest => dest.Audience, opt => opt.Ignore())
+                .ForMember(dest => dest.Schedule, opt => opt.Ignore());
+            CreateMap<UpdateCampaignDto, Campaign>()
+                .ForMember(dest => dest.Content, opt => opt.Ignore())
+                .ForMember(dest => dest.Audience, opt => opt.Ignore())
+                .ForMember(dest => dest.Schedule, opt => opt.Ignore());
             CreateMap<CampaignContent, CampaignContentDto>();
             CreateMap<CampaignAudience, CampaignAudienceDto>();
             CreateMap<CampaignSchedule, CampaignScheduleDto>();
@@ -202,6 +214,16 @@ namespace MarketingPlatform.Application.Mappings
             CreateMap<TaxConfiguration, TaxConfigurationDto>();
             CreateMap<CreateTaxConfigurationDto, TaxConfiguration>();
             CreateMap<UpdateTaxConfigurationDto, TaxConfiguration>();
+
+            // Phone Number mappings
+            CreateMap<PhoneNumber, PhoneNumberDto>()
+                .ForMember(dest => dest.AssignedToUserName, opt => opt.Ignore());
+            CreateMap<CreatePhoneNumberDto, PhoneNumber>();
+
+            // Suppression Rule mappings
+            CreateMap<SuppressionRule, SuppressionRuleDto>();
+            CreateMap<CreateSuppressionRuleDto, SuppressionRule>();
+            CreateMap<UpdateSuppressionRuleDto, SuppressionRule>();
         }
     }
 }

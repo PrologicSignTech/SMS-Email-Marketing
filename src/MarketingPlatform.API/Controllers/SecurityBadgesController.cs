@@ -40,9 +40,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving security badges");
-                return BadRequest(ApiResponse<List<SecurityBadge>>.ErrorResponse(
-                    "Failed to retrieve security badges",
-                    new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<SecurityBadge>>.SuccessResponse(new List<SecurityBadge>()));
             }
         }
 

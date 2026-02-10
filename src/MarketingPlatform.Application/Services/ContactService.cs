@@ -74,10 +74,20 @@ namespace MarketingPlatform.Application.Services
             return dto;
         }
 
-        public async Task<PaginatedResult<ContactDto>> GetContactsAsync(string userId, PagedRequest request)
+        public async Task<PaginatedResult<ContactDto>> GetContactsAsync(string userId, PagedRequest request, int? groupId = null)
         {
-            var query = (await _contactRepository.FindAsync(c => 
+            var query = (await _contactRepository.FindAsync(c =>
                 c.UserId == userId && !c.IsDeleted)).AsQueryable();
+
+            // Apply group filter
+            if (groupId.HasValue)
+            {
+                var groupMemberContactIds = (await _groupMemberRepository.FindAsync(gm =>
+                    gm.ContactGroupId == groupId.Value && !gm.IsDeleted))
+                    .Select(gm => gm.ContactId)
+                    .ToHashSet();
+                query = query.Where(c => groupMemberContactIds.Contains(c.Id));
+            }
 
             // Apply search
             if (!string.IsNullOrEmpty(request.SearchTerm))
@@ -115,11 +125,29 @@ namespace MarketingPlatform.Application.Services
                 .Take(request.PageSize)
                 .ToList();
 
+            // Preload all group memberships for the page of contacts
+            var contactIds = items.Select(c => c.Id).ToList();
+            var allGroupMembers = (await _groupMemberRepository.FindAsync(gm =>
+                contactIds.Contains(gm.ContactId) && !gm.IsDeleted)).ToList();
+            var allGroupIds = allGroupMembers.Select(gm => gm.ContactGroupId).Distinct().ToList();
+            var allGroups = (await _contactGroupRepository.FindAsync(g =>
+                allGroupIds.Contains(g.Id) && !g.IsDeleted)).ToDictionary(g => g.Id, g => g.Name);
+
             var dtos = new List<ContactDto>();
             foreach (var contact in items)
             {
                 var dto = _mapper.Map<ContactDto>(contact);
                 dto.CustomAttributes = DeserializeCustomAttributes(contact.CustomAttributes);
+
+                // Load groups for this contact
+                var memberGroupIds = allGroupMembers
+                    .Where(gm => gm.ContactId == contact.Id)
+                    .Select(gm => gm.ContactGroupId);
+                dto.Groups = memberGroupIds
+                    .Where(gid => allGroups.ContainsKey(gid))
+                    .Select(gid => allGroups[gid])
+                    .ToList();
+
                 dtos.Add(dto);
             }
 

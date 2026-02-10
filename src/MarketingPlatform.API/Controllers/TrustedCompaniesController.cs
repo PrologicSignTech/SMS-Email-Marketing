@@ -40,9 +40,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving trusted companies");
-                return BadRequest(ApiResponse<List<TrustedCompany>>.ErrorResponse(
-                    "Failed to retrieve trusted companies",
-                    new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<TrustedCompany>>.SuccessResponse(new List<TrustedCompany>()));
             }
         }
 

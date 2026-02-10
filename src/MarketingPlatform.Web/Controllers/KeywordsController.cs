@@ -47,22 +47,20 @@ public class KeywordsController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetKeywords([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetKeywords([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/keywords",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "createdAt",
-                    sortDirection = "desc",
-                    isActive = request.IsActive
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/keywords?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=createdAt&sortDescending=true";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -123,56 +121,129 @@ public class KeywordsController : Controller
     }
 
     /// <summary>
-    /// Create new keyword
+    /// Create new keyword page
     /// </summary>
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// Get phone numbers for short code dropdown (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetPhoneNumbers()
     {
         try
         {
-            // Load phone numbers/providers for dropdown
-            var providers = await _apiClient.GetAsync<ApiResponse<object>>("/api/providers");
-            ViewBag.Providers = providers?.Data;
-
-            return View();
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/phonenumbers?pageNumber=1&pageSize=200");
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, items = itemsElement });
+                }
+                return Json(new { success = true, items = result.Data });
+            }
+            return Json(new { success = false, items = new object[] { } });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading keyword creation data");
-            TempData["Error"] = "Failed to load required data for keyword creation";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error fetching phone numbers");
+            return Json(new { success = false, items = new object[] { } });
         }
     }
 
     /// <summary>
-    /// Edit keyword
+    /// Get campaigns for dropdown (SERVER-SIDE)
     /// </summary>
-    public async Task<IActionResult> Edit(int id)
+    [HttpGet]
+    public async Task<IActionResult> GetCampaigns()
     {
         try
         {
-            var keywordTask = _apiClient.GetAsync<ApiResponse<object>>($"/api/keywords/{id}");
-            var providersTask = _apiClient.GetAsync<ApiResponse<object>>("/api/providers");
-
-            await Task.WhenAll(keywordTask, providersTask);
-
-            var keyword = await keywordTask;
-            var providers = await providersTask;
-
-            if (keyword?.Success == true && keyword.Data != null)
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/campaigns?pageNumber=1&pageSize=200");
+            if (result?.Success == true)
             {
-                ViewBag.KeywordId = id;
-                ViewBag.Providers = providers?.Data;
-                return View(keyword.Data);
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, items = itemsElement });
+                }
+                return Json(new { success = true, items = result.Data });
             }
-
-            TempData["Error"] = "Keyword not found";
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = false, items = new object[] { } });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading keyword {KeywordId}", id);
-            TempData["Error"] = "Failed to load keyword";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error fetching campaigns");
+            return Json(new { success = false, items = new object[] { } });
+        }
+    }
+
+    /// <summary>
+    /// Save new keyword (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateKeyword([FromBody] object keywordData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/keywords", keywordData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Keyword created" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating keyword");
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Edit keyword page
+    /// </summary>
+    public IActionResult Edit(int id)
+    {
+        ViewBag.KeywordId = id;
+        return View();
+    }
+
+    /// <summary>
+    /// Get keyword details (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetKeyword(int id)
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/keywords/{id}");
+            return Json(new { success = result?.Success ?? false, data = result?.Data });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching keyword {KeywordId}", id);
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Update keyword (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateKeyword(int id, [FromBody] object keywordData)
+    {
+        try
+        {
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>($"/api/keywords/{id}", keywordData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Keyword updated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating keyword {KeywordId}", id);
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 

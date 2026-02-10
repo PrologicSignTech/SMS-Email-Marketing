@@ -1,0 +1,220 @@
+@{
+    ViewData["Title"] = "Compliance Settings";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-gear-fill"></i> Compliance Settings</h2>
+        <button class="btn btn-primary" id="saveSettingsBtn" onclick="saveSettings()">
+            <i class="bi bi-check-lg"></i> Save Settings
+        </button>
+    </div>
+
+    <!-- Loading -->
+    <div id="settingsLoading" class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Loading compliance settings...</p>
+    </div>
+
+    <!-- Settings Form -->
+    <div id="settingsForm" class="d-none">
+        <div class="row">
+            <!-- Consent Settings -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-check-circle"></i> Consent & Opt-In Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="requireDoubleOptIn">
+                                <label class="form-check-label" for="requireDoubleOptIn">
+                                    <strong>Require Double Opt-In</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Contacts must confirm their subscription via a confirmation message</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="requireDoubleOptInSms">
+                                <label class="form-check-label" for="requireDoubleOptInSms">
+                                    <strong>Double Opt-In for SMS</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Require SMS-specific double opt-in confirmation</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="requireDoubleOptInEmail">
+                                <label class="form-check-label" for="requireDoubleOptInEmail">
+                                    <strong>Double Opt-In for Email</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Require email-specific double opt-in confirmation</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="enableConsentTracking">
+                                <label class="form-check-label" for="enableConsentTracking">
+                                    <strong>Enable Consent Tracking</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Track and log all consent changes for each contact</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="enableAuditLogging">
+                                <label class="form-check-label" for="enableAuditLogging">
+                                    <strong>Enable Audit Logging</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Log all compliance actions for audit trail</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="enforceSuppressionList">
+                                <label class="form-check-label" for="enforceSuppressionList">
+                                    <strong>Enforce Suppression List</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Automatically block messages to suppressed contacts</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="consentRetentionDays" class="form-label">Consent Retention (days)</label>
+                            <input type="number" class="form-control" id="consentRetentionDays" min="0" max="3650" value="365">
+                            <small class="text-muted">Set to 0 for no expiry. Common: 365 days</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiet Hours -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-moon-stars"></i> Quiet Hours</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="enableQuietHours">
+                                <label class="form-check-label" for="enableQuietHours">
+                                    <strong>Enable Quiet Hours</strong>
+                                </label>
+                            </div>
+                            <small class="text-muted">Block messages during specified hours (e.g., 9 PM - 8 AM)</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="quietHoursStart" class="form-label">Start Time</label>
+                                <input type="time" class="form-control" id="quietHoursStart" value="21:00">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="quietHoursEnd" class="form-label">End Time</label>
+                                <input type="time" class="form-control" id="quietHoursEnd" value="08:00">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quietHoursTimeZone" class="form-label">Timezone</label>
+                            <select class="form-select" id="quietHoursTimeZone">
+                                <option value="America/New_York">Eastern (ET)</option>
+                                <option value="America/Chicago">Central (CT)</option>
+                                <option value="America/Denver">Mountain (MT)</option>
+                                <option value="America/Los_Angeles">Pacific (PT)</option>
+                                <option value="UTC">UTC</option>
+                                <option value="Asia/Kolkata">India (IST)</option>
+                                <option value="Europe/London">UK (GMT/BST)</option>
+                                <option value="Asia/Dubai">Gulf (GST)</option>
+                            </select>
+                        </div>
+
+                        <!-- Quiet Hours Status -->
+                        <div class="alert alert-info" id="quietHoursStatus">
+                            <i class="bi bi-clock"></i> <span id="quietHoursStatusText">Checking quiet hours status...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto-Response Keywords -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-chat-left-text"></i> Auto-Response Keywords</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="optOutKeywords" class="form-label">Opt-Out Keywords</label>
+                            <input type="text" class="form-control" id="optOutKeywords" placeholder="STOP, UNSUBSCRIBE, CANCEL, QUIT">
+                            <small class="text-muted">Comma-separated. Contacts replying with these words will be opted out.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="optInKeywords" class="form-label">Opt-In Keywords</label>
+                            <input type="text" class="form-control" id="optInKeywords" placeholder="START, SUBSCRIBE, YES, OPTIN">
+                            <small class="text-muted">Comma-separated. Contacts replying with these words will be re-opted in.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="optOutConfirmationMessage" class="form-label">Opt-Out Confirmation Message</label>
+                            <textarea class="form-control" id="optOutConfirmationMessage" rows="2" placeholder="You have been unsubscribed. Reply START to re-subscribe."></textarea>
+                            <small class="text-muted">Auto-reply when someone opts out</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="optInConfirmationMessage" class="form-label">Opt-In Confirmation Message</label>
+                            <textarea class="form-control" id="optInConfirmationMessage" rows="2" placeholder="Welcome! You have been subscribed. Reply STOP to unsubscribe."></textarea>
+                            <small class="text-muted">Auto-reply when someone opts in</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Info -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-building"></i> Company Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="companyName" placeholder="Your Company Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="companyAddress" class="form-label">Physical Address</label>
+                            <input type="text" class="form-control" id="companyAddress" placeholder="123 Main St, City, State">
+                            <small class="text-muted">Required for CAN-SPAM compliance</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="privacyPolicyUrl" class="form-label">Privacy Policy URL</label>
+                            <input type="url" class="form-control" id="privacyPolicyUrl" placeholder="https://example.com/privacy">
+                            <small class="text-muted">Link to your privacy policy page</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="termsOfServiceUrl" class="form-label">Terms of Service URL</label>
+                            <input type="url" class="form-control" id="termsOfServiceUrl" placeholder="https://example.com/terms">
+                            <small class="text-muted">Link to your terms of service page</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/compliance-settings.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,56 @@
+/**
+ * Public Pages Stylesheet
+ * Styles for Terms, Privacy, and other public-facing pages
+ * Note: This file should only be loaded on public pages (Terms, Privacy, etc.)
+ */
+
+/* Page Header Section */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+/* Content Section */
+.content-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.content-section h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.content-section p {
+    line-height: 1.8;
+    color: #555;
+}
+
+.content-section h5 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+.content-section ul {
+    line-height: 1.8;
+    color: #555;
+}
+
+/* Page Image Styling */
+.page-image {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Body Typography for Public Pages */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}

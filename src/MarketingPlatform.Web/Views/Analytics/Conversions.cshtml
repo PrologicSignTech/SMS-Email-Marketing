@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Conversion Tracking";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-bullseye"></i> Conversion Tracking</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-success btn-sm" onclick="exportConversions('csv')">
+                <i class="bi bi-file-earmark-csv"></i> CSV
+            </button>
+            <button class="btn btn-outline-primary btn-sm" onclick="exportConversions('excel')">
+                <i class="bi bi-file-earmark-excel"></i> Excel
+            </button>
+            <button class="btn btn-outline-primary" onclick="loadConversions()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Date Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Date From</label>
+                    <input type="date" class="form-control form-control-sm" id="dateFrom">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Date To</label>
+                    <input type="date" class="form-control form-control-sm" id="dateTo">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary btn-sm" onclick="loadConversions()">
+                        <i class="bi bi-filter"></i> Apply Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-bullseye fs-1"></i>
+                    <h3 id="totalConversions" class="mt-2">0</h3>
+                    <small>Total Conversions</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-percent fs-1"></i>
+                    <h3 id="avgConversionRate" class="mt-2">0%</h3>
+                    <small>Avg. Conversion Rate</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-currency-dollar fs-1"></i>
+                    <h3 id="totalRevenue" class="mt-2">$0</h3>
+                    <small>Total Revenue</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-megaphone fs-1"></i>
+                    <h3 id="campaignsTracked" class="mt-2">0</h3>
+                    <small>Campaigns Tracked</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversions Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Campaign Conversions</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Sent</th>
+                            <th>Delivered</th>
+                            <th>Clicks</th>
+                            <th>Conversions</th>
+                            <th>Conv. Rate</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="conversionsTableBody">
+                        <tr><td colspan="7" class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm"></div> Loading conversion data...
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/analytics-conversions.js" asp-append-version="true"></script>
+}

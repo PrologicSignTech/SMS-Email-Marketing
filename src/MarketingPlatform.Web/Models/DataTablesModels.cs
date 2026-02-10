@@ -17,6 +17,9 @@ public class DataTablesRequest
     // Additional filters for Users
     public int? RoleId { get; set; }
 
+    // Additional filters for Contacts
+    public int? GroupId { get; set; }
+
     // Additional filters for Suppression/Providers
     public string? Type { get; set; }
 }

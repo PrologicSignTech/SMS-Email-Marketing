@@ -6022,23 +6022,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Monil Vy\\.nuget\\packages\\": {},
+    "C:\\Users\\Umesh Kamboj\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Web\\MarketingPlatform.Web.csproj",
+      "projectUniqueName": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Web\\MarketingPlatform.Web.csproj",
       "projectName": "MarketingPlatform.Web",
-      "projectPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Web\\MarketingPlatform.Web.csproj",
-      "packagesPath": "C:\\Users\\Monil Vy\\.nuget\\packages\\",
-      "outputPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Web\\obj\\",
+      "projectPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Web\\MarketingPlatform.Web.csproj",
+      "packagesPath": "C:\\Users\\Umesh Kamboj\\.nuget\\packages\\",
+      "outputPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Monil Vy\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Umesh Kamboj\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -6047,24 +6047,23 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://nuget.pkg.github.com/REV23/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Application\\MarketingPlatform.Application.csproj": {
-              "projectPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Application\\MarketingPlatform.Application.csproj"
+            "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Application\\MarketingPlatform.Application.csproj": {
+              "projectPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Application\\MarketingPlatform.Application.csproj"
             },
-            "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Core\\MarketingPlatform.Core.csproj": {
-              "projectPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Core\\MarketingPlatform.Core.csproj"
+            "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Core\\MarketingPlatform.Core.csproj": {
+              "projectPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Core\\MarketingPlatform.Core.csproj"
             },
-            "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Infrastructure\\MarketingPlatform.Infrastructure.csproj": {
-              "projectPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Infrastructure\\MarketingPlatform.Infrastructure.csproj"
+            "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Infrastructure\\MarketingPlatform.Infrastructure.csproj": {
+              "projectPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Infrastructure\\MarketingPlatform.Infrastructure.csproj"
             },
-            "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Shared\\MarketingPlatform.Shared.csproj": {
-              "projectPath": "E:\\pLOGIC\\Projects\\TextingPro\\src\\MarketingPlatform.Shared\\MarketingPlatform.Shared.csproj"
+            "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Shared\\MarketingPlatform.Shared.csproj": {
+              "projectPath": "E:\\pLOGIC\\Projects\\GitProject\\src\\MarketingPlatform.Shared\\MarketingPlatform.Shared.csproj"
             }
           }
         }
@@ -6079,7 +6078,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "net8.0": {
@@ -6139,7 +6138,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

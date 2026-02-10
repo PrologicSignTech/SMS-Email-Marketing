@@ -15,6 +15,7 @@
             apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
             recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
             stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+            token: '@(User.FindFirst("access_token")?.Value ?? "")',
         };
     </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -500,67 +501,54 @@
             </button>
         </div>
 
+        @{
+            var sidebarRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList();
+            var isAdmin = sidebarRoles.Contains("Admin") || sidebarRoles.Contains("SuperAdmin");
+            var isSuperAdmin = sidebarRoles.Contains("SuperAdmin");
+        }
         <div class="sidebar-menu">
-            <!-- Dashboards -->
-            <div class="menu-section" require-permission="ViewProfile">
+            <!-- ========== USER MENUS (visible to all authenticated users) ========== -->
+
+            <!-- 1. Dashboard -->
+            <div class="menu-section">
                 <div class="menu-item">
                     <a class="menu-link" asp-controller="UserDashboard" asp-action="Index">
                         <span class="menu-icon"><i class="bi bi-grid-fill"></i></span>
-                        <span class="menu-text">My Dashboard</span>
-                    </a>
-                </div>
-                <div class="menu-item" require-permission="ViewUsers">
-                    <a class="menu-link" asp-controller="AdminDashboard" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-speedometer2"></i></span>
-                        <span class="menu-text">Admin Dashboard</span>
+                        <span class="menu-text">Dashboard</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Campaigns -->
-            <div class="menu-section" require-permission="ViewCampaigns">
+            <!-- 2. Phone Numbers -->
+            <div class="menu-section">
                 <div class="menu-item">
-                    <a class="menu-link" data-bs-toggle="collapse" href="#campaignsMenu" role="button">
-                        <span class="menu-icon"><i class="bi bi-megaphone"></i></span>
-                        <span class="menu-text">Campaigns</span>
+                    <a class="menu-link" data-bs-toggle="collapse" href="#phoneNumbersMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-telephone"></i></span>
+                        <span class="menu-text">Phone Numbers</span>
                         <i class="menu-arrow bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse submenu" id="campaignsMenu">
-                        <a class="menu-link" asp-controller="Campaigns" asp-action="Index">
+                    <div class="collapse submenu" id="phoneNumbersMenu">
+                        <a class="menu-link" asp-controller="PhoneNumbers" asp-action="Index">
                             <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
-                            <span class="menu-text">All Campaigns</span>
+                            <span class="menu-text">My Numbers</span>
                         </a>
-                        <a class="menu-link" asp-controller="Campaigns" asp-action="Create">
-                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
-                            <span class="menu-text">Create Campaign</span>
+                        <a class="menu-link" asp-controller="PhoneNumbers" asp-action="Buy">
+                            <span class="menu-icon"><i class="bi bi-cart-plus"></i></span>
+                            <span class="menu-text">Buy Number</span>
                         </a>
+                        @if (isSuperAdmin)
+                        {
+                            <a class="menu-link" asp-controller="PhoneNumbers" asp-action="Assign">
+                                <span class="menu-icon"><i class="bi bi-person-badge"></i></span>
+                                <span class="menu-text">Assign Numbers</span>
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
 
-            <!-- Messages -->
-            <div class="menu-section" require-permission="ViewMessages">
-                <div class="menu-item">
-                    <a class="menu-link" data-bs-toggle="collapse" href="#messagesMenu" role="button">
-                        <span class="menu-icon"><i class="bi bi-envelope"></i></span>
-                        <span class="menu-text">Messages</span>
-                        <i class="menu-arrow bi bi-chevron-right"></i>
-                    </a>
-                    <div class="collapse submenu" id="messagesMenu">
-                        <a class="menu-link" asp-controller="Messages" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
-                            <span class="menu-text">All Messages</span>
-                        </a>
-                        <a class="menu-link" asp-controller="Messages" asp-action="Compose">
-                            <span class="menu-icon"><i class="bi bi-send"></i></span>
-                            <span class="menu-text">Send Message</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contacts -->
-            <div class="menu-section" require-permission="ViewContacts">
+            <!-- 3. Contacts -->
+            <div class="menu-section">
                 <div class="menu-item">
                     <a class="menu-link" data-bs-toggle="collapse" href="#contactsMenu" role="button">
                         <span class="menu-icon"><i class="bi bi-people"></i></span>
@@ -576,20 +564,36 @@
                             <span class="menu-icon"><i class="bi bi-person-plus"></i></span>
                             <span class="menu-text">Add Contact</span>
                         </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Import">
+                            <span class="menu-icon"><i class="bi bi-upload"></i></span>
+                            <span class="menu-text">Import Contacts</span>
+                        </a>
                         <a class="menu-link" asp-controller="Contacts" asp-action="Groups">
                             <span class="menu-icon"><i class="bi bi-collection"></i></span>
                             <span class="menu-text">Groups</span>
                         </a>
-                        <a class="menu-link" asp-controller="Suppression" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-slash-circle"></i></span>
-                            <span class="menu-text">Suppression List</span>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Segments">
+                            <span class="menu-icon"><i class="bi bi-diagram-3"></i></span>
+                            <span class="menu-text">Segments</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Tags">
+                            <span class="menu-icon"><i class="bi bi-tags"></i></span>
+                            <span class="menu-text">Tags</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Scoring">
+                            <span class="menu-icon"><i class="bi bi-star"></i></span>
+                            <span class="menu-text">Engagement Scores</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Contacts" asp-action="Duplicates">
+                            <span class="menu-icon"><i class="bi bi-intersect"></i></span>
+                            <span class="menu-text">Duplicates</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Templates -->
-            <div class="menu-section" require-permission="ViewTemplates">
+            <!-- 4. Templates -->
+            <div class="menu-section">
                 <div class="menu-item">
                     <a class="menu-link" data-bs-toggle="collapse" href="#templatesMenu" role="button">
                         <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
@@ -609,32 +613,82 @@
                 </div>
             </div>
 
-            <!-- Workflows -->
-            <div class="menu-section" require-permission="ViewWorkflows">
+            <!-- 5. Campaigns -->
+            <div class="menu-section">
                 <div class="menu-item">
-                    <a class="menu-link" data-bs-toggle="collapse" href="#workflowsMenu" role="button">
-                        <span class="menu-icon"><i class="bi bi-diagram-3"></i></span>
-                        <span class="menu-text">Workflows</span>
+                    <a class="menu-link" data-bs-toggle="collapse" href="#campaignsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-megaphone"></i></span>
+                        <span class="menu-text">Campaigns</span>
                         <i class="menu-arrow bi bi-chevron-right"></i>
                     </a>
-                    <div class="collapse submenu" id="workflowsMenu">
-                        <a class="menu-link" asp-controller="Workflows" asp-action="Index">
+                    <div class="collapse submenu" id="campaignsMenu">
+                        <a class="menu-link" asp-controller="Campaigns" asp-action="Index">
                             <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
-                            <span class="menu-text">All Workflows</span>
+                            <span class="menu-text">All Campaigns</span>
                         </a>
-                        <a class="menu-link" asp-controller="Workflows" asp-action="Create">
+                        <a class="menu-link" asp-controller="Campaigns" asp-action="Create">
                             <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
-                            <span class="menu-text">Create Workflow</span>
+                            <span class="menu-text">Create Campaign</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Journeys -->
+            <!-- 6. Messages -->
+            <div class="menu-section">
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#messagesMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-envelope"></i></span>
+                        <span class="menu-text">Messages</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="messagesMenu">
+                      @*   <a class="menu-link" asp-controller="Messages" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Messages</span>
+                        </a> *@
+                        <a class="menu-link" asp-controller="Messages" asp-action="Compose">
+                            <span class="menu-icon"><i class="bi bi-send"></i></span>
+                            <span class="menu-text">Send Message</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Messages" asp-action="Inbox">
+                            <span class="menu-icon"><i class="bi bi-inbox"></i></span>
+                            <span class="menu-text">Inbox</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.5. Keywords -->
+            <div class="menu-section">
+                <div class="menu-item">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#keywordsMenu" role="button">
+                        <span class="menu-icon"><i class="bi bi-hash"></i></span>
+                        <span class="menu-text">Keywords</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
+                    </a>
+                    <div class="collapse submenu" id="keywordsMenu">
+                        <a class="menu-link" asp-controller="Keywords" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Keywords</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Keywords" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
+                            <span class="menu-text">Create Keyword</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Keywords" asp-action="Analytics">
+                            <span class="menu-icon"><i class="bi bi-bar-chart-line"></i></span>
+                            <span class="menu-text">Keyword Analytics</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.6. Journeys & Workflows -->
             <div class="menu-section">
                 <div class="menu-item">
                     <a class="menu-link" data-bs-toggle="collapse" href="#journeysMenu" role="button">
-                        <span class="menu-icon"><i class="bi bi-signpost"></i></span>
+                        <span class="menu-icon"><i class="bi bi-diagram-3"></i></span>
                         <span class="menu-text">Journeys</span>
                         <i class="menu-arrow bi bi-chevron-right"></i>
                     </a>
@@ -647,40 +701,41 @@
                             <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
                             <span class="menu-text">Create Journey</span>
                         </a>
+                        <a class="menu-link" asp-controller="Workflows" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-gear-wide-connected"></i></span>
+                            <span class="menu-text">Workflows</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Providers -->
-            <div class="menu-section" require-permission="ManageProviders">
+            <!-- 6.7. URL Shortener -->
+            <div class="menu-section">
                 <div class="menu-item">
-                    <a class="menu-link" asp-controller="Providers" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-plug"></i></span>
-                        <span class="menu-text">Providers</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Webhooks" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-arrow-left-right"></i></span>
-                        <span class="menu-text">Webhooks</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Keywords" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-tag"></i></span>
-                        <span class="menu-text">Keywords</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Urls" asp-action="Index">
+                    <a class="menu-link" data-bs-toggle="collapse" href="#urlsMenu" role="button">
                         <span class="menu-icon"><i class="bi bi-link-45deg"></i></span>
-                        <span class="menu-text">URL Shortener</span>
+                        <span class="menu-text">Short Links</span>
+                        <i class="menu-arrow bi bi-chevron-right"></i>
                     </a>
+                    <div class="collapse submenu" id="urlsMenu">
+                        <a class="menu-link" asp-controller="Urls" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-list-ul"></i></span>
+                            <span class="menu-text">All Links</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Urls" asp-action="Create">
+                            <span class="menu-icon"><i class="bi bi-plus-circle"></i></span>
+                            <span class="menu-text">Create Short Link</span>
+                        </a>
+                        <a class="menu-link" asp-controller="Urls" asp-action="Analytics">
+                            <span class="menu-icon"><i class="bi bi-graph-up"></i></span>
+                            <span class="menu-text">Click Analytics</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- Analytics -->
-            <div class="menu-section" require-permission="ViewAnalytics">
+            <!-- 7. Analytics -->
+            <div class="menu-section">
                 <div class="menu-item">
                     <a class="menu-link" data-bs-toggle="collapse" href="#analyticsMenu" role="button">
                         <span class="menu-icon"><i class="bi bi-graph-up-arrow"></i></span>
@@ -696,6 +751,10 @@
                             <span class="menu-icon"><i class="bi bi-bar-chart"></i></span>
                             <span class="menu-text">Campaign Performance</span>
                         </a>
+                        <a class="menu-link" asp-controller="Analytics" asp-action="Conversions">
+                            <span class="menu-icon"><i class="bi bi-bullseye"></i></span>
+                            <span class="menu-text">Conversions</span>
+                        </a>
                         <a class="menu-link" asp-controller="Analytics" asp-action="Reports">
                             <span class="menu-icon"><i class="bi bi-file-earmark-bar-graph"></i></span>
                             <span class="menu-text">Reports</span>
@@ -704,100 +763,184 @@
                 </div>
             </div>
 
-            <!-- Billing -->
-            <div class="menu-section" require-permission="ViewBilling">
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Billing" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-credit-card"></i></span>
-                        <span class="menu-text">Billing & Usage</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Administration -->
-            <div class="menu-section" require-permission="ViewUsers">
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Users" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-people"></i></span>
-                        <span class="menu-text">Manage Users</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Roles" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-key"></i></span>
-                        <span class="menu-text">Roles & Permissions</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Settings" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-gear"></i></span>
-                        <span class="menu-text">Settings</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="PageContent" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-file-text"></i></span>
-                        <span class="menu-text">Page Content</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Super Admin -->
-            <div class="menu-section" require-permission="ManageSuperAdmins">
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="SuperAdmin" asp-action="Dashboard">
-                        <span class="menu-icon"><i class="bi bi-lightning-fill"></i></span>
-                        <span class="menu-text">Super Admin</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" asp-controller="Pricing" asp-action="Index">
-                        <span class="menu-icon"><i class="bi bi-currency-dollar"></i></span>
-                        <span class="menu-text">Pricing Plans</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" data-bs-toggle="collapse" href="#landingPageMenu" role="button">
-                        <span class="menu-icon"><i class="bi bi-globe"></i></span>
-                        <span class="menu-text">Landing Page</span>
-                        <i class="menu-arrow bi bi-chevron-right"></i>
-                    </a>
-                    <div class="collapse submenu" id="landingPageMenu">
-                        <a class="menu-link" asp-controller="LandingFeatures" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-stars"></i></span>
-                            <span class="menu-text">Features</span>
-                        </a>
-                        <a class="menu-link" asp-controller="LandingFaqs" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-question-circle"></i></span>
-                            <span class="menu-text">FAQs</span>
-                        </a>
-                        <a class="menu-link" asp-controller="UseCases" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-lightbulb"></i></span>
-                            <span class="menu-text">Use Cases</span>
-                        </a>
-                        <a class="menu-link" asp-controller="LandingStats" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-graph-up"></i></span>
-                            <span class="menu-text">Stats</span>
-                        </a>
-                        <a class="menu-link" asp-controller="Testimonials" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-chat-quote"></i></span>
-                            <span class="menu-text">Testimonials</span>
-                        </a>
-                        <a class="menu-link" asp-controller="TrustedCompanies" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-building"></i></span>
-                            <span class="menu-text">Trusted Companies</span>
-                        </a>
-                        <a class="menu-link" asp-controller="SecurityBadges" asp-action="Index">
+            <!-- 7.5. Compliance (Admin/SuperAdmin only) -->
+            @if (isAdmin)
+            {
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <a class="menu-link" data-bs-toggle="collapse" href="#complianceMenu" role="button">
                             <span class="menu-icon"><i class="bi bi-shield-check"></i></span>
-                            <span class="menu-text">Security Badges</span>
+                            <span class="menu-text">Compliance</span>
+                            <i class="menu-arrow bi bi-chevron-right"></i>
                         </a>
-                        <a class="menu-link" asp-controller="FooterSettings" asp-action="Index">
-                            <span class="menu-icon"><i class="bi bi-layout-text-window-reverse"></i></span>
-                            <span class="menu-text">Footer Settings</span>
+                        <div class="collapse submenu" id="complianceMenu">
+                            <a class="menu-link" asp-controller="Compliance" asp-action="Settings">
+                                <span class="menu-icon"><i class="bi bi-gear"></i></span>
+                                <span class="menu-text">Settings</span>
+                            </a>
+                            <a class="menu-link" asp-controller="Compliance" asp-action="AuditLog">
+                                <span class="menu-icon"><i class="bi bi-journal-text"></i></span>
+                                <span class="menu-text">Audit Log</span>
+                            </a>
+                            <a class="menu-link" asp-controller="Suppression" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-slash-circle"></i></span>
+                                <span class="menu-text">Suppression List</span>
+                            </a>
+                            <a class="menu-link" asp-controller="SuppressionRules" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-gear-wide-connected"></i></span>
+                                <span class="menu-text">Auto-Suppression Rules</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- 8. Sign Out -->
+            <div class="menu-section">
+                <div class="menu-item">
+                    <a class="menu-link" asp-controller="Auth" asp-action="Logout">
+                        <span class="menu-icon"><i class="bi bi-box-arrow-right"></i></span>
+                        <span class="menu-text">Sign Out</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ========== ADMIN MENUS (visible to Admin and SuperAdmin only) ========== -->
+            @if (isAdmin)
+            {
+                <!-- Admin Dashboard -->
+                <div class="menu-section">
+                    <div class="menu-section-title">Administration</div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="AdminDashboard" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-speedometer2"></i></span>
+                            <span class="menu-text">Admin Dashboard</span>
                         </a>
                     </div>
                 </div>
-            </div>
+
+                <!-- Providers, Keywords, URL Shortener -->
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Providers" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-plug"></i></span>
+                            <span class="menu-text">Providers</span>
+                        </a>
+                    </div>
+                    @* Webhooks - Hidden until fully implemented *@
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Keywords" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-tag"></i></span>
+                            <span class="menu-text">Keywords</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Urls" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-link-45deg"></i></span>
+                            <span class="menu-text">URL Shortener</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Billing -->
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Billing" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-credit-card"></i></span>
+                            <span class="menu-text">Billing & Usage</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Users" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-people"></i></span>
+                            <span class="menu-text">Manage Users</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Roles" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-key"></i></span>
+                            <span class="menu-text">Roles & Permissions</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Settings" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-gear"></i></span>
+                            <span class="menu-text">Settings</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="PageContent" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-file-text"></i></span>
+                            <span class="menu-text">Page Content</span>
+                        </a>
+                    </div>
+                </div>
+            }
+
+            <!-- ========== SUPER ADMIN MENUS (visible to SuperAdmin only) ========== -->
+            @if (isSuperAdmin)
+            {
+                <div class="menu-section">
+                    <div class="menu-section-title">Super Admin</div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="SuperAdmin" asp-action="Dashboard">
+                            <span class="menu-icon"><i class="bi bi-lightning-fill"></i></span>
+                            <span class="menu-text">Super Admin</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" asp-controller="Pricing" asp-action="Index">
+                            <span class="menu-icon"><i class="bi bi-currency-dollar"></i></span>
+                            <span class="menu-text">Pricing Plans</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" data-bs-toggle="collapse" href="#landingPageMenu" role="button">
+                            <span class="menu-icon"><i class="bi bi-globe"></i></span>
+                            <span class="menu-text">Landing Page</span>
+                            <i class="menu-arrow bi bi-chevron-right"></i>
+                        </a>
+                        <div class="collapse submenu" id="landingPageMenu">
+                            <a class="menu-link" asp-controller="LandingFeatures" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-stars"></i></span>
+                                <span class="menu-text">Features</span>
+                            </a>
+                            <a class="menu-link" asp-controller="LandingFaqs" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-question-circle"></i></span>
+                                <span class="menu-text">FAQs</span>
+                            </a>
+                            <a class="menu-link" asp-controller="UseCases" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-lightbulb"></i></span>
+                                <span class="menu-text">Use Cases</span>
+                            </a>
+                            <a class="menu-link" asp-controller="LandingStats" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-graph-up"></i></span>
+                                <span class="menu-text">Stats</span>
+                            </a>
+                            <a class="menu-link" asp-controller="Testimonials" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-chat-quote"></i></span>
+                                <span class="menu-text">Testimonials</span>
+                            </a>
+                            <a class="menu-link" asp-controller="TrustedCompanies" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-building"></i></span>
+                                <span class="menu-text">Trusted Companies</span>
+                            </a>
+                            <a class="menu-link" asp-controller="SecurityBadges" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-shield-check"></i></span>
+                                <span class="menu-text">Security Badges</span>
+                            </a>
+                            <a class="menu-link" asp-controller="FooterSettings" asp-action="Index">
+                                <span class="menu-icon"><i class="bi bi-layout-text-window-reverse"></i></span>
+                                <span class="menu-text">Footer Settings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </nav>
 
@@ -825,11 +968,19 @@
             <div class="dropdown">
                 <div class="user-dropdown" data-bs-toggle="dropdown">
                     <div class="user-avatar">
-                        <span id="user-initials">U</span>
+                        @{
+                            var userName = User.Identity?.Name ?? "User";
+                            var userInitials = string.Join("", userName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(n => n[0])).ToUpper();
+                            if (userInitials.Length > 2) userInitials = userInitials.Substring(0, 2);
+                            if (string.IsNullOrEmpty(userInitials)) userInitials = "U";
+                            var userRoles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value).ToList();
+                            var displayRole = userRoles.Contains("Admin") ? "Admin" : userRoles.Contains("Manager") ? "Manager" : "Member";
+                        }
+                        <span id="user-initials">@userInitials</span>
                     </div>
                     <div class="user-info d-none d-md-flex">
-                        <span class="user-name" id="user-name">User</span>
-                        <span class="user-role">Member</span>
+                        <span class="user-name" id="user-name">@userName</span>
+                        <span class="user-role">@displayRole</span>
                     </div>
                     <i class="bi bi-chevron-down"></i>
                 </div>
@@ -870,35 +1021,7 @@
     <script src="~/js/custom.js" asp-append-version="true"></script>
     <script src="~/js/csp-handlers.js" asp-append-version="true"></script>
     <script src="~/js/sidebar.js" asp-append-version="true"></script>
-    <script>
-        // Get user info and display
-        document.addEventListener('DOMContentLoaded', function() {
-            const apiBaseUrl = window.appConfig?.apiBaseUrl || window.authConfig?.apiBaseUrl || '';
-            const fetchUrl = apiBaseUrl ? `${apiBaseUrl}/api/auth/me` : '/api/auth/me';
-
-            fetch(fetchUrl, {
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.data) {
-                    const firstName = data.data.firstName || '';
-                    const lastName = data.data.lastName || '';
-                    const name = `${firstName} ${lastName}`.trim() || data.data.name || data.data.email || 'User';
-
-                    const nameEl = document.getElementById('user-name');
-                    if (nameEl) nameEl.textContent = name;
-
-                    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                    const initialsEl = document.getElementById('user-initials');
-                    if (initialsEl) initialsEl.textContent = initials;
-                }
-            })
-            .catch((error) => {
-                console.warn('Failed to fetch user info:', error);
-            });
-        });
-    </script>
+    <!-- User info is now rendered server-side from cookie claims above -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

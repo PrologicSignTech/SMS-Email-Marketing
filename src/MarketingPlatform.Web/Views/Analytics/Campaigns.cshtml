@@ -5,53 +5,16 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="bi bi-graph-up-arrow"></i> Campaign Analytics</h2>
-        <button class="btn btn-outline-primary" data-action="export-report">
-            <i class="bi bi-download"></i> Export Report
+        <button class="btn btn-outline-primary" id="refreshBtn" onclick="loadCampaignAnalytics()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh
         </button>
-    </div>
-
-    <!-- Filters -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <label class="form-label">Date Range</label>
-                    <select class="form-select" id="dateRange">
-                        <option>Last 7 days</option>
-                        <option>Last 30 days</option>
-                        <option>Last 90 days</option>
-                        <option>Custom</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Campaign Type</label>
-                    <select class="form-select">
-                        <option>All Types</option>
-                        <option>Email</option>
-                        <option>SMS</option>
-                        <option>MMS</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Status</label>
-                    <select class="form-select">
-                        <option>All Status</option>
-                        <option>Completed</option>
-                        <option>Running</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">&nbsp;</label>
-                    <button class="btn btn-primary w-100">Apply Filters</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Campaign Comparison -->
     <div class="card">
-        <div class="card-header">
-            <h5>Campaign Comparison</h5>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Campaign Comparison</h5>
+            <span class="badge bg-primary" id="campaignCount">0 campaigns</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -60,35 +23,15 @@
                         <tr>
                             <th>Campaign Name</th>
                             <th>Type</th>
-                            <th>Send Date</th>
+                            <th>Status</th>
                             <th>Recipients</th>
                             <th>Delivered %</th>
                             <th>Open %</th>
                             <th>Click %</th>
-                            <th>ROI</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Summer Sale 2024</strong></td>
-                            <td><span class="badge bg-primary">Email</span></td>
-                            <td>2024-07-15</td>
-                            <td>12,456</td>
-                            <td><span class="text-success">98.2%</span></td>
-                            <td><span class="text-success">44.4%</span></td>
-                            <td><span class="text-success">19.2%</span></td>
-                            <td><span class="text-success">+$45,230</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Newsletter July</strong></td>
-                            <td><span class="badge bg-primary">Email</span></td>
-                            <td>2024-07-01</td>
-                            <td>25,678</td>
-                            <td><span class="text-success">98.7%</span></td>
-                            <td><span class="text-warning">40.4%</span></td>
-                            <td><span class="text-warning">18.0%</span></td>
-                            <td><span class="text-success">+$23,450</span></td>
-                        </tr>
+                    <tbody id="campaignTableBody">
+                        <tr><td colspan="7" class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading campaign data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -97,5 +40,90 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/analytics-campaigns.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function() {
+            loadCampaignAnalytics();
+        });
+
+        function loadCampaignAnalytics() {
+            var tbody = document.getElementById('campaignTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading campaign data...</td></tr>';
+
+            $.get('/Analytics/GetCampaignAnalytics', function(response) {
+                if (response.success && response.data) {
+                    var campaigns = [];
+                    if (Array.isArray(response.data)) {
+                        campaigns = response.data;
+                    } else if (response.data.items && Array.isArray(response.data.items)) {
+                        campaigns = response.data.items;
+                    }
+
+                    document.getElementById('campaignCount').textContent = campaigns.length + ' campaigns';
+
+                    if (campaigns.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox" style="font-size: 1.5rem;"></i><br>No campaign data available yet. Create and run campaigns to see analytics.</td></tr>';
+                        return;
+                    }
+
+                    var html = '';
+                    campaigns.forEach(function(c) {
+                        var sent = c.totalSent || c.sent || c.recipientCount || 0;
+                        var delivered = c.totalDelivered || c.delivered || 0;
+                        var opens = c.totalOpened || c.opens || 0;
+                        var clicks = c.totalClicked || c.clicks || 0;
+
+                        var delivRate = sent > 0 ? ((delivered / sent) * 100).toFixed(1) : '0.0';
+                        var openRate = delivered > 0 ? ((opens / delivered) * 100).toFixed(1) : '0.0';
+                        var clickRate = delivered > 0 ? ((clicks / delivered) * 100).toFixed(1) : '0.0';
+
+                        // Campaign type badge
+                        var typeNames = ['SMS', 'MMS', 'Email', 'Multi'];
+                        var typeBadgeColors = ['bg-success', 'bg-info', 'bg-primary', 'bg-warning'];
+                        var typeVal = c.type || c.campaignType || 0;
+                        var typeName = typeNames[typeVal] || 'SMS';
+                        var typeBadge = typeBadgeColors[typeVal] || 'bg-secondary';
+
+                        // Status badge
+                        var statusNames = ['Draft', 'Scheduled', 'Running', 'Paused', 'Completed', 'Cancelled', 'Failed'];
+                        var statusColors = ['bg-secondary', 'bg-info', 'bg-primary', 'bg-warning', 'bg-success', 'bg-danger', 'bg-danger'];
+                        var statusVal = c.status || 0;
+                        var statusName = statusNames[statusVal] || 'Unknown';
+                        var statusColor = statusColors[statusVal] || 'bg-secondary';
+
+                        // Color code rates
+                        function rateColor(rate) {
+                            var r = parseFloat(rate);
+                            if (r >= 80) return 'text-success';
+                            if (r >= 50) return 'text-warning';
+                            return 'text-danger';
+                        }
+
+                        html += '<tr>' +
+                            '<td><strong>' + escapeHtml(c.campaignName || c.name || 'Campaign') + '</strong></td>' +
+                            '<td><span class="badge ' + typeBadge + '">' + typeName + '</span></td>' +
+                            '<td><span class="badge ' + statusColor + '">' + statusName + '</span></td>' +
+                            '<td>' + sent.toLocaleString() + '</td>' +
+                            '<td><span class="' + rateColor(delivRate) + '">' + delivRate + '%</span></td>' +
+                            '<td><span class="' + rateColor(openRate) + '">' + openRate + '%</span></td>' +
+                            '<td><span class="' + rateColor(clickRate) + '">' + clickRate + '%</span></td>' +
+                            '</tr>';
+                    });
+                    tbody.innerHTML = html;
+                } else {
+                    document.getElementById('campaignCount').textContent = '0 campaigns';
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox" style="font-size: 1.5rem;"></i><br>No campaign data available yet</td></tr>';
+                }
+            }).fail(function() {
+                document.getElementById('campaignCount').textContent = '0 campaigns';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle"></i> Failed to load campaign data</td></tr>';
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
 }

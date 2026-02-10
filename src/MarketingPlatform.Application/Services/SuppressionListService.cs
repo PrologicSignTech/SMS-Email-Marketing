@@ -38,10 +38,17 @@ namespace MarketingPlatform.Application.Services
             return _mapper.Map<SuppressionListDto>(suppression);
         }
 
-        public async Task<PaginatedResult<SuppressionListDto>> GetAllAsync(string userId, PagedRequest request)
+        public async Task<PaginatedResult<SuppressionListDto>> GetAllAsync(string userId, PagedRequest request, int? type = null)
         {
             var query = (await _suppressionRepository.FindAsync(s =>
                 s.UserId == userId && !s.IsDeleted)).AsQueryable();
+
+            // Apply type filter
+            if (type.HasValue)
+            {
+                var suppressionType = (Core.Enums.SuppressionType)type.Value;
+                query = query.Where(s => s.Type == suppressionType);
+            }
 
             // Apply search
             if (!string.IsNullOrEmpty(request.SearchTerm))

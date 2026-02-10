@@ -16,6 +16,7 @@
             apiBaseUrl: '@(Configuration["ApiSettings:BaseUrl"])',
             recaptchaSiteKey: '@(Configuration["ReCaptcha:SiteKey"])',
             stripePublishableKey: '@(Configuration["Stripe:PublishableKey"])',
+            token: '@(User.FindFirst("access_token")?.Value ?? "")',
         };
     </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -65,19 +66,6 @@
                                 <li><a class="dropdown-item" asp-controller="Users" asp-action="Settings"><i class="bi bi-gear"></i> My Settings</a></li>
                             </ul>
                         </li>
-
-                        <!-- Campaigns -->
-                        <li class="nav-item dropdown" require-permission="ViewCampaigns">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-megaphone"></i> Campaigns
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Index"><i class="bi bi-list-ul"></i> All Campaigns</a></li>
-                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Campaign</a></li>
-                            </ul>
-                        </li>
-
-                        <!-- Contacts -->
                         <li class="nav-item dropdown" require-permission="ViewContacts">
                             <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-people"></i> Contacts
@@ -99,6 +87,19 @@
                                 <li><a class="dropdown-item" asp-controller="Templates" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Template</a></li>
                             </ul>
                         </li>
+                        <!-- Campaigns -->
+                        <li class="nav-item dropdown" require-permission="ViewCampaigns">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-megaphone"></i> Campaigns
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Index"><i class="bi bi-list-ul"></i> All Campaigns</a></li>
+                                <li><a class="dropdown-item" asp-controller="Campaigns" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Campaign</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Contacts -->
+                       
 
                         <!-- Workflows -->
                         <li class="nav-item dropdown" require-permission="ViewWorkflows">
@@ -107,7 +108,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Workflows" asp-action="Index"><i class="bi bi-list-ul"></i> All Workflows</a></li>
-                                <li><a class="dropdown-item" asp-controller="Workflows" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Workflow</a></li>
+                               @*  <li><a class="dropdown-item" asp-controller="Workflows" asp-action="Create"><i class="bi bi-plus-circle"></i> Create Workflow</a></li> *@
                             </ul>
                         </li>
 
@@ -159,9 +160,9 @@
                     <!-- Right side menu -->
                     <ul class="navbar-nav ms-auto align-items-center">
                         <!-- Authenticated User Menu -->
-                        <li class="nav-item dropdown d-none" id="user-menu">
+                        <li class="nav-item dropdown @(User.Identity?.IsAuthenticated == true ? "" : "d-none")" id="user-menu">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> <span id="user-name">User</span>
+                                <i class="bi bi-person-circle"></i> <span id="user-name">@(User.Identity?.IsAuthenticated == true ? User.Identity.Name ?? "User" : "User")</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" asp-controller="Users" asp-action="Profile"><i class="bi bi-person"></i> Profile</a></li>
@@ -172,12 +173,12 @@
                         </li>
 
                         <!-- Guest Menu -->
-                        <li class="nav-item" id="login-link">
+                        <li class="nav-item @(User.Identity?.IsAuthenticated == true ? "d-none" : "")" id="login-link">
                             <a class="nav-link nav-link-login" asp-controller="Auth" asp-action="Login">
                                 <i class="bi bi-box-arrow-in-right me-1"></i> Login
                             </a>
                         </li>
-                        <li class="nav-item" id="register-link">
+                        <li class="nav-item @(User.Identity?.IsAuthenticated == true ? "d-none" : "")" id="register-link">
                             <a class="btn btn-signup ms-3" asp-controller="Auth" asp-action="Register">
                                 <i class="bi bi-person-plus me-1"></i> Sign Up
                             </a>
@@ -380,49 +381,7 @@
             });
         }
 
-        // Check authentication state and update header menu
-        document.addEventListener('DOMContentLoaded', function() {
-            const apiBaseUrl = window.appConfig?.apiBaseUrl || window.authConfig?.apiBaseUrl || '';
-            const fetchUrl = apiBaseUrl ? `${apiBaseUrl}/api/auth/me` : '/api/auth/me';
-
-            fetch(fetchUrl, { credentials: 'include' })
-                .then(response => response.json())
-                .then(data => {
-                    const userMenu = document.getElementById('user-menu');
-                    const loginLink = document.getElementById('login-link');
-                    const registerLink = document.getElementById('register-link');
-                    const userNameSpan = document.getElementById('user-name');
-
-                    if (data.success && data.data) {
-                        // User is logged in - show user menu, hide login/register
-                        if (userMenu) userMenu.classList.remove('d-none');
-                        if (loginLink) loginLink.classList.add('d-none');
-                        if (registerLink) registerLink.classList.add('d-none');
-
-                        // Set user name
-                        const firstName = data.data.firstName || '';
-                        const lastName = data.data.lastName || '';
-                        const displayName = `${firstName} ${lastName}`.trim() || data.data.name || data.data.email || 'User';
-                        if (userNameSpan) userNameSpan.textContent = displayName;
-                    } else {
-                        // User is not logged in - show login/register, hide user menu
-                        if (userMenu) userMenu.classList.add('d-none');
-                        if (loginLink) loginLink.classList.remove('d-none');
-                        if (registerLink) registerLink.classList.remove('d-none');
-                    }
-                })
-                .catch(error => {
-                    console.warn('Auth check failed:', error);
-                    // On error, show login/register (assume not logged in)
-                    const userMenu = document.getElementById('user-menu');
-                    const loginLink = document.getElementById('login-link');
-                    const registerLink = document.getElementById('register-link');
-
-                    if (userMenu) userMenu.classList.add('d-none');
-                    if (loginLink) loginLink.classList.remove('d-none');
-                    if (registerLink) registerLink.classList.remove('d-none');
-                });
-        });
+        // Authentication state is now handled server-side via Razor conditionals
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

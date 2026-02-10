@@ -47,22 +47,22 @@ public class SuppressionController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetSuppressionList([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetSuppressionList([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/suppression",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "name",
-                    sortDirection = "asc",
-                    type = request.Type
-                }
-            );
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var queryString = $"/api/suppressionlists?pageNumber={pageNumber}&pageSize={pageSize}&sortBy=name&sortDescending=false";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+            if (!string.IsNullOrEmpty(request.Type))
+                queryString += $"&type={request.Type}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -110,7 +110,7 @@ public class SuppressionController : Controller
         try
         {
             var result = await _apiClient.DeleteAsync<ApiResponse<bool>>(
-                $"/api/suppression/{id}"
+                $"/api/suppressionlists/{id}"
             );
 
             return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Operation completed" });
@@ -123,23 +123,54 @@ public class SuppressionController : Controller
     }
 
     /// <summary>
-    /// Create suppression list
+    /// Create suppression list (GET - show form)
     /// </summary>
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// Create single suppression entry (POST - save to API)
+    /// Routes browser call through Web controller to API
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateEntry([FromBody] object entryData)
     {
         try
         {
-            // Load suppression list types (Global, Campaign-specific, etc.)
-            var listTypes = await _apiClient.GetAsync<ApiResponse<object>>("/api/suppression/types");
-            ViewBag.ListTypes = listTypes?.Data;
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                "/api/suppressionlists", entryData
+            );
 
-            return View();
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Entry added" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading suppression list creation data");
-            TempData["Error"] = "Failed to load required data for suppression list creation";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error creating suppression entry");
+            return Json(new { success = false, message = "An error occurred while creating the entry" });
+        }
+    }
+
+    /// <summary>
+    /// Bulk create suppression entries (POST - save to API)
+    /// Routes browser call through Web controller to API
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> BulkCreateEntries([FromBody] object bulkData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
+                "/api/suppressionlists/bulk", bulkData
+            );
+
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Entries added" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating bulk suppression entries");
+            return Json(new { success = false, message = "An error occurred while creating entries" });
         }
     }
 

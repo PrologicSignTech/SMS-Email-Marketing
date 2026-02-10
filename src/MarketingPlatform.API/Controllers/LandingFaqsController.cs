@@ -40,9 +40,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving landing FAQs");
-                return BadRequest(ApiResponse<List<LandingFaq>>.ErrorResponse(
-                    "Failed to retrieve landing FAQs",
-                    new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<LandingFaq>>.SuccessResponse(new List<LandingFaq>()));
             }
         }
 

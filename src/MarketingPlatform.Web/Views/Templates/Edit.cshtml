@@ -1,5 +1,6 @@
 @{
-    ViewData["Title"] = "Edit Template"; Layout = "_LayoutAuthenticated";
+    ViewData["Title"] = "Edit Template";
+    Layout = "_LayoutAuthenticated";
 }
 
 <div class="container-fluid">
@@ -10,82 +11,239 @@
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h5>Template Information</h5>
-        </div>
-        <div class="card-body">
-            <form id="templateForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="templateName" class="form-label">Template Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="templateName" value="Welcome Email" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="templateType" class="form-label">Type <span class="text-danger">*</span></label>
-                        <select class="form-select" id="templateType" required>
-                            <option value="0">SMS</option>
-                            <option value="1">MMS</option>
-                            <option value="2" selected>Email</option>
-                        </select>
-                    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Template Information</h5>
                 </div>
-                
-                <div class="mb-3" id="subjectGroup">
-                    <label for="subject" class="form-label">Email Subject <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="subject" value="Welcome to Our Platform, {FirstName}!">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="bodyText" class="form-label">Message Body <span class="text-danger">*</span></label>
-                    <textarea class="form-control" id="bodyText" rows="6" required>Hi {FirstName},
+                <div class="card-body">
+                    <div id="loadingSpinner" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Loading template...</p>
+                    </div>
+                    <form id="templateForm" style="display:none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="templateName" class="form-label">Template Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="templateName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="templateType" class="form-label">Channel <span class="text-danger">*</span></label>
+                                <select class="form-select" id="templateType" required>
+                                    <option value="0">SMS</option>
+                                    <option value="1">MMS</option>
+                                    <option value="2">Email</option>
+                                </select>
+                            </div>
+                        </div>
 
-Welcome to our platform! We're excited to have you on board.</textarea>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description">
+                        </div>
+
+                        <div class="mb-3" id="subjectGroup" style="display: none;">
+                            <label for="subject" class="form-label">Email Subject</label>
+                            <input type="text" class="form-control" id="subject">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bodyText" class="form-label">Message Body <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="bodyText" rows="6" required></textarea>
+                            <div class="form-text" id="charCount">0 characters</div>
+                        </div>
+
+                        <div class="mb-3" id="htmlGroup" style="display: none;">
+                            <label for="htmlContent" class="form-label">HTML Content</label>
+                            <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isActive">
+                                <label class="form-check-label" for="isActive">Active Template</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-danger" id="deleteBtn" onclick="deleteCurrentTemplate()">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                            <div>
+                                <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                
-                <div class="mb-3" id="htmlGroup">
-                    <label for="htmlContent" class="form-label">HTML Content</label>
-                    <textarea class="form-control" id="htmlContent" rows="8"></textarea>
-                </div>
-                
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isActive" checked>
-                        <label class="form-check-label" for="isActive">
-                            Active Template
-                        </label>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm bg-light">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-code-square me-1"></i> Available Tokens</h6>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Email}">{Email}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
                     </div>
+                    <small class="text-muted">Click to insert token into message body</small>
                 </div>
-                
-                <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-danger" onclick="deleteTemplate()">
-                        <i class="bi bi-trash"></i> Delete Template
-                    </button>
-                    <div>
-                        <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary me-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Save Changes
-                        </button>
-                    </div>
+            </div>
+
+            <div class="card shadow-sm mt-3" id="statsCard" style="display:none">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-bar-chart me-1"></i> Usage Stats</h6>
+                    <p class="mb-1">Used: <strong id="usageCount">0</strong> times</p>
+                    <p class="mb-0 small text-muted">Created: <span id="createdAt">-</span></p>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script nonce="@Context.GetCspNonce()">
-        function deleteTemplate() {
-            if (confirm('Are you sure you want to delete this template?')) {
-                alert('Template deleted! (Demo)');
-                window.location.href = '/Templates/Index';
+        const templateId = @(ViewBag.TemplateId ?? 0);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTemplateData();
+
+            document.getElementById('templateType').addEventListener('change', function() {
+                const isEmail = this.value === '2';
+                document.getElementById('subjectGroup').style.display = isEmail ? 'block' : 'none';
+                document.getElementById('htmlGroup').style.display = isEmail ? 'block' : 'none';
+            });
+
+            document.getElementById('bodyText').addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length + ' characters';
+            });
+
+            document.querySelectorAll('.token-badge').forEach(function(badge) {
+                badge.addEventListener('click', function() {
+                    const textarea = document.getElementById('bodyText');
+                    const start = textarea.selectionStart;
+                    const text = textarea.value;
+                    const token = this.dataset.token;
+                    textarea.value = text.substring(0, start) + token + text.substring(textarea.selectionEnd);
+                    textarea.focus();
+                    document.getElementById('charCount').textContent = textarea.value.length + ' characters';
+                });
+            });
+
+            document.getElementById('templateForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await updateTemplate();
+            });
+        });
+
+        async function loadTemplateData() {
+            try {
+                const response = await fetch(`/Templates/GetTemplateById?id=${templateId}`);
+                const result = await response.json();
+                if (!result.success) {
+                    showNotification(result.message || 'Failed to load template data', 'error');
+                    return;
+                }
+                const tpl = result.data;
+
+                if (tpl) {
+                    document.getElementById('templateName').value = tpl.name || '';
+                    document.getElementById('description').value = tpl.description || '';
+                    document.getElementById('templateType').value = (tpl.channel !== undefined ? tpl.channel : '0').toString();
+                    document.getElementById('subject').value = tpl.subject || '';
+                    document.getElementById('bodyText').value = tpl.messageBody || '';
+                    document.getElementById('htmlContent').value = tpl.htmlContent || tpl.htmlcontent || '';
+                    document.getElementById('isActive').checked = tpl.isActive !== false;
+                    document.getElementById('charCount').textContent = (tpl.messageBody || '').length + ' characters';
+
+                    // Show email fields if email
+                    const isEmail = tpl.channel === 2;
+                    document.getElementById('subjectGroup').style.display = isEmail ? 'block' : 'none';
+                    document.getElementById('htmlGroup').style.display = isEmail ? 'block' : 'none';
+
+                    // Stats
+                    if (tpl.usageCount !== undefined) {
+                        document.getElementById('usageCount').textContent = tpl.usageCount || 0;
+                        document.getElementById('createdAt').textContent = tpl.createdAt ? new Date(tpl.createdAt).toLocaleDateString() : '-';
+                        document.getElementById('statsCard').style.display = '';
+                    }
+
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('templateForm').style.display = '';
+                }
+            } catch (error) {
+                console.error('Error loading template:', error);
+                showNotification('Failed to load template data', 'error');
             }
         }
-        
-        document.getElementById('templateForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Template updated successfully! (Demo)');
-            window.location.href = '/Templates/Index';
-        });
+
+        async function updateTemplate() {
+            const name = document.getElementById('templateName').value.trim();
+            const messageBody = document.getElementById('bodyText').value.trim();
+
+            if (!name || !messageBody) {
+                showNotification('Name and message body are required', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="spinner-border spinner-border-sm me-1"></i>Saving...';
+
+            try {
+                const response = await fetch(`/Templates/UpdateTemplate?id=${templateId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        description: document.getElementById('description').value.trim() || null,
+                        subject: document.getElementById('subject').value.trim() || null,
+                        messageBody: messageBody,
+                        htmlContent: document.getElementById('htmlContent').value.trim() || null,
+                        defaultMediaUrls: [],
+                        variables: []
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Template updated successfully!', 'success');
+                    setTimeout(() => { window.location.href = '/Templates'; }, 1000);
+                } else {
+                    showNotification(result.message || 'Failed to update template', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Save Changes';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Save Changes';
+            }
+        }
+
+        function deleteCurrentTemplate() {
+            if (!confirm('Are you sure you want to delete this template? This cannot be undone.')) return;
+
+            fetch(`/Templates/Delete?id=${templateId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(result => {
+                    if (result.success) {
+                        showNotification('Template deleted!', 'success');
+                        setTimeout(() => { window.location.href = '/Templates'; }, 1000);
+                    } else {
+                        showNotification(result.message || 'Failed to delete', 'error');
+                    }
+                })
+                .catch(() => showNotification('Failed to delete template', 'error'));
+        }
     </script>
 }

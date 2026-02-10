@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "Messaging Inbox";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold"><i class="bi bi-inbox text-primary me-2"></i>Messaging Inbox</h2>
+            <p class="text-muted mb-0">Two-way conversations with your contacts</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Compose", "Messages")" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> New Message
+            </a>
+        </div>
+    </div>
+
+    <div class="row" style="height: calc(100vh - 220px);">
+        <!-- Conversation List (Left Panel) -->
+        <div class="col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-start-0" id="searchConversations" placeholder="Search conversations...">
+                    </div>
+                </div>
+                <div class="card-header bg-white py-2 border-top-0">
+                    <div class="btn-group btn-group-sm w-100" role="group">
+                        <input type="radio" class="btn-check" name="inboxFilter" id="filterAll" value="all" checked>
+                        <label class="btn btn-outline-secondary" for="filterAll">All</label>
+                        <input type="radio" class="btn-check" name="inboxFilter" id="filterUnread" value="unread">
+                        <label class="btn btn-outline-secondary" for="filterUnread">Unread</label>
+                        <input type="radio" class="btn-check" name="inboxFilter" id="filterAssigned" value="assigned">
+                        <label class="btn btn-outline-secondary" for="filterAssigned">My Assigned</label>
+                    </div>
+                </div>
+                <div class="card-body p-0" style="overflow-y: auto;" id="conversationList">
+                    <div class="text-center py-5">
+                        <div class="spinner-border spinner-border-sm text-primary"></div>
+                        <p class="text-muted small mt-2">Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area (Right Panel) -->
+        <div class="col-md-8 col-lg-9">
+            <div class="card shadow-sm h-100 d-flex flex-column">
+                <!-- Chat Header -->
+                <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center" id="chatHeader" style="display: none !important;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar-circle bg-primary text-white" id="contactAvatar">?</div>
+                        <div>
+                            <strong id="contactName">Select a conversation</strong>
+                            <div class="small text-muted" id="contactInfo"></div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" id="assignBtn" style="display: none;">
+                                <i class="bi bi-person-check"></i> Assign
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" id="agentDropdown">
+                                <li><span class="dropdown-item text-muted small">Loading agents...</span></li>
+                            </ul>
+                        </div>
+                        <span class="badge bg-secondary" id="channelBadge" style="display: none;">SMS</span>
+                        <button class="btn btn-sm btn-outline-secondary" id="markResolvedBtn" style="display: none;" title="Mark as Resolved">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="card-body flex-grow-1" style="overflow-y: auto; background: #f8f9fa;" id="messagesArea">
+                    <div class="text-center py-5" id="noChatSelected">
+                        <i class="bi bi-chat-dots fs-1 text-muted"></i>
+                        <p class="text-muted mt-3">Select a conversation to view messages</p>
+                    </div>
+                    <div id="messagesList" style="display: none;"></div>
+                </div>
+
+                <!-- Reply Area -->
+                <div class="card-footer bg-white" id="replyArea" style="display: none;">
+                    <div class="d-flex gap-2">
+                        <div class="flex-grow-1">
+                            <div class="input-group">
+                                <textarea class="form-control" id="replyMessage" rows="2" placeholder="Type your reply..." style="resize: none;"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-light" title="Insert Token" id="insertTokenBtn">
+                                        <i class="bi bi-braces"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light" title="Use Template" id="useTemplateBtn">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </button>
+                                </div>
+                                <div>
+                                    <small class="text-muted" id="replyCharCount">0/160</small>
+                                    <button class="btn btn-sm btn-primary ms-2" id="sendReplyBtn">
+                                        <i class="bi bi-send"></i> Send
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .conversation-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .conversation-item:hover { background: #f8f9fa; }
+        .conversation-item.active { background: #e8f0fe; border-left: 3px solid #667eea; }
+        .conversation-item.unread { font-weight: 600; }
+        .avatar-circle {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.875rem; font-weight: 600; flex-shrink: 0;
+        }
+        .message-bubble {
+            max-width: 70%; padding: 0.75rem 1rem;
+            border-radius: 12px; margin-bottom: 0.75rem;
+            position: relative;
+        }
+        .message-bubble.outgoing {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; margin-left: auto; border-bottom-right-radius: 4px;
+        }
+        .message-bubble.incoming {
+            background: white; border: 1px solid #e1e5eb;
+            border-bottom-left-radius: 4px;
+        }
+        .message-time { font-size: 0.7rem; opacity: 0.7; margin-top: 4px; }
+        .unread-badge {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #667eea; display: inline-block;
+        }
+        .assigned-badge { font-size: 0.65rem; }
+    </style>
+}
+
+@section Scripts {
+    <script src="~/js/messages-inbox.js" asp-append-version="true"></script>
+}

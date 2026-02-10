@@ -11,156 +11,436 @@
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h5>Template Information</h5>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Template Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="templateForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="templateName" class="form-label">Template Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="templateName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="templateType" class="form-label">Channel <span class="text-danger">*</span></label>
+                                <select class="form-select" id="templateType" required>
+                                    <option value="">Select Channel</option>
+                                    <option value="0">SMS</option>
+                                    <option value="1">MMS</option>
+                                    <option value="2">Email</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="description" placeholder="Brief description of this template">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="language" class="form-label">Language</label>
+                                <select class="form-select" id="language">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                    <option value="pt">Portuguese</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="ar">Arabic</option>
+                                    <option value="zh">Chinese</option>
+                                    <option value="ja">Japanese</option>
+                                    <option value="ko">Korean</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select" id="category">
+                                    <option value="0">General</option>
+                                    <option value="1">Marketing</option>
+                                    <option value="2">Transactional</option>
+                                    <option value="3">OTP / Verification</option>
+                                    <option value="4">Notification</option>
+                                    <option value="5">Promotional</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dltTemplateId" class="form-label">DLT Template ID</label>
+                                <input type="text" class="form-control" id="dltTemplateId" placeholder="Optional - for DLT compliance">
+                                <div class="form-text">Required for India DLT registration</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="subjectGroup" style="display: none;">
+                            <label for="subject" class="form-label">Email Subject <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="subject">
+                            <div class="form-text">Use tokens like {FirstName}, {LastName}, etc.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label for="bodyText" class="form-label mb-0">Message Body <span class="text-danger">*</span></label>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-info" id="previewBodyBtn" title="Preview">
+                                        <i class="bi bi-eye"></i> Preview
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="bodyText" rows="6" required></textarea>
+                            <div class="d-flex justify-content-between">
+                                <div class="form-text" id="charCount">0 characters</div>
+                                <div id="smsSegments" class="form-text text-info" style="display:none;">1 SMS segment</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="htmlGroup" style="display: none;">
+                            <label for="htmlContent" class="form-label">HTML Content</label>
+                            <textarea class="form-control" id="htmlContent" rows="8"></textarea>
+                            <div class="form-text">Rich HTML email content</div>
+                        </div>
+
+                        <!-- Compliance Validation -->
+                        <div class="card bg-light mb-3" id="complianceCard">
+                            <div class="card-body py-2">
+                                <h6 class="mb-2"><i class="bi bi-shield-check text-success me-1"></i> Compliance Check</h6>
+                                <div id="complianceChecks">
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <i class="bi bi-circle text-muted" id="checkOptOut"></i>
+                                        <small>Contains opt-out language (STOP/UNSUBSCRIBE)</small>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <i class="bi bi-circle text-muted" id="checkCompany"></i>
+                                        <small>Contains company identification</small>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <i class="bi bi-circle text-muted" id="checkLength"></i>
+                                        <small>Message length within recommended limits</small>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-circle text-muted" id="checkPersonalization"></i>
+                                        <small>Contains personalization tokens</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isActive" checked>
+                                    <label class="form-check-label" for="isActive">Active Template</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="submitForApproval">
+                                    <label class="form-check-label" for="submitForApproval">Submit for Approval</label>
+                                </div>
+                                <small class="text-muted">Send to admin for review before activation</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="button" class="btn btn-outline-primary me-2" id="saveDraftBtn">
+                                <i class="bi bi-file-earmark"></i> Save as Draft
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> Create Template
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form id="templateForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="templateName" class="form-label">Template Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="templateName" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="templateType" class="form-label">Type <span class="text-danger">*</span></label>
-                        <select class="form-select" id="templateType" required>
-                            <option value="">Select Type</option>
-                            <option value="0">SMS</option>
-                            <option value="1">MMS</option>
-                            <option value="2">Email</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="mb-3" id="subjectGroup" style="display: none;">
-                    <label for="subject" class="form-label">Email Subject <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="subject">
-                    <div class="form-text">Use tokens like {FirstName}, {LastName}, etc.</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="bodyText" class="form-label">Message Body <span class="text-danger">*</span></label>
-                    <textarea class="form-control" id="bodyText" rows="6" required></textarea>
-                    <div class="form-text" id="charCount">0 characters</div>
-                </div>
-
-                <div class="mb-3" id="htmlGroup" style="display: none;">
-                    <label for="htmlContent" class="form-label">HTML Content</label>
-                    <textarea class="form-control" id="htmlContent" rows="8"></textarea>
-                    <div class="form-text">Rich HTML email content</div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Available Tokens</label>
-                    <div class="d-flex flex-wrap gap-2">
+        <div class="col-lg-4">
+            <!-- Available Tokens -->
+            <div class="card shadow-sm bg-light mb-3">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-code-square me-1"></i> Personalization Tokens</h6>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
                         <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{FirstName}">{FirstName}</span>
                         <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{LastName}">{LastName}</span>
                         <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Email}">{Email}</span>
+                        <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{Phone}">{Phone}</span>
                         <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{CompanyName}">{CompanyName}</span>
                         <span class="badge bg-secondary token-badge" style="cursor: pointer;" data-token="{UnsubscribeLink}">{UnsubscribeLink}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{ShortLink}">{ShortLink}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{Date}">{Date}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{CustomField1}">{CustomField1}</span>
+                        <span class="badge bg-info token-badge" style="cursor: pointer;" data-token="{CustomField2}">{CustomField2}</span>
                     </div>
-                    <small class="text-muted">Click to insert token</small>
+                    <small class="text-muted">Click to insert token into message body</small>
                 </div>
+            </div>
 
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isActive" checked>
-                        <label class="form-check-label" for="isActive">
-                            Active Template
-                        </label>
+            <!-- Template Performance Score -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-speedometer2 me-1"></i> Template Score</h6>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div class="position-relative" style="width: 60px; height: 60px;">
+                            <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e9ecef" stroke-width="3"/>
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#667eea" stroke-width="3" stroke-dasharray="0, 100" id="scoreCircle"/>
+                            </svg>
+                            <div class="position-absolute top-50 start-50 translate-middle fw-bold" id="scoreValue">0</div>
+                        </div>
+                        <div>
+                            <div class="fw-bold" id="scoreLabel">Not Scored</div>
+                            <small class="text-muted" id="scoreHint">Start typing to see score</small>
+                        </div>
+                    </div>
+                    <div id="scoreTips" class="small"></div>
+                </div>
+            </div>
+
+            <!-- Live Preview -->
+            <div class="card shadow-sm" id="livePreviewCard">
+                <div class="card-header bg-white py-2">
+                    <h6 class="mb-0"><i class="bi bi-phone me-1"></i> Live Preview</h6>
+                </div>
+                <div class="card-body p-2" style="background: #f8f9fa;">
+                    <div class="bg-white rounded p-3" style="min-height: 150px; border: 2px solid #e1e5eb; border-radius: 20px !important;">
+                        <div class="text-muted small mb-2" id="previewSender">From: Your Company</div>
+                        <div id="previewContent" style="font-size: 0.9rem; word-wrap: break-word;">
+                            <span class="text-muted fst-italic">Your message will appear here...</span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="d-flex justify-content-end">
-                    <a href="@Url.Action("Index", "Templates")" class="btn btn-secondary me-2">Cancel</a>
-                    <button type="button" class="btn btn-outline-primary me-2" id="previewBtn">
-                        <i class="bi bi-eye"></i> Preview
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Create Template
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
+    <script nonce="@Context.GetCspNonce()">
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle email-specific fields
-            document.getElementById('templateType').addEventListener('change', function() {
-                const isEmail = this.value === '2';
+            var bodyText = document.getElementById('bodyText');
+            var templateType = document.getElementById('templateType');
+
+            // Channel toggle
+            templateType.addEventListener('change', function() {
+                var isEmail = this.value === '2';
+                var isSms = this.value === '0';
                 document.getElementById('subjectGroup').style.display = isEmail ? 'block' : 'none';
                 document.getElementById('htmlGroup').style.display = isEmail ? 'block' : 'none';
+                document.getElementById('smsSegments').style.display = isSms ? 'inline' : 'none';
+                updateScore();
             });
 
-            // Character counter
-            document.getElementById('bodyText').addEventListener('input', function() {
-                document.getElementById('charCount').textContent = this.value.length + ' characters';
+            // Character counter + compliance + score + preview
+            bodyText.addEventListener('input', function() {
+                var len = this.value.length;
+                document.getElementById('charCount').textContent = len + ' characters';
+
+                // SMS segments
+                if (templateType.value === '0') {
+                    var segments = len <= 160 ? 1 : Math.ceil(len / 153);
+                    document.getElementById('smsSegments').textContent = segments + ' SMS segment' + (segments > 1 ? 's' : '');
+                    document.getElementById('smsSegments').style.display = 'inline';
+                }
+
+                runComplianceChecks();
+                updateScore();
+                updatePreview();
             });
 
             // Token insertion
             document.querySelectorAll('.token-badge').forEach(function(badge) {
                 badge.addEventListener('click', function() {
-                    insertToken(this.dataset.token);
+                    var textarea = bodyText;
+                    var start = textarea.selectionStart;
+                    var text = textarea.value;
+                    var token = this.dataset.token;
+                    textarea.value = text.substring(0, start) + token + text.substring(textarea.selectionEnd);
+                    textarea.focus();
+                    textarea.dispatchEvent(new Event('input'));
                 });
             });
 
-            // Form submission
-            document.getElementById('templateForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await createTemplate();
+            // Preview button
+            document.getElementById('previewBodyBtn').addEventListener('click', function() {
+                var content = bodyText.value || 'No content yet';
+                // Replace tokens with sample data
+                content = content.replace(/\{FirstName\}/g, 'John')
+                    .replace(/\{LastName\}/g, 'Smith')
+                    .replace(/\{Email\}/g, 'john@example.com')
+                    .replace(/\{Phone\}/g, '+1 555-123-4567')
+                    .replace(/\{CompanyName\}/g, 'Your Company')
+                    .replace(/\{UnsubscribeLink\}/g, '#unsubscribe')
+                    .replace(/\{ShortLink\}/g, 'https://sho.rt/abc123')
+                    .replace(/\{Date\}/g, new Date().toLocaleDateString());
+                document.getElementById('previewContent').textContent = content;
             });
-        });
 
-        function insertToken(token) {
-            const textarea = document.getElementById('bodyText');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            textarea.value = text.substring(0, start) + token + text.substring(end);
-            textarea.focus();
-            document.getElementById('charCount').textContent = textarea.value.length + ' characters';
-        }
-
-        async function createTemplate() {
-            const templateData = {
-                name: document.getElementById('templateName').value,
-                type: parseInt(document.getElementById('templateType').value),
-                subject: document.getElementById('subject').value || null,
-                bodyText: document.getElementById('bodyText').value,
-                htmlContent: document.getElementById('htmlContent').value || null,
-                isActive: document.getElementById('isActive').checked
-            };
-
-            if (!templateData.name || templateData.type === null || !templateData.bodyText) {
-                showNotification('Please fill in all required fields', 'warning');
-                return;
-            }
-
-            try {
-                const response = await fetch('/Templates/Create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(templateData)
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showNotification('Template created successfully!', 'success');
-                    setTimeout(() => {
-                        window.location.href = '/Templates/Index';
-                    }, 1000);
-                } else {
-                    showNotification(result.message || 'Failed to create template', 'danger');
+            // Live preview
+            function updatePreview() {
+                var content = bodyText.value || '';
+                if (!content) {
+                    document.getElementById('previewContent').innerHTML = '<span class="text-muted fst-italic">Your message will appear here...</span>';
+                    return;
                 }
-            } catch (error) {
-                console.error('Error creating template:', error);
-                showNotification('An error occurred while creating the template', 'danger');
+                var preview = content.replace(/\{FirstName\}/g, '<span class="text-primary">John</span>')
+                    .replace(/\{LastName\}/g, '<span class="text-primary">Smith</span>')
+                    .replace(/\{Email\}/g, '<span class="text-primary">john@example.com</span>')
+                    .replace(/\{Phone\}/g, '<span class="text-primary">+1 555-123-4567</span>')
+                    .replace(/\{CompanyName\}/g, '<span class="text-primary">Your Company</span>')
+                    .replace(/\{UnsubscribeLink\}/g, '<a href="#">Unsubscribe</a>')
+                    .replace(/\{ShortLink\}/g, '<a href="#">sho.rt/abc</a>')
+                    .replace(/\{Date\}/g, '<span class="text-primary">' + new Date().toLocaleDateString() + '</span>')
+                    .replace(/\n/g, '<br>');
+                document.getElementById('previewContent').innerHTML = preview;
             }
-        }
+
+            // Compliance checks
+            function runComplianceChecks() {
+                var text = bodyText.value.toLowerCase();
+                setCheck('checkOptOut', text.indexOf('stop') >= 0 || text.indexOf('unsubscribe') >= 0 || text.indexOf('{unsubscribelink}') >= 0);
+                setCheck('checkCompany', text.indexOf('{companyname}') >= 0 || document.getElementById('templateName').value.length > 0);
+                setCheck('checkLength', templateType.value === '0' ? bodyText.value.length <= 320 : bodyText.value.length > 0);
+                setCheck('checkPersonalization', text.indexOf('{') >= 0 && text.indexOf('}') >= 0);
+            }
+
+            function setCheck(id, passed) {
+                var el = document.getElementById(id);
+                el.className = passed ? 'bi bi-check-circle-fill text-success' : 'bi bi-circle text-muted';
+            }
+
+            // Template score
+            function updateScore() {
+                var score = 0;
+                var tips = [];
+                var text = bodyText.value;
+                var lower = text.toLowerCase();
+
+                if (text.length > 0) score += 10;
+                if (text.length > 20) score += 10;
+                if (document.getElementById('templateName').value.length > 0) score += 10;
+                if (document.getElementById('description').value.length > 0) score += 5;
+
+                // Personalization
+                if (lower.indexOf('{firstname}') >= 0 || lower.indexOf('{lastname}') >= 0) {
+                    score += 15;
+                } else { tips.push('Add personalization tokens for better engagement'); }
+
+                // Opt-out
+                if (lower.indexOf('stop') >= 0 || lower.indexOf('{unsubscribelink}') >= 0) {
+                    score += 15;
+                } else { tips.push('Include opt-out language for compliance'); }
+
+                // CTA
+                if (lower.indexOf('click') >= 0 || lower.indexOf('visit') >= 0 || lower.indexOf('call') >= 0 || lower.indexOf('reply') >= 0 || lower.indexOf('{shortlink}') >= 0) {
+                    score += 15;
+                } else { tips.push('Add a clear call-to-action'); }
+
+                // Length optimization
+                if (templateType.value === '0' && text.length > 0 && text.length <= 160) {
+                    score += 10;
+                } else if (templateType.value === '2' && text.length > 50) {
+                    score += 10;
+                } else if (text.length > 0) {
+                    score += 5;
+                }
+
+                // DLT
+                if (document.getElementById('dltTemplateId').value) score += 5;
+
+                // Language
+                if (document.getElementById('language').value !== 'en') score += 5;
+
+                score = Math.min(score, 100);
+
+                // Update UI
+                document.getElementById('scoreValue').textContent = score;
+                document.getElementById('scoreCircle').setAttribute('stroke-dasharray', score + ', 100');
+
+                var color = score >= 80 ? '#198754' : score >= 50 ? '#ffc107' : '#dc3545';
+                document.getElementById('scoreCircle').setAttribute('stroke', color);
+
+                var label = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : score > 0 ? 'Needs Work' : 'Not Scored';
+                document.getElementById('scoreLabel').textContent = label;
+                document.getElementById('scoreHint').textContent = score >= 80 ? 'Great template!' : 'Improve score with tips below';
+
+                var tipsHtml = tips.map(function(t) { return '<div class="text-warning"><i class="bi bi-lightbulb me-1"></i>' + t + '</div>'; }).join('');
+                document.getElementById('scoreTips').innerHTML = tipsHtml;
+            }
+
+            // Name change triggers score update
+            document.getElementById('templateName').addEventListener('input', updateScore);
+            document.getElementById('description').addEventListener('input', updateScore);
+            document.getElementById('dltTemplateId').addEventListener('input', updateScore);
+            document.getElementById('language').addEventListener('change', updateScore);
+
+            // Save as draft
+            document.getElementById('saveDraftBtn').addEventListener('click', function() {
+                submitTemplate(true);
+            });
+
+            // Form submit
+            document.getElementById('templateForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitTemplate(false);
+            });
+
+            async function submitTemplate(isDraft) {
+                var name = document.getElementById('templateName').value.trim();
+                var channel = templateType.value;
+                var messageBody = bodyText.value.trim();
+
+                if (!name || channel === '' || !messageBody) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                var btn = isDraft ? document.getElementById('saveDraftBtn') : document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>' + (isDraft ? 'Saving...' : 'Creating...');
+
+                try {
+                    var response = await fetch('/Templates/CreateTemplate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: name,
+                            description: document.getElementById('description').value.trim() || null,
+                            channel: parseInt(channel),
+                            category: parseInt(document.getElementById('category').value),
+                            subject: document.getElementById('subject').value.trim() || null,
+                            messageBody: messageBody,
+                            htmlContent: document.getElementById('htmlContent').value.trim() || null,
+                            defaultMediaUrls: [],
+                            variables: [],
+                            language: document.getElementById('language').value,
+                            dltTemplateId: document.getElementById('dltTemplateId').value.trim() || null,
+                            isActive: isDraft ? false : document.getElementById('isActive').checked,
+                            submitForApproval: document.getElementById('submitForApproval').checked
+                        })
+                    });
+
+                    var result = await response.json();
+
+                    if (result.success) {
+                        showNotification(isDraft ? 'Template saved as draft!' : 'Template created successfully!', 'success');
+                        setTimeout(function() { window.location.href = '/Templates'; }, 1000);
+                    } else {
+                        showNotification(result.message || 'Failed to create template', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = isDraft ? '<i class="bi bi-file-earmark"></i> Save as Draft' : '<i class="bi bi-check-circle"></i> Create Template';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('An error occurred', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = isDraft ? '<i class="bi bi-file-earmark"></i> Save as Draft' : '<i class="bi bi-check-circle"></i> Create Template';
+                }
+            }
+        });
     </script>
 }

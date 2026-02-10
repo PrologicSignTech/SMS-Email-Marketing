@@ -22,13 +22,13 @@ namespace MarketingPlatform.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PaginatedResult<SuppressionListDto>>>> GetSuppressionLists([FromQuery] PagedRequest request)
+        public async Task<ActionResult<ApiResponse<PaginatedResult<SuppressionListDto>>>> GetSuppressionLists([FromQuery] PagedRequest request, [FromQuery] int? type = null)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var result = await _suppressionService.GetAllAsync(userId, request);
+            var result = await _suppressionService.GetAllAsync(userId, request, type);
             return Ok(ApiResponse<PaginatedResult<SuppressionListDto>>.SuccessResponse(result));
         }
 

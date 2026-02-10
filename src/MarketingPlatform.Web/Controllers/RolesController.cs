@@ -47,27 +47,21 @@ public class RolesController : Controller
     /// Web server calls API, not browser - more secure
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> GetRoles([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetRoles([FromBody] DataTablesRequest? request)
     {
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/roles",
-                new
-                {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = "name",
-                    sortDirection = "asc"
-                }
-            );
+            // API returns a flat list (not paginated) via [HttpGet]
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/roles");
 
             if (result?.Success == true)
             {
                 var dataObj = result.Data as System.Text.Json.JsonElement?;
-                var items = dataObj?.GetProperty("items");
-                var totalCount = dataObj?.GetProperty("totalCount").GetInt32() ?? 0;
+                // API returns array directly, not PaginatedResult
+                var items = dataObj;
+                var totalCount = dataObj?.GetArrayLength() ?? 0;
 
                 return Json(new
                 {
@@ -122,56 +116,73 @@ public class RolesController : Controller
     }
 
     /// <summary>
-    /// Create new role
+    /// Create role page
     /// </summary>
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    /// <summary>
+    /// Edit role page
+    /// </summary>
+    public IActionResult Edit(int id)
+    {
+        ViewBag.RoleId = id;
+        return View();
+    }
+
+    /// <summary>
+    /// Get role details (SERVER-SIDE)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetRole(int id)
     {
         try
         {
-            // Load available permissions for role assignment
-            var permissions = await _apiClient.GetAsync<ApiResponse<object>>("/api/permissions");
-            ViewBag.Permissions = permissions?.Data;
-
-            return View();
+            var result = await _apiClient.GetAsync<ApiResponse<object>>($"/api/roles/{id}");
+            return Json(new { success = result?.Success ?? false, data = result?.Data });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading role creation data");
-            TempData["Error"] = "Failed to load required data for role creation";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error fetching role {RoleId}", id);
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 
     /// <summary>
-    /// Edit role
+    /// Create role (SERVER-SIDE)
     /// </summary>
-    public async Task<IActionResult> Edit(string id)
+    [HttpPost]
+    public async Task<IActionResult> CreateRole([FromBody] object roleData)
     {
         try
         {
-            var roleTask = _apiClient.GetAsync<ApiResponse<object>>($"/api/roles/{id}");
-            var permissionsTask = _apiClient.GetAsync<ApiResponse<object>>("/api/permissions");
-
-            await Task.WhenAll(roleTask, permissionsTask);
-
-            var role = await roleTask;
-            var permissions = await permissionsTask;
-
-            if (role?.Success == true && role.Data != null)
-            {
-                ViewBag.RoleId = id;
-                ViewBag.Permissions = permissions?.Data;
-                return View(role.Data);
-            }
-
-            TempData["Error"] = "Role not found";
-            return RedirectToAction(nameof(Index));
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/roles", roleData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Role created" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading role {RoleId}", id);
-            TempData["Error"] = "Failed to load role";
-            return RedirectToAction(nameof(Index));
+            _logger.LogError(ex, "Error creating role");
+            return Json(new { success = false, message = "An error occurred" });
+        }
+    }
+
+    /// <summary>
+    /// Update role (SERVER-SIDE)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> UpdateRole(int id, [FromBody] object roleData)
+    {
+        try
+        {
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>($"/api/roles/{id}", roleData);
+            return Json(new { success = result?.Success ?? false, message = result?.Message ?? "Role updated" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating role {RoleId}", id);
+            return Json(new { success = false, message = "An error occurred" });
         }
     }
 }

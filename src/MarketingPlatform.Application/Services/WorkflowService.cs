@@ -5,6 +5,8 @@ using MarketingPlatform.Application.Interfaces;
 using MarketingPlatform.Core.Entities;
 using MarketingPlatform.Core.Enums;
 using MarketingPlatform.Core.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -18,7 +20,12 @@ namespace MarketingPlatform.Application.Services
         private readonly IRepository<Contact> _contactRepository;
         private readonly IRepository<ContactGroupMember> _groupMemberRepository;
         private readonly IRepository<ContactTagAssignment> _tagAssignmentRepository;
+        private readonly IRepository<SuppressionList> _suppressionRepository;
         private readonly IMessageService _messageService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ISMSProvider _smsProvider;
+        private readonly IMMSProvider _mmsProvider;
+        private readonly IEmailProvider _emailProvider;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<WorkflowService> _logger;
 
@@ -29,7 +36,12 @@ namespace MarketingPlatform.Application.Services
             IRepository<Contact> contactRepository,
             IRepository<ContactGroupMember> groupMemberRepository,
             IRepository<ContactTagAssignment> tagAssignmentRepository,
+            IRepository<SuppressionList> suppressionRepository,
             IMessageService messageService,
+            IServiceProvider serviceProvider,
+            ISMSProvider smsProvider,
+            IMMSProvider mmsProvider,
+            IEmailProvider emailProvider,
             IUnitOfWork unitOfWork,
             ILogger<WorkflowService> logger)
         {
@@ -39,7 +51,12 @@ namespace MarketingPlatform.Application.Services
             _contactRepository = contactRepository;
             _groupMemberRepository = groupMemberRepository;
             _tagAssignmentRepository = tagAssignmentRepository;
+            _suppressionRepository = suppressionRepository;
             _messageService = messageService;
+            _serviceProvider = serviceProvider;
+            _smsProvider = smsProvider;
+            _mmsProvider = mmsProvider;
+            _emailProvider = emailProvider;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -423,6 +440,16 @@ namespace MarketingPlatform.Application.Services
                 return;
             }
 
+            // CRITICAL: Verify the contact belongs to the same user who owns the workflow
+            // User A's workflow must never execute on User B's contacts
+            if (contact.UserId != workflow.UserId)
+            {
+                _logger.LogWarning(
+                    "SECURITY: Workflow {WorkflowId} (user {WorkflowUser}) cannot execute on contact {ContactId} (user {ContactUser}) — different owners",
+                    workflowId, workflow.UserId, contactId, contact.UserId);
+                return;
+            }
+
             // Check if there's already an active execution for this workflow and contact
             var existingExecution = await _executionRepository.FirstOrDefaultAsync(e =>
                 e.WorkflowId == workflowId &&
@@ -668,44 +695,198 @@ namespace MarketingPlatform.Application.Services
             }
         }
 
+        /// <summary>
+        /// Check if a contact's phone/email is on the suppression list
+        /// </summary>
+        private async Task<bool> IsOnSuppressionListAsync(string userId, string phoneOrEmail)
+        {
+            if (string.IsNullOrEmpty(phoneOrEmail))
+                return false;
+
+            var suppressed = await _suppressionRepository.GetQueryable()
+                .AnyAsync(s => s.UserId == userId && s.PhoneOrEmail == phoneOrEmail);
+
+            if (suppressed)
+            {
+                _logger.LogWarning("Recipient {Recipient} is on suppression list for user {UserId} — skipping send", phoneOrEmail, userId);
+            }
+
+            return suppressed;
+        }
+
+        /// <summary>
+        /// Personalise message body by replacing tokens with contact data
+        /// </summary>
+        private string PersonalizeMessage(string messageBody, Contact contact)
+        {
+            if (string.IsNullOrEmpty(messageBody))
+                return messageBody;
+
+            return messageBody
+                .Replace("{FirstName}", contact.FirstName ?? "", StringComparison.OrdinalIgnoreCase)
+                .Replace("{LastName}", contact.LastName ?? "", StringComparison.OrdinalIgnoreCase)
+                .Replace("{Email}", contact.Email ?? "", StringComparison.OrdinalIgnoreCase)
+                .Replace("{Phone}", contact.PhoneNumber ?? "", StringComparison.OrdinalIgnoreCase)
+                .Replace("{City}", contact.City ?? "", StringComparison.OrdinalIgnoreCase)
+                .Replace("{Country}", contact.Country ?? "", StringComparison.OrdinalIgnoreCase);
+        }
+
         private async Task SendSMSAsync(Contact contact, string userId, Dictionary<string, object> config)
         {
             if (string.IsNullOrEmpty(contact.PhoneNumber))
             {
-                _logger.LogWarning("Contact {ContactId} has no phone number", contact.Id);
+                _logger.LogWarning("Contact {ContactId} has no phone number — skipping SMS", contact.Id);
+                return;
+            }
+
+            // Check suppression list
+            if (await IsOnSuppressionListAsync(userId, contact.PhoneNumber))
+                return;
+
+            // Check contact opt-in status
+            if (contact.SmsOptIn == false)
+            {
+                _logger.LogWarning("Contact {ContactId} has SMS opt-in disabled — skipping SMS", contact.Id);
                 return;
             }
 
             var messageBody = config.GetValueOrDefault("messageBody", "")?.ToString() ?? "";
-            // TODO: Use MessageService to send SMS
-            _logger.LogInformation("Sending SMS to contact {ContactId}: {Message}", contact.Id, messageBody);
+            messageBody = PersonalizeMessage(messageBody, contact);
+
+            if (string.IsNullOrWhiteSpace(messageBody))
+            {
+                _logger.LogWarning("Workflow SMS has empty message body for contact {ContactId}", contact.Id);
+                return;
+            }
+
+            var (success, externalId, error, cost) = await _smsProvider.SendSMSAsync(contact.PhoneNumber, messageBody);
+
+            if (success)
+            {
+                _logger.LogInformation("Workflow SMS sent to contact {ContactId} ({Phone}), ExternalId: {ExternalId}",
+                    contact.Id, contact.PhoneNumber, externalId);
+
+                // Fire MessageSent event so other workflows can react (lazy resolve to avoid circular DI)
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.MessageSent, contact.Id,
+                    new Dictionary<string, object> { { "channel", "SMS" }, { "externalId", externalId ?? "" } });
+            }
+            else
+            {
+                _logger.LogError("Workflow SMS failed for contact {ContactId} ({Phone}): {Error}",
+                    contact.Id, contact.PhoneNumber, error);
+                throw new InvalidOperationException($"SMS send failed: {error}");
+            }
         }
 
         private async Task SendMMSAsync(Contact contact, string userId, Dictionary<string, object> config)
         {
             if (string.IsNullOrEmpty(contact.PhoneNumber))
             {
-                _logger.LogWarning("Contact {ContactId} has no phone number", contact.Id);
+                _logger.LogWarning("Contact {ContactId} has no phone number — skipping MMS", contact.Id);
+                return;
+            }
+
+            // Check suppression list
+            if (await IsOnSuppressionListAsync(userId, contact.PhoneNumber))
+                return;
+
+            // Check contact opt-in status
+            if (contact.MmsOptIn == false)
+            {
+                _logger.LogWarning("Contact {ContactId} has MMS opt-in disabled — skipping MMS", contact.Id);
                 return;
             }
 
             var messageBody = config.GetValueOrDefault("messageBody", "")?.ToString() ?? "";
-            // TODO: Use MessageService to send MMS
-            _logger.LogInformation("Sending MMS to contact {ContactId}: {Message}", contact.Id, messageBody);
+            messageBody = PersonalizeMessage(messageBody, contact);
+
+            // Parse media URLs from config
+            var mediaUrls = new List<string>();
+            if (config.TryGetValue("mediaUrls", out var mediaUrlsObj) && mediaUrlsObj != null)
+            {
+                try
+                {
+                    var mediaJson = mediaUrlsObj.ToString();
+                    if (!string.IsNullOrEmpty(mediaJson))
+                    {
+                        mediaUrls = JsonConvert.DeserializeObject<List<string>>(mediaJson) ?? new List<string>();
+                    }
+                }
+                catch
+                {
+                    // Single URL as string
+                    var singleUrl = mediaUrlsObj.ToString();
+                    if (!string.IsNullOrEmpty(singleUrl))
+                        mediaUrls.Add(singleUrl);
+                }
+            }
+
+            var (success, externalId, error, cost) = await _mmsProvider.SendMMSAsync(contact.PhoneNumber, messageBody, mediaUrls);
+
+            if (success)
+            {
+                _logger.LogInformation("Workflow MMS sent to contact {ContactId} ({Phone}), ExternalId: {ExternalId}",
+                    contact.Id, contact.PhoneNumber, externalId);
+
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.MessageSent, contact.Id,
+                    new Dictionary<string, object> { { "channel", "MMS" }, { "externalId", externalId ?? "" } });
+            }
+            else
+            {
+                _logger.LogError("Workflow MMS failed for contact {ContactId} ({Phone}): {Error}",
+                    contact.Id, contact.PhoneNumber, error);
+                throw new InvalidOperationException($"MMS send failed: {error}");
+            }
         }
 
         private async Task SendEmailAsync(Contact contact, string userId, Dictionary<string, object> config)
         {
             if (string.IsNullOrEmpty(contact.Email))
             {
-                _logger.LogWarning("Contact {ContactId} has no email", contact.Id);
+                _logger.LogWarning("Contact {ContactId} has no email — skipping Email", contact.Id);
+                return;
+            }
+
+            // Check suppression list
+            if (await IsOnSuppressionListAsync(userId, contact.Email))
+                return;
+
+            // Check contact opt-in status
+            if (contact.EmailOptIn == false)
+            {
+                _logger.LogWarning("Contact {ContactId} has Email opt-in disabled — skipping Email", contact.Id);
                 return;
             }
 
             var subject = config.GetValueOrDefault("subject", "")?.ToString() ?? "";
             var messageBody = config.GetValueOrDefault("messageBody", "")?.ToString() ?? "";
-            // TODO: Use MessageService to send Email
-            _logger.LogInformation("Sending Email to contact {ContactId}: {Subject}", contact.Id, subject);
+            var htmlBody = config.GetValueOrDefault("htmlBody", "")?.ToString();
+
+            subject = PersonalizeMessage(subject, contact);
+            messageBody = PersonalizeMessage(messageBody, contact);
+            if (!string.IsNullOrEmpty(htmlBody))
+                htmlBody = PersonalizeMessage(htmlBody, contact);
+
+            var (success, externalId, error, cost) = await _emailProvider.SendEmailAsync(
+                contact.Email, subject, messageBody, htmlBody);
+
+            if (success)
+            {
+                _logger.LogInformation("Workflow Email sent to contact {ContactId} ({Email}), ExternalId: {ExternalId}",
+                    contact.Id, contact.Email, externalId);
+
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.MessageSent, contact.Id,
+                    new Dictionary<string, object> { { "channel", "Email" }, { "externalId", externalId ?? "" } });
+            }
+            else
+            {
+                _logger.LogError("Workflow Email failed for contact {ContactId} ({Email}): {Error}",
+                    contact.Id, contact.Email, error);
+                throw new InvalidOperationException($"Email send failed: {error}");
+            }
         }
 
         private async Task AddToGroupAsync(int contactId, Dictionary<string, object> config)
@@ -733,6 +914,11 @@ namespace MarketingPlatform.Application.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation("Added contact {ContactId} to group {GroupId}", contactId, groupId);
+
+                // Fire event — other workflows listening for ContactAddedToGroup will trigger
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.ContactAddedToGroup, contactId,
+                    new Dictionary<string, object> { { "groupId", groupId } });
             }
         }
 
@@ -758,6 +944,11 @@ namespace MarketingPlatform.Application.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation("Removed contact {ContactId} from group {GroupId}", contactId, groupId);
+
+                // Fire event — other workflows listening for ContactRemovedFromGroup will trigger
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.ContactRemovedFromGroup, contactId,
+                    new Dictionary<string, object> { { "groupId", groupId } });
             }
         }
 
@@ -786,6 +977,11 @@ namespace MarketingPlatform.Application.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation("Added tag {TagId} to contact {ContactId}", tagId, contactId);
+
+                // Fire event — other workflows listening for ContactTagged will trigger
+                var eventTrigger = _serviceProvider.GetRequiredService<IEventTriggerService>();
+                await eventTrigger.TriggerEventAsync(EventType.ContactTagged, contactId,
+                    new Dictionary<string, object> { { "tagId", tagId } });
             }
         }
 

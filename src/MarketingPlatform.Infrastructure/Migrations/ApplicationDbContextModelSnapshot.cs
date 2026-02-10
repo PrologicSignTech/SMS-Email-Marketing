@@ -117,6 +117,15 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("EmailOtp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmailOtpAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EmailOtpExpiresAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
@@ -2946,6 +2955,77 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.ToTable("PageContents");
                 });
 
+            modelBuilder.Entity("MarketingPlatform.Core.Entities.PhoneNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AssignedToUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Capabilities")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("MonthlyRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProviderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProviderNumberSid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PurchasedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PurchasedByUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhoneNumbers");
+                });
+
             modelBuilder.Entity("MarketingPlatform.Core.Entities.PlanFeatureMapping", b =>
                 {
                     b.Property<int>("Id")
@@ -3844,6 +3924,71 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.ToTable("SuppressionLists");
                 });
 
+            modelBuilder.Entity("MarketingPlatform.Core.Entities.SuppressionRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AutoReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSystemRule")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastTriggeredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SuppressionType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Trigger")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TriggerCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SuppressionRules");
+                });
+
             modelBuilder.Entity("MarketingPlatform.Core.Entities.TaxConfiguration", b =>
                 {
                     b.Property<int>("Id")
@@ -4720,7 +4865,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
                 });
@@ -4729,12 +4874,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                 {
                     b.HasOne("MarketingPlatform.Core.Entities.Invoice", "Invoice")
                         .WithMany("BillingHistories")
-                        .HasForeignKey("InvoiceId");
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -4747,7 +4893,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany("Campaigns")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -4758,7 +4904,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithOne("Analytics")
                         .HasForeignKey("MarketingPlatform.Core.Entities.CampaignAnalytics", "CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Campaign");
@@ -4769,7 +4915,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithOne("Audience")
                         .HasForeignKey("MarketingPlatform.Core.Entities.CampaignAudience", "CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Campaign");
@@ -4780,13 +4926,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithOne("Content")
                         .HasForeignKey("MarketingPlatform.Core.Entities.CampaignContent", "CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.MessageTemplate", "MessageTemplate")
                         .WithMany("CampaignContents")
                         .HasForeignKey("MessageTemplateId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Campaign");
 
@@ -4798,7 +4944,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithMany("Messages")
                         .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
@@ -4810,7 +4956,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.CampaignVariant", "Variant")
                         .WithMany("Messages")
                         .HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Campaign");
 
@@ -4824,7 +4970,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithOne("Schedule")
                         .HasForeignKey("MarketingPlatform.Core.Entities.CampaignSchedule", "CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Campaign");
@@ -4835,13 +4981,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithMany("Variants")
                         .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.MessageTemplate", "MessageTemplate")
                         .WithMany()
                         .HasForeignKey("MessageTemplateId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Campaign");
 
@@ -4853,7 +4999,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.CampaignVariant", "CampaignVariant")
                         .WithOne("Analytics")
                         .HasForeignKey("MarketingPlatform.Core.Entities.CampaignVariantAnalytics", "CampaignVariantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CampaignVariant");
@@ -4864,7 +5010,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.PricingModel", "PricingModel")
                         .WithMany("ChannelPricings")
                         .HasForeignKey("PricingModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("PricingModel");
@@ -4875,7 +5021,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ChatRoom", "ChatRoom")
                         .WithMany("Messages")
                         .HasForeignKey("ChatRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "Sender")
@@ -4909,16 +5055,18 @@ namespace MarketingPlatform.Infrastructure.Migrations
                 {
                     b.HasOne("MarketingPlatform.Core.Entities.Campaign", "Campaign")
                         .WithMany()
-                        .HasForeignKey("CampaignId");
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany()
-                        .HasForeignKey("ContactId");
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Campaign");
@@ -4933,7 +5081,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ComplianceRule", "ComplianceRule")
                         .WithMany("AuditTrail")
                         .HasForeignKey("ComplianceRuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ComplianceRule");
@@ -4944,7 +5092,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -4955,7 +5103,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany("ConsentHistories")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -4966,7 +5114,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany("Contacts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -4977,7 +5125,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany("ContactConsents")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -4988,7 +5136,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithOne("Engagement")
                         .HasForeignKey("MarketingPlatform.Core.Entities.ContactEngagement", "ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -4999,7 +5147,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany("ContactGroups")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5016,7 +5164,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany("GroupMembers")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -5029,7 +5177,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5040,7 +5188,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany("TagAssignments")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ContactTag", "ContactTag")
@@ -5059,13 +5207,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Contact", "Contact")
                         .WithMany()
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -5078,13 +5226,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.UserSubscription", "UserSubscription")
                         .WithMany("Invoices")
                         .HasForeignKey("UserSubscriptionId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
 
@@ -5101,12 +5249,12 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ContactGroup", "OptInGroup")
                         .WithMany("Keywords")
                         .HasForeignKey("OptInGroupId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("LinkedCampaign");
@@ -5121,7 +5269,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Keyword", "Keyword")
                         .WithMany("Activities")
                         .HasForeignKey("KeywordId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Keyword");
@@ -5144,7 +5292,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Keyword", "Keyword")
                         .WithMany()
                         .HasForeignKey("KeywordId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AssignedBy");
@@ -5203,7 +5351,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.CampaignMessage", "CampaignMessage")
                         .WithMany()
                         .HasForeignKey("CampaignMessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("CampaignMessage");
@@ -5214,7 +5362,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5225,7 +5373,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "LastModifiedByUser")
                         .WithMany()
                         .HasForeignKey("LastModifiedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("LastModifiedByUser");
                 });
@@ -5235,13 +5383,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Feature", "Feature")
                         .WithMany("PlanFeatureMappings")
                         .HasForeignKey("FeatureId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.SubscriptionPlan", "SubscriptionPlan")
                         .WithMany("PlanFeatureMappings")
                         .HasForeignKey("SubscriptionPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Feature");
@@ -5275,7 +5423,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.MessageProvider", "MessageProvider")
                         .WithMany("Logs")
                         .HasForeignKey("MessageProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("MessageProvider");
@@ -5286,7 +5434,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5297,7 +5445,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5308,7 +5456,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.PricingModel", "PricingModel")
                         .WithMany("RegionPricings")
                         .HasForeignKey("PricingModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("PricingModel");
@@ -5344,7 +5492,18 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MarketingPlatform.Core.Entities.SuppressionRule", b =>
+                {
+                    b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5355,7 +5514,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.URLShortener", "URLShortener")
                         .WithMany("Clicks")
                         .HasForeignKey("URLShortenerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("URLShortener");
@@ -5377,7 +5536,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.PricingModel", "PricingModel")
                         .WithMany("UsagePricings")
                         .HasForeignKey("PricingModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("PricingModel");
@@ -5388,7 +5547,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5399,7 +5558,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany("ActivityLogs")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5410,13 +5569,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ExternalAuthProvider", "Provider")
                         .WithMany("UserExternalLogins")
                         .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Provider");
@@ -5429,13 +5588,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -5454,7 +5613,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("SubscriptionPlan");
@@ -5467,7 +5626,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -5478,7 +5637,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Workflow", "Workflow")
                         .WithMany("Executions")
                         .HasForeignKey("WorkflowId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Workflow");
@@ -5489,7 +5648,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.Workflow", "Workflow")
                         .WithMany("Steps")
                         .HasForeignKey("WorkflowId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Workflow");
@@ -5500,7 +5659,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -5509,7 +5668,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -5518,7 +5677,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -5527,13 +5686,13 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -5542,7 +5701,7 @@ namespace MarketingPlatform.Infrastructure.Migrations
                     b.HasOne("MarketingPlatform.Core.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

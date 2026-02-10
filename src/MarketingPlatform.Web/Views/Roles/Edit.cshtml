@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Edit Role"; Layout = "_LayoutAuthenticated";
+    var roleId = ViewBag.RoleId ?? 0;
 }
 
 <div class="container-fluid">
@@ -12,14 +13,15 @@
 
     <div class="card">
         <div class="card-body">
-            <form id="roleForm">
+            <div id="loading" class="text-center py-5"><div class="spinner-border"></div></div>
+            <form id="roleForm" style="display: none;">
                 <div class="mb-3">
                     <label for="roleName" class="form-label">Role Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="roleName" value="Manager" required>
+                    <input type="text" class="form-control" id="roleName" required>
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" rows="2">Campaign management role</textarea>
+                    <textarea class="form-control" id="description" rows="2"></textarea>
                 </div>
 
                 <hr>
@@ -29,39 +31,68 @@
                     <div class="col-md-6">
                         <h6>Campaign Management</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewCampaigns" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewCampaigns" id="viewCampaigns">
                             <label class="form-check-label" for="viewCampaigns">View Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="createCampaigns" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="CreateCampaigns" id="createCampaigns">
                             <label class="form-check-label" for="createCampaigns">Create Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editCampaigns" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="EditCampaigns" id="editCampaigns">
                             <label class="form-check-label" for="editCampaigns">Edit Campaigns</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="deleteCampaigns">
+                            <input class="form-check-input perm-check" type="checkbox" value="DeleteCampaigns" id="deleteCampaigns">
                             <label class="form-check-label" for="deleteCampaigns">Delete Campaigns</label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <h6>Contact Management</h6>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="viewContacts" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewContacts" id="viewContacts">
                             <label class="form-check-label" for="viewContacts">View Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="createContacts" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="CreateContacts" id="createContacts">
                             <label class="form-check-label" for="createContacts">Create Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editContacts" checked>
+                            <input class="form-check-input perm-check" type="checkbox" value="EditContacts" id="editContacts">
                             <label class="form-check-label" for="editContacts">Edit Contacts</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="deleteContacts">
+                            <input class="form-check-input perm-check" type="checkbox" value="DeleteContacts" id="deleteContacts">
                             <label class="form-check-label" for="deleteContacts">Delete Contacts</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Analytics</h6>
+                        <div class="form-check">
+                            <input class="form-check-input perm-check" type="checkbox" value="ViewAnalytics" id="viewAnalytics">
+                            <label class="form-check-label" for="viewAnalytics">View Analytics</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input perm-check" type="checkbox" value="ExportReports" id="exportReports">
+                            <label class="form-check-label" for="exportReports">Export Reports</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>System Administration</h6>
+                        <div class="form-check">
+                            <input class="form-check-input perm-check" type="checkbox" value="ManageUsers" id="manageUsers">
+                            <label class="form-check-label" for="manageUsers">Manage Users</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input perm-check" type="checkbox" value="ManageRoles" id="manageRoles">
+                            <label class="form-check-label" for="manageRoles">Manage Roles</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input perm-check" type="checkbox" value="SystemSettings" id="systemSettings">
+                            <label class="form-check-label" for="systemSettings">System Settings</label>
                         </div>
                     </div>
                 </div>
@@ -69,12 +100,12 @@
                 <hr>
 
                 <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-danger" onclick="deleteRole()">
+                    <button type="button" class="btn btn-outline-danger" onclick="deleteRole()">
                         <i class="bi bi-trash"></i> Delete Role
                     </button>
                     <div>
                         <a href="@Url.Action("Index", "Roles")" class="btn btn-secondary me-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
                             <i class="bi bi-check-circle"></i> Save Changes
                         </button>
                     </div>
@@ -85,18 +116,85 @@
 </div>
 
 @section Scripts {
-    <script nonce="@Context.GetCspNonce()">
-        function deleteRole() {
-            if (confirm('Are you sure you want to delete this role?')) {
-                alert('Role deleted! (Demo)');
-                window.location.href = '/Roles/Index';
-            }
-        }
+    <script>
+        var roleId = @roleId;
+
+        $(document).ready(function() {
+            $.get('/Roles/GetRole?id=' + roleId, function(response) {
+                if (response.success && response.data) {
+                    var r = response.data;
+                    document.getElementById('roleName').value = r.name || '';
+                    document.getElementById('description').value = r.description || '';
+
+                    // Check permission checkboxes
+                    var perms = r.permissions || [];
+                    if (Array.isArray(perms)) {
+                        perms.forEach(function(p) {
+                            var permName = typeof p === 'string' ? p : (p.name || p.permission || '');
+                            var cb = document.querySelector('.perm-check[value="' + permName + '"]');
+                            if (cb) cb.checked = true;
+                        });
+                    }
+
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('roleForm').style.display = 'block';
+                } else {
+                    document.getElementById('loading').innerHTML = '<div class="alert alert-danger">Role not found</div>';
+                }
+            });
+        });
 
         document.getElementById('roleForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Role updated successfully! (Demo)');
-            window.location.href = '/Roles/Index';
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+            var permissions = [];
+            document.querySelectorAll('.perm-check:checked').forEach(function(cb) {
+                permissions.push(cb.value);
+            });
+
+            var data = {
+                name: document.getElementById('roleName').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                permissions: permissions
+            };
+
+            $.ajax({
+                url: '/Roles/UpdateRole?id=' + roleId,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Role updated successfully!', 'success');
+                        setTimeout(function() { window.location.href = '/Roles/Index'; }, 1000);
+                    } else {
+                        showNotification(response.message || 'Failed to update role', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-circle"></i> Save Changes';
+                    }
+                },
+                error: function() {
+                    showNotification('An error occurred', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle"></i> Save Changes';
+                }
+            });
         });
+
+        function deleteRole() {
+            confirmAction('Are you sure you want to delete this role?', function() {
+                $.post('/Roles/Delete?id=' + roleId, function(response) {
+                    if (response.success) {
+                        showNotification('Role deleted!', 'success');
+                        setTimeout(function() { window.location.href = '/Roles/Index'; }, 1000);
+                    } else {
+                        showNotification(response.message || 'Failed to delete role', 'error');
+                    }
+                });
+            });
+        }
     </script>
 }

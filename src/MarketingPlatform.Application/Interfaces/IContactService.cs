@@ -7,7 +7,7 @@ namespace MarketingPlatform.Application.Interfaces
     public interface IContactService
     {
         Task<ContactDto?> GetContactByIdAsync(string userId, int contactId);
-        Task<PaginatedResult<ContactDto>> GetContactsAsync(string userId, PagedRequest request);
+        Task<PaginatedResult<ContactDto>> GetContactsAsync(string userId, PagedRequest request, int? groupId = null);
         Task<ContactDto> CreateContactAsync(string userId, CreateContactDto dto);
         Task<bool> UpdateContactAsync(string userId, int contactId, UpdateContactDto dto);
         Task<bool> DeleteContactAsync(string userId, int contactId);

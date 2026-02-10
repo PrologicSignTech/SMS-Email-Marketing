@@ -12,12 +12,38 @@ using MarketingPlatform.Web.Middleware;
 using MarketingPlatform.Web.Extensions;
 using MarketingPlatform.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add Identity services (needed for database seeding with UserManager/RoleManager)
+// Using AddIdentityCore to avoid overriding our cookie authentication scheme
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWebApp", policy =>
+    {
+        policy.WithOrigins(builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>() ?? new[] { "https://localhost:7061" })
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Required for SignalR
+    });
+});
 
 // Add Cookie Authentication (for web application sessions)
 // Note: We're NOT using Identity here - authentication is handled by the API
@@ -81,6 +107,12 @@ builder.Services.AddControllersWithViews(options =>
     // Apply kebab-case transformation to route parameters
     options.Conventions.Add(new Microsoft.AspNetCore.Mvc.ApplicationModels.RouteTokenTransformerConvention(
         new SlugifyParameterTransformer()));
+})
+.AddJsonOptions(options =>
+{
+    // Allow camelCase JSON from JavaScript to bind to PascalCase C# models
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 });
 builder.Services.AddHttpContextAccessor();
 
@@ -92,7 +124,7 @@ builder.Services.AddRouting(options =>
 });
 
 var app = builder.Build();
-
+app.UseCors("AllowWebApp");
 // Content Security Policy Middleware with nonce-based inline script/style support
 // This middleware generates a unique nonce per request and sets CSP headers
 // Development: Permissive CSP to allow hot reload, browser-link, WebSockets
@@ -100,12 +132,24 @@ var app = builder.Build();
 //app.UseMiddleware<CspMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Handle forwarded headers from reverse proxy (shared hosting / IIS)
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -113,6 +157,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+
+// Automatically refresh expired JWT tokens before they cause 401 errors
+app.UseTokenRefresh();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -134,6 +182,7 @@ using (var scope = app.Services.CreateScope())
         // Test database connection
         logger.LogInformation("Testing database connection...");
         var canConnect = await context.Database.CanConnectAsync();
+        
         if (!canConnect)
         {
             logger.LogError("Cannot connect to the database. Please check your connection string and ensure SQL Server is running.");
@@ -157,11 +206,18 @@ using (var scope = app.Services.CreateScope())
             logger.LogInformation("No pending migrations. Database is up to date.");
         }
         
+        // Full database seeding (roles, users, features, plans, settings, etc.)
+        logger.LogInformation("Running full database seeding...");
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.SeedAsync(context, userManager, roleManager, logger);
+        logger.LogInformation("Full database seeding completed.");
+
         // Seed page content (Privacy Policy and Terms of Service)
         logger.LogInformation("Seeding page content...");
         await DatabaseSeeder.SeedPageContentAsync(scope.ServiceProvider);
         logger.LogInformation("Page content seeding completed.");
-        
+
         logger.LogInformation("Database initialization for Web application completed successfully.");
     }
     catch (Exception ex)

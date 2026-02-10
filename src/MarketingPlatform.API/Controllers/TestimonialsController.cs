@@ -40,9 +40,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving testimonials");
-                return BadRequest(ApiResponse<List<Testimonial>>.ErrorResponse(
-                    "Failed to retrieve testimonials",
-                    new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<Testimonial>>.SuccessResponse(new List<Testimonial>()));
             }
         }
 

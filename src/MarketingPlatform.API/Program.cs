@@ -149,6 +149,8 @@ builder.Services.AddScoped<IPlatformConfigurationService, PlatformConfigurationS
 builder.Services.AddScoped<IPlatformSettingService, PlatformSettingService>();
 builder.Services.AddScoped<IFeatureToggleService, FeatureToggleService>();
 builder.Services.AddScoped<IComplianceRuleService, ComplianceRuleService>();
+builder.Services.AddScoped<IPhoneNumberService, PhoneNumberService>();
+builder.Services.AddScoped<ISuppressionRuleService, SuppressionRuleService>();
 
 // Landing Page Services
 builder.Services.AddScoped<IUseCaseService, UseCaseService>();
@@ -202,6 +204,9 @@ builder.Services.AddScoped<IFileStorageProvider, MarketingPlatform.Infrastructur
 builder.Services.AddScoped<IFileStorageProvider, MarketingPlatform.Infrastructure.Services.FileStorageProviders.AzureBlobStorageProvider>();
 builder.Services.AddScoped<IFileStorageProvider, MarketingPlatform.Infrastructure.Services.FileStorageProviders.S3FileStorageProvider>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+
+// Provider Management Service
+builder.Services.AddScoped<IProviderService, ProviderService>();
 
 // Provider Services (Mock implementations)
 builder.Services.AddScoped<ISMSProvider, MockSMSProvider>();
@@ -262,7 +267,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Allow camelCase JSON from clients to bind to PascalCase C# models
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 
 // Add SignalR
 builder.Services.AddSignalR();

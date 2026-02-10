@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "Duplicate Detection";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people-fill"></i> Duplicate Detection & Merge</h2>
+        <button class="btn btn-primary" id="scanBtn" onclick="scanForDuplicates()">
+            <i class="bi bi-search"></i> Scan for Duplicates
+        </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle fs-1"></i>
+                    <h3 id="totalDuplicates" class="mt-2">-</h3>
+                    <small>Duplicate Groups</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-files fs-1"></i>
+                    <h3 id="totalDuplicateContacts" class="mt-2">-</h3>
+                    <small>Duplicate Contacts</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-telephone fs-1"></i>
+                    <h3 id="phoneDuplicates" class="mt-2">-</h3>
+                    <small>Phone Duplicates</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope fs-1"></i>
+                    <h3 id="emailDuplicates" class="mt-2">-</h3>
+                    <small>Email Duplicates</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loadingSection" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+        <p class="mt-3 text-muted">Scanning contacts for duplicates...</p>
+    </div>
+
+    <!-- No Duplicates -->
+    <div id="noDuplicatesSection" class="d-none">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                <h4 class="mt-3">No Duplicates Found</h4>
+                <p class="text-muted">Your contact list is clean. No duplicate contacts were detected.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicates List -->
+    <div id="duplicatesSection" class="d-none">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Duplicate Groups</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="duplicateTypeFilter" style="width: auto;" onchange="filterDuplicates()">
+                        <option value="">All Types</option>
+                        <option value="Phone">Phone Duplicates</option>
+                        <option value="Email">Email Duplicates</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body" id="duplicatesList">
+                <!-- Duplicate groups will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Initial State -->
+    <div id="initialState">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-search text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3">Scan for Duplicates</h4>
+                <p class="text-muted">Click the "Scan for Duplicates" button to detect duplicate contacts in your list.</p>
+                <button class="btn btn-primary btn-lg" onclick="scanForDuplicates()">
+                    <i class="bi bi-search"></i> Start Scan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resolve Modal -->
+<div class="modal fade" id="resolveModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Resolve Duplicates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Resolution Action</label>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="resolveAction" id="actionKeep" value="KeepPrimary" checked>
+                            <label class="form-check-label" for="actionKeep">
+                                <strong>Keep Primary</strong> - Delete duplicates, keep the primary contact
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="resolveAction" id="actionMerge" value="MergeIntoPrimary">
+                            <label class="form-check-label" for="actionMerge">
+                                <strong>Merge into Primary</strong> - Merge all data into primary contact, delete duplicates
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="resolveAction" id="actionKeepAll" value="KeepAll">
+                            <label class="form-check-label" for="actionKeepAll">
+                                <strong>Keep All</strong> - Mark as reviewed, keep all contacts
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Select Primary Contact</label>
+                    <div id="primaryContactSelect">
+                        <!-- Radio buttons for primary contact selection -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="resolveBtn" onclick="resolveDuplicates()">
+                    <i class="bi bi-check-lg"></i> Resolve
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/contacts-duplicates.js" asp-append-version="true"></script>
+}

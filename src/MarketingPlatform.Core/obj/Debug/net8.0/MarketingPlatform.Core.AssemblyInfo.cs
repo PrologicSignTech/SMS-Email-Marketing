@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MarketingPlatform.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2379550bbc1077c6b583e2dcba816b11a3cb6ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6da736f289b6e7ff936e7e6983e008793924e80")]
 [assembly: System.Reflection.AssemblyProductAttribute("MarketingPlatform.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MarketingPlatform.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

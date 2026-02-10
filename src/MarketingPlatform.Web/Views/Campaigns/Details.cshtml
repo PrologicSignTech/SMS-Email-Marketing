@@ -1,0 +1,236 @@
+@{
+    ViewData["Title"] = "Campaign Details";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold"><i class="bi bi-megaphone-fill text-primary me-2"></i>Campaign Details</h2>
+            <p class="text-muted mb-0" id="campaignSubtitle">Loading campaign details...</p>
+        </div>
+        <div id="headerActions">
+            <a href="@Url.Action("Index", "Campaigns")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Campaigns
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-megaphone" style="font-size: 4rem; color: #667eea;"></i>
+                    </div>
+                    <h4 id="campaignName" class="fw-bold">Loading...</h4>
+                    <div id="campaignStatusBadge" class="mb-2"></div>
+                    <div id="campaignTypeBadge" class="mb-2"></div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-bar-chart me-2"></i>Campaign Stats</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Total Recipients:</span>
+                        <strong id="totalRecipients">0</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Successful:</span>
+                        <strong id="successCount" class="text-success">0</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Failed:</span>
+                        <strong id="failureCount" class="text-danger">0</strong>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">A/B Test:</span>
+                        <strong id="isABTest">No</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-lightning me-2"></i>Actions</h6>
+                </div>
+                <div class="card-body" id="actionButtons">
+                    <!-- Dynamic buttons based on status -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="col-md-8">
+            <!-- Basic Info Card -->
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Campaign Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Name:</div>
+                        <div class="col-md-8 fw-semibold" id="detailName">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Description:</div>
+                        <div class="col-md-8" id="detailDescription">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Type:</div>
+                        <div class="col-md-8" id="detailType">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Status:</div>
+                        <div class="col-md-8" id="detailStatus">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Created:</div>
+                        <div class="col-md-8" id="detailCreated">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Scheduled At:</div>
+                        <div class="col-md-8" id="detailScheduled">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Started At:</div>
+                        <div class="col-md-8" id="detailStarted">-</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 text-muted">Completed At:</div>
+                        <div class="col-md-8" id="detailCompleted">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabbed Details -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#contentTab">
+                                <i class="bi bi-chat-text me-1"></i>Content
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#audienceTab">
+                                <i class="bi bi-people me-1"></i>Audience
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#scheduleTab">
+                                <i class="bi bi-clock me-1"></i>Schedule
+                            </a>
+                        </li>
+                        <li class="nav-item" id="variantsTabItem" style="display:none">
+                            <a class="nav-link" data-bs-toggle="tab" href="#variantsTab">
+                                <i class="bi bi-diagram-3 me-1"></i>A/B Variants
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Content Tab -->
+                        <div class="tab-pane fade show active" id="contentTab">
+                            <div id="contentDetails">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Channel:</div>
+                                    <div class="col-md-8" id="contentChannel">-</div>
+                                </div>
+                                <div class="row mb-2" id="contentSubjectRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Subject:</div>
+                                    <div class="col-md-8" id="contentSubject">-</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Message Body:</div>
+                                    <div class="col-md-8">
+                                        <div class="border rounded p-3 bg-light" id="contentMessageBody" style="white-space: pre-wrap;">-</div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2" id="contentHtmlRow" style="display:none">
+                                    <div class="col-md-4 text-muted">HTML Content:</div>
+                                    <div class="col-md-8">
+                                        <div class="border rounded p-3 bg-light" id="contentHtml" style="max-height: 200px; overflow-y: auto;">-</div>
+                                    </div>
+                                </div>
+                                <div class="row mb-2" id="contentTemplateRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Template ID:</div>
+                                    <div class="col-md-8" id="contentTemplate">-</div>
+                                </div>
+                            </div>
+                            <div id="noContent" class="text-muted text-center py-3" style="display:none">
+                                <i class="bi bi-inbox"></i> No content configured
+                            </div>
+                        </div>
+
+                        <!-- Audience Tab -->
+                        <div class="tab-pane fade" id="audienceTab">
+                            <div id="audienceDetails">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Target Type:</div>
+                                    <div class="col-md-8" id="audienceTargetType">-</div>
+                                </div>
+                                <div class="row mb-2" id="audienceGroupsRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Groups:</div>
+                                    <div class="col-md-8" id="audienceGroups">-</div>
+                                </div>
+                                <div class="row mb-2" id="audienceSegmentRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Segment Criteria:</div>
+                                    <div class="col-md-8" id="audienceSegment">-</div>
+                                </div>
+                            </div>
+                            <div id="noAudience" class="text-muted text-center py-3" style="display:none">
+                                <i class="bi bi-inbox"></i> No audience configured
+                            </div>
+                        </div>
+
+                        <!-- Schedule Tab -->
+                        <div class="tab-pane fade" id="scheduleTab">
+                            <div id="scheduleDetails">
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Schedule Type:</div>
+                                    <div class="col-md-8" id="scheduleType">-</div>
+                                </div>
+                                <div class="row mb-2" id="scheduleDateRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Scheduled Date:</div>
+                                    <div class="col-md-8" id="scheduleDate">-</div>
+                                </div>
+                                <div class="row mb-2" id="scheduleRecurrenceRow" style="display:none">
+                                    <div class="col-md-4 text-muted">Recurrence:</div>
+                                    <div class="col-md-8" id="scheduleRecurrence">-</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 text-muted">Timezone Aware:</div>
+                                    <div class="col-md-8" id="scheduleTimezone">-</div>
+                                </div>
+                            </div>
+                            <div id="noSchedule" class="text-muted text-center py-3" style="display:none">
+                                <i class="bi bi-inbox"></i> No schedule configured - Immediate send
+                            </div>
+                        </div>
+
+                        <!-- Variants Tab -->
+                        <div class="tab-pane fade" id="variantsTab">
+                            <div id="variantsList"></div>
+                            <div id="noVariants" class="text-muted text-center py-3" style="display:none">
+                                <i class="bi bi-inbox"></i> No A/B test variants
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/campaign-details.js" asp-append-version="true"></script>
+}

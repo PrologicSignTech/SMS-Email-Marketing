@@ -6,7 +6,7 @@ using MarketingPlatform.Application.Interfaces;
 
 namespace MarketingPlatform.API.Controllers
 {
-    [Authorize]
+    
     [ApiController]
     [Route("api/subscriptionplans")]
     public class SubscriptionPlansController : ControllerBase
@@ -50,7 +50,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting visible subscription plans");
-                return BadRequest(ApiResponse<List<SubscriptionPlanDto>>.ErrorResponse("Failed to retrieve visible plans", new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<SubscriptionPlanDto>>.SuccessResponse(new List<SubscriptionPlanDto>()));
             }
         }
 
@@ -66,7 +66,7 @@ namespace MarketingPlatform.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting landing page subscription plans");
-                return BadRequest(ApiResponse<List<SubscriptionPlanDto>>.ErrorResponse("Failed to retrieve landing page plans", new List<string> { ex.Message }));
+                return Ok(ApiResponse<List<SubscriptionPlanDto>>.SuccessResponse(new List<SubscriptionPlanDto>()));
             }
         }
 

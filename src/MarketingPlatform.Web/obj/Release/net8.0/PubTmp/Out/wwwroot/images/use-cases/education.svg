@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <rect fill="#f3f4f6" width="600" height="400" rx="16"/>
+  <!-- Graduation cap icon -->
+  <g transform="translate(245, 130)">
+    <polygon points="55,15 5,45 55,75 105,45" fill="#8b5cf6" opacity="0.2"/>
+    <polygon points="55,15 5,45 55,75 105,45" stroke="#8b5cf6" stroke-width="3" fill="none"/>
+    <line x1="55" y1="75" x2="55" y2="50" stroke="#8b5cf6" stroke-width="3"/>
+    <path d="M25 55 L25 75 Q55 95 85 75 L85 55" stroke="#8b5cf6" stroke-width="3" fill="#8b5cf6" opacity="0.15"/>
+    <line x1="100" y1="45" x2="100" y2="80" stroke="#8b5cf6" stroke-width="3"/>
+    <circle cx="100" cy="82" r="3" fill="#8b5cf6"/>
+  </g>
+  <text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#6b7280" font-weight="600">Education</text>
+</svg>

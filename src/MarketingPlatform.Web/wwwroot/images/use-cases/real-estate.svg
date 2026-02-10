@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <rect fill="#f3f4f6" width="600" height="400" rx="16"/>
+  <!-- House icon -->
+  <g transform="translate(250, 130)">
+    <polygon points="50,10 10,50 90,50" fill="#f59e0b" opacity="0.3"/>
+    <polygon points="50,10 10,50 90,50" stroke="#f59e0b" stroke-width="3" fill="none"/>
+    <rect x="20" y="50" width="60" height="40" fill="#f59e0b" opacity="0.2" stroke="#f59e0b" stroke-width="3"/>
+    <rect x="38" y="60" width="24" height="30" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" stroke-width="2" rx="2"/>
+  </g>
+  <text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#6b7280" font-weight="600">Real Estate</text>
+</svg>

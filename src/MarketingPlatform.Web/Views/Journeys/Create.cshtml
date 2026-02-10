@@ -15,38 +15,47 @@
         <div class="col-md-8">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>Journey Information</h5>
+                    <h5 class="mb-0">Journey Information</h5>
                 </div>
                 <div class="card-body">
                     <form id="journeyForm">
                         <div class="mb-3">
                             <label for="journeyName" class="form-label">Journey Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="journeyName" required>
+                            <input type="text" class="form-control" id="journeyName" placeholder="e.g. Welcome Series, Re-engagement Flow" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="2"></textarea>
+                            <textarea class="form-control" id="description" rows="2" placeholder="Describe what this journey does..."></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="triggerType" class="form-label">Entry Trigger <span class="text-danger">*</span></label>
-                            <select class="form-select" id="triggerType" required>
-                                <option value="">Select Trigger</option>
-                                <option value="ContactAdded">Contact Added to Group</option>
-                                <option value="FormSubmission">Form Submission</option>
-                                <option value="TagAdded">Tag Added</option>
-                                <option value="Manual">Manual Enrollment</option>
-                                <option value="Scheduled">Scheduled Start</option>
-                                <option value="WebhookEvent">Webhook Event</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="triggerType" class="form-label">Entry Trigger <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="triggerType" required>
+                                        <option value="">Select Trigger</option>
+                                        <option value="0">Event (Contact Added / Tag Added)</option>
+                                        <option value="1">Scheduled Start</option>
+                                        <option value="2">Keyword Received</option>
+                                        <option value="3">Manual Enrollment</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="triggerCriteria" class="form-label">Trigger Criteria</label>
+                                    <input type="text" class="form-control" id="triggerCriteria" placeholder="e.g. group:VIP, tag:new-lead, keyword:DEALS">
+                                    <small class="form-text text-muted" id="triggerCriteriaHelp">Optional criteria for the trigger</small>
+                                </div>
+                            </div>
                         </div>
                         <div class="mb-3" id="contactGroupSection" style="display: none;">
                             <label for="contactGroup" class="form-label">Contact Group</label>
                             <select class="form-select" id="contactGroup">
-                                <option value="">Select Group</option>
+                                <option value="">Select Group (optional)</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <div class="form-check">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isActive">
                                 <label class="form-check-label" for="isActive">
                                     Start as Active Journey
@@ -57,17 +66,19 @@
                 </div>
             </div>
 
+            <!-- Journey Builder Canvas -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Journey Builder</h5>
-                    <small class="text-muted">Drag elements from the sidebar to build your journey</small>
+                    <h5 class="mb-0"><i class="bi bi-diagram-3 me-2"></i>Journey Builder</h5>
+                    <small class="text-muted">Click elements from the sidebar to build your journey</small>
                 </div>
                 <div class="card-body">
-                    <div id="journeyCanvas" style="min-height: 400px; border: 2px dashed #dee2e6; border-radius: 8px; padding: 20px;">
+                    <div id="journeyCanvas" style="min-height: 400px; border: 2px dashed #dee2e6; border-radius: 8px; padding: 20px; background: #fafafa;">
                         <div id="journeySteps">
-                            <div class="text-center text-muted" id="emptyState">
-                                <i class="bi bi-signpost-2" style="font-size: 3rem;"></i>
+                            <div class="text-center text-muted py-5" id="emptyState">
+                                <i class="bi bi-signpost-2" style="font-size: 3rem; opacity: 0.5;"></i>
                                 <p class="mt-2">Click on elements from the sidebar to add steps to your journey</p>
+                                <small>Start with an action like "Send SMS" or "Send Email"</small>
                             </div>
                         </div>
                     </div>
@@ -75,86 +86,72 @@
             </div>
         </div>
 
+        <!-- Sidebar: Elements + Actions -->
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Journey Elements</h5>
+                    <h5 class="mb-0"><i class="bi bi-puzzle me-2"></i>Journey Elements</h5>
                 </div>
                 <div class="card-body">
                     <div class="accordion" id="elementsAccordion">
+                        <!-- Messaging Actions -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#actionsAccordion">
-                                    <i class="bi bi-gear me-2"></i> Actions
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#messagingAccordion">
+                                    <i class="bi bi-chat-dots me-2"></i> Messaging
                                 </button>
                             </h2>
-                            <div id="actionsAccordion" class="accordion-collapse collapse show" data-bs-parent="#elementsAccordion">
-                                <div class="accordion-body">
-                                    <div class="list-group">
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="SendEmail">
-                                            <i class="bi bi-envelope me-2"></i> Send Email
+                            <div id="messagingAccordion" class="accordion-collapse collapse show" data-bs-parent="#elementsAccordion">
+                                <div class="accordion-body p-2">
+                                    <div class="list-group list-group-flush">
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="0" data-label="Send SMS" data-icon="bi-phone">
+                                            <i class="bi bi-phone me-2 text-success"></i> Send SMS
                                         </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="SendSMS">
-                                            <i class="bi bi-phone me-2"></i> Send SMS
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="1" data-label="Send MMS" data-icon="bi-image">
+                                            <i class="bi bi-image me-2 text-info"></i> Send MMS
                                         </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="Wait">
-                                            <i class="bi bi-clock me-2"></i> Wait/Delay
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="AddTag">
-                                            <i class="bi bi-tag me-2"></i> Add Tag
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="RemoveTag">
-                                            <i class="bi bi-tag-fill me-2"></i> Remove Tag
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="AddToGroup">
-                                            <i class="bi bi-people me-2"></i> Add to Group
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="RemoveFromGroup">
-                                            <i class="bi bi-person-dash me-2"></i> Remove from Group
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="2" data-label="Send Email" data-icon="bi-envelope">
+                                            <i class="bi bi-envelope me-2 text-primary"></i> Send Email
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- Flow Control -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#conditionsAccordion">
-                                    <i class="bi bi-signpost-split me-2"></i> Conditions
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flowAccordion">
+                                    <i class="bi bi-clock-history me-2"></i> Flow Control
                                 </button>
                             </h2>
-                            <div id="conditionsAccordion" class="accordion-collapse collapse" data-bs-parent="#elementsAccordion">
-                                <div class="accordion-body">
-                                    <div class="list-group">
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="IfElse">
-                                            <i class="bi bi-diagram-2 me-2"></i> If/Else Branch
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="CheckTag">
-                                            <i class="bi bi-check2-square me-2"></i> Check Tag
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="CheckEmail">
-                                            <i class="bi bi-envelope-check me-2"></i> Email Opened?
-                                        </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="CheckLink">
-                                            <i class="bi bi-link-45deg me-2"></i> Link Clicked?
+                            <div id="flowAccordion" class="accordion-collapse collapse" data-bs-parent="#elementsAccordion">
+                                <div class="accordion-body p-2">
+                                    <div class="list-group list-group-flush">
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="3" data-label="Wait / Delay" data-icon="bi-clock" data-has-delay="true">
+                                            <i class="bi bi-clock me-2 text-warning"></i> Wait / Delay
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- Contact Management -->
                         <div class="accordion-item">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#exitAccordion">
-                                    <i class="bi bi-door-open me-2"></i> Exit Points
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactAccordion">
+                                    <i class="bi bi-people me-2"></i> Contact Management
                                 </button>
                             </h2>
-                            <div id="exitAccordion" class="accordion-collapse collapse" data-bs-parent="#elementsAccordion">
-                                <div class="accordion-body">
-                                    <div class="list-group">
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="EndJourney">
-                                            <i class="bi bi-flag me-2"></i> End Journey
+                            <div id="contactAccordion" class="accordion-collapse collapse" data-bs-parent="#elementsAccordion">
+                                <div class="accordion-body p-2">
+                                    <div class="list-group list-group-flush">
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="4" data-label="Add to Group" data-icon="bi-people">
+                                            <i class="bi bi-people me-2 text-success"></i> Add to Group
                                         </button>
-                                        <button type="button" class="list-group-item list-group-item-action" data-action="GoalReached">
-                                            <i class="bi bi-trophy me-2"></i> Goal Reached
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="5" data-label="Remove from Group" data-icon="bi-person-dash">
+                                            <i class="bi bi-person-dash me-2 text-danger"></i> Remove from Group
+                                        </button>
+                                        <button type="button" class="list-group-item list-group-item-action py-2" data-action="6" data-label="Add Tag" data-icon="bi-tag">
+                                            <i class="bi bi-tag me-2 text-info"></i> Add Tag
                                         </button>
                                     </div>
                                 </div>
@@ -164,15 +161,96 @@
                 </div>
             </div>
 
+            <!-- Save / Preview -->
             <div class="card mt-3">
                 <div class="card-body">
                     <button class="btn btn-primary w-100 mb-2" id="saveJourneyBtn">
-                        <i class="bi bi-check-circle"></i> Save Journey
+                        <i class="bi bi-check-circle me-1"></i> Save Journey
                     </button>
                     <button class="btn btn-outline-secondary w-100" id="previewJourneyBtn">
-                        <i class="bi bi-eye"></i> Preview
+                        <i class="bi bi-eye me-1"></i> Preview
                     </button>
                 </div>
+            </div>
+
+            <!-- Journey Summary -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <small class="text-muted">Steps:</small>
+                        <span class="badge bg-primary" id="stepCountBadge">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small class="text-muted">Messages:</small>
+                        <span class="badge bg-info" id="messageCountBadge">0</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">Delays:</small>
+                        <span class="badge bg-warning" id="delayCountBadge">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Step Configuration Modal -->
+<div class="modal fade" id="stepConfigModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="stepConfigTitle">Configure Step</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Wait/Delay config -->
+                <div id="delayConfig" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Delay Duration</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="delayMinutes" min="1" value="60" placeholder="Minutes">
+                            <span class="input-group-text">minutes</span>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">Quick set:</small>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="document.getElementById('delayMinutes').value=30">30m</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="document.getElementById('delayMinutes').value=60">1h</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="document.getElementById('delayMinutes').value=1440">1d</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="document.getElementById('delayMinutes').value=4320">3d</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="document.getElementById('delayMinutes').value=10080">7d</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Message config -->
+                <div id="messageConfig" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Node Label</label>
+                        <input type="text" class="form-control" id="nodeLabel" placeholder="e.g. Welcome SMS, Follow-up Email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Configuration (JSON)</label>
+                        <textarea class="form-control" id="actionConfig" rows="3" placeholder='e.g. {"templateId": 1, "subject": "Welcome!"}'></textarea>
+                        <small class="form-text text-muted">Optional: configure template, message content, etc.</small>
+                    </div>
+                </div>
+                <!-- Group/Tag config -->
+                <div id="groupTagConfig" style="display:none;">
+                    <div class="mb-3">
+                        <label class="form-label">Node Label</label>
+                        <input type="text" class="form-control" id="groupTagLabel" placeholder="e.g. Add to VIP Group, Tag as Engaged">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Configuration</label>
+                        <input type="text" class="form-control" id="groupTagValue" placeholder="e.g. group name or tag name">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmStepBtn">Add Step</button>
             </div>
         </div>
     </div>
@@ -180,28 +258,58 @@
 
 @section Scripts {
     <script>
+        /**
+         * Journey Builder
+         * Sends data matching CreateJourneyDto / CreateJourneyNodeDto:
+         *   TriggerType enum: 0=Event, 1=Schedule, 2=Keyword, 3=Manual
+         *   WorkflowActionType enum: 0=SendSMS, 1=SendMMS, 2=SendEmail, 3=Wait, 4=AddToGroup, 5=RemoveFromGroup, 6=AddTag
+         *   Nodes[] with: stepOrder, actionType (int), actionConfiguration, delayMinutes, positionX, positionY, nodeLabel
+         */
         let journeySteps = [];
         let stepCounter = 0;
+        let pendingAction = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add step buttons
-            document.querySelectorAll('[data-action]').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    addStep(this.dataset.action, this.textContent.trim());
+        // Action type display info (keyed by WorkflowActionType integer)
+        const actionInfo = {
+            0: { label: 'Send SMS', icon: 'bi-phone', color: 'success', category: 'message' },
+            1: { label: 'Send MMS', icon: 'bi-image', color: 'info', category: 'message' },
+            2: { label: 'Send Email', icon: 'bi-envelope', color: 'primary', category: 'message' },
+            3: { label: 'Wait / Delay', icon: 'bi-clock', color: 'warning', category: 'delay' },
+            4: { label: 'Add to Group', icon: 'bi-people', color: 'success', category: 'group' },
+            5: { label: 'Remove from Group', icon: 'bi-person-dash', color: 'danger', category: 'group' },
+            6: { label: 'Add Tag', icon: 'bi-tag', color: 'info', category: 'group' }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Element buttons - open config modal
+            document.querySelectorAll('[data-action]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var actionType = parseInt(this.dataset.action);
+                    openStepConfig(actionType);
                 });
             });
 
-            // Show/hide contact group based on trigger type
-            document.getElementById('triggerType').addEventListener('change', function() {
-                const showGroup = this.value === 'ContactAdded' || this.value === 'TagAdded';
-                document.getElementById('contactGroupSection').style.display = showGroup ? 'block' : 'none';
+            // Trigger type change - update help text and show/hide group selector
+            document.getElementById('triggerType').addEventListener('change', function () {
+                var val = this.value;
+                var helpTexts = {
+                    '0': 'e.g. group:VIP, tag:new-lead, form:signup',
+                    '1': 'e.g. cron:0 9 * * MON (every Monday 9am)',
+                    '2': 'e.g. DEALS, SUBSCRIBE, YES',
+                    '3': 'No criteria needed for manual enrollment'
+                };
+                document.getElementById('triggerCriteriaHelp').textContent = helpTexts[val] || 'Optional criteria for the trigger';
+                document.getElementById('contactGroupSection').style.display = (val === '0') ? 'block' : 'none';
             });
 
-            // Save journey
+            // Save
             document.getElementById('saveJourneyBtn').addEventListener('click', saveJourney);
 
-            // Preview journey
+            // Preview
             document.getElementById('previewJourneyBtn').addEventListener('click', previewJourney);
+
+            // Confirm step from modal
+            document.getElementById('confirmStepBtn').addEventListener('click', confirmStep);
 
             // Load contact groups
             loadContactGroups();
@@ -209,151 +317,288 @@
 
         async function loadContactGroups() {
             try {
-                const response = await fetch('/Contacts/GetGroups');
-                const result = await response.json();
-                if (result.success && result.data) {
-                    const select = document.getElementById('contactGroup');
-                    result.data.forEach(group => {
-                        const option = document.createElement('option');
-                        option.value = group.id;
-                        option.textContent = escapeHtml(group.name);
+                var response = await fetch('/Contacts/GetContactGroups');
+                var result = await response.json();
+                if (result.success) {
+                    var select = document.getElementById('contactGroup');
+                    // Response format: { success: true, items: [...] }
+                    var items = result.items || result.data || [];
+                    if (!Array.isArray(items)) {
+                        items = items.items || [];
+                    }
+                    items.forEach(function (group) {
+                        var option = document.createElement('option');
+                        option.value = group.id || group.Id;
+                        option.textContent = group.name || group.Name || 'Group';
                         select.appendChild(option);
                     });
                 }
             } catch (error) {
-                console.error('Error loading contact groups:', error);
+                console.warn('Could not load contact groups:', error);
             }
         }
 
-        function addStep(actionType, label) {
-            stepCounter++;
-            const stepId = `step-${stepCounter}`;
+        function openStepConfig(actionType) {
+            pendingAction = actionType;
+            var info = actionInfo[actionType];
 
-            journeySteps.push({
+            document.getElementById('stepConfigTitle').textContent = 'Configure: ' + info.label;
+
+            // Show the right config section
+            document.getElementById('delayConfig').style.display = (info.category === 'delay') ? 'block' : 'none';
+            document.getElementById('messageConfig').style.display = (info.category === 'message') ? 'block' : 'none';
+            document.getElementById('groupTagConfig').style.display = (info.category === 'group') ? 'block' : 'none';
+
+            // Reset fields
+            document.getElementById('delayMinutes').value = 60;
+            document.getElementById('nodeLabel').value = '';
+            document.getElementById('actionConfig').value = '';
+            document.getElementById('groupTagLabel').value = '';
+            document.getElementById('groupTagValue').value = '';
+
+            var modal = new bootstrap.Modal(document.getElementById('stepConfigModal'));
+            modal.show();
+        }
+
+        function confirmStep() {
+            if (pendingAction === null) return;
+
+            var actionType = pendingAction;
+            var info = actionInfo[actionType];
+
+            stepCounter++;
+            var stepId = 'step-' + stepCounter;
+
+            var stepData = {
                 id: stepId,
                 actionType: actionType,
-                label: label,
-                order: stepCounter
-            });
+                label: info.label,
+                stepOrder: stepCounter,
+                actionConfiguration: null,
+                delayMinutes: null,
+                nodeLabel: null,
+                positionX: 0,
+                positionY: stepCounter * 80
+            };
+
+            // Collect config based on category
+            if (info.category === 'delay') {
+                var delayVal = parseInt(document.getElementById('delayMinutes').value) || 60;
+                stepData.delayMinutes = delayVal;
+                stepData.nodeLabel = formatDelay(delayVal);
+                stepData.actionConfiguration = JSON.stringify({ delayMinutes: delayVal });
+            } else if (info.category === 'message') {
+                stepData.nodeLabel = document.getElementById('nodeLabel').value || info.label;
+                var configText = document.getElementById('actionConfig').value.trim();
+                stepData.actionConfiguration = configText || null;
+            } else if (info.category === 'group') {
+                stepData.nodeLabel = document.getElementById('groupTagLabel').value || info.label;
+                var groupTagVal = document.getElementById('groupTagValue').value.trim();
+                if (groupTagVal) {
+                    stepData.actionConfiguration = JSON.stringify({ value: groupTagVal });
+                }
+            }
+
+            journeySteps.push(stepData);
 
             // Hide empty state
             document.getElementById('emptyState').style.display = 'none';
 
-            // Get icon for action type
-            const iconMap = {
-                'SendEmail': 'bi-envelope',
-                'SendSMS': 'bi-phone',
-                'Wait': 'bi-clock',
-                'AddTag': 'bi-tag',
-                'RemoveTag': 'bi-tag-fill',
-                'AddToGroup': 'bi-people',
-                'RemoveFromGroup': 'bi-person-dash',
-                'IfElse': 'bi-diagram-2',
-                'CheckTag': 'bi-check2-square',
-                'CheckEmail': 'bi-envelope-check',
-                'CheckLink': 'bi-link-45deg',
-                'EndJourney': 'bi-flag',
-                'GoalReached': 'bi-trophy'
-            };
-            const icon = iconMap[actionType] || 'bi-circle';
+            // Render the step card
+            renderStepCard(stepData, info);
 
-            // Add step to canvas
-            const stepHtml = `
-                <div class="card mb-2" id="${stepId}">
-                    <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
-                        <div>
-                            <span class="badge bg-primary me-2">${stepCounter}</span>
-                            <i class="bi ${icon} me-2"></i>
-                            <span>${escapeHtml(label)}</span>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep('${stepId}')">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+            // Update summary
+            updateSummary();
+
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('stepConfigModal')).hide();
+            pendingAction = null;
+        }
+
+        function renderStepCard(step, info) {
+            var subtitle = '';
+            if (step.delayMinutes) {
+                subtitle = '<small class="text-muted ms-2">(' + formatDelay(step.delayMinutes) + ')</small>';
+            } else if (step.nodeLabel && step.nodeLabel !== info.label) {
+                subtitle = '<small class="text-muted ms-2">' + escapeHtml(step.nodeLabel) + '</small>';
+            }
+
+            var stepHtml =
+                '<div class="card mb-2 border-start border-4 border-' + info.color + '" id="' + step.id + '">' +
+                    '<div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">' +
+                        '<div>' +
+                            '<span class="badge bg-' + info.color + ' me-2">' + step.stepOrder + '</span>' +
+                            '<i class="bi ' + info.icon + ' me-2"></i>' +
+                            '<span>' + escapeHtml(info.label) + '</span>' +
+                            subtitle +
+                        '</div>' +
+                        '<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeStep(\'' + step.id + '\')">' +
+                            '<i class="bi bi-trash"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+
+            // Add connector arrow between steps
+            if (journeySteps.length > 1) {
+                var arrowHtml = '<div class="text-center my-1"><i class="bi bi-arrow-down text-muted"></i></div>';
+                document.getElementById('journeySteps').insertAdjacentHTML('beforeend', arrowHtml);
+            }
 
             document.getElementById('journeySteps').insertAdjacentHTML('beforeend', stepHtml);
         }
 
         function removeStep(stepId) {
-            journeySteps = journeySteps.filter(s => s.id !== stepId);
-            document.getElementById(stepId).remove();
+            journeySteps = journeySteps.filter(function (s) { return s.id !== stepId; });
+
+            // Remove the step card and any preceding arrow
+            var el = document.getElementById(stepId);
+            if (el && el.previousElementSibling && el.previousElementSibling.classList.contains('text-center')) {
+                el.previousElementSibling.remove();
+            }
+            if (el) el.remove();
+
+            // Re-number remaining steps
+            journeySteps.forEach(function (s, idx) {
+                s.stepOrder = idx + 1;
+            });
 
             if (journeySteps.length === 0) {
                 document.getElementById('emptyState').style.display = 'block';
             }
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            var stepCount = journeySteps.length;
+            var messageCount = journeySteps.filter(function (s) { return s.actionType <= 2; }).length;
+            var delayCount = journeySteps.filter(function (s) { return s.actionType === 3; }).length;
+
+            document.getElementById('stepCountBadge').textContent = stepCount;
+            document.getElementById('messageCountBadge').textContent = messageCount;
+            document.getElementById('delayCountBadge').textContent = delayCount;
+        }
+
+        function formatDelay(minutes) {
+            if (minutes < 60) return minutes + ' min';
+            if (minutes < 1440) return (minutes / 60).toFixed(0) + ' hour' + (minutes >= 120 ? 's' : '');
+            return (minutes / 1440).toFixed(0) + ' day' + (minutes >= 2880 ? 's' : '');
         }
 
         function escapeHtml(text) {
-            const div = document.createElement('div');
+            var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
+        /**
+         * Save journey - sends data matching CreateJourneyDto exactly:
+         * {
+         *   name, description, triggerType (int), triggerCriteria (string),
+         *   isActive (bool),
+         *   nodes: [{ stepOrder, actionType (int), actionConfiguration, delayMinutes, positionX, positionY, nodeLabel }]
+         * }
+         */
         async function saveJourney() {
-            const name = document.getElementById('journeyName').value;
-            const description = document.getElementById('description').value;
-            const triggerType = document.getElementById('triggerType').value;
-            const contactGroupId = document.getElementById('contactGroup').value;
-            const isActive = document.getElementById('isActive').checked;
+            var name = document.getElementById('journeyName').value.trim();
+            var description = document.getElementById('description').value.trim();
+            var triggerType = document.getElementById('triggerType').value;
+            var triggerCriteria = document.getElementById('triggerCriteria').value.trim();
+            var contactGroupId = document.getElementById('contactGroup').value;
+            var isActive = document.getElementById('isActive').checked;
 
             if (!name) {
-                showNotification('Please enter a journey name', 'warning');
+                if (typeof showNotification === 'function') showNotification('Please enter a journey name', 'warning');
+                else alert('Please enter a journey name');
                 return;
             }
 
-            if (!triggerType) {
-                showNotification('Please select an entry trigger', 'warning');
+            if (triggerType === '') {
+                if (typeof showNotification === 'function') showNotification('Please select an entry trigger', 'warning');
+                else alert('Please select an entry trigger');
                 return;
             }
 
-            const journeyData = {
+            // Build triggerCriteria - include contact group if selected
+            var fullCriteria = triggerCriteria;
+            if (contactGroupId && triggerType === '0') {
+                fullCriteria = fullCriteria ? fullCriteria + ',groupId:' + contactGroupId : 'groupId:' + contactGroupId;
+            }
+
+            // Build nodes array matching CreateJourneyNodeDto
+            var nodes = journeySteps.map(function (s, index) {
+                return {
+                    stepOrder: index + 1,
+                    actionType: s.actionType,                        // int enum value
+                    actionConfiguration: s.actionConfiguration || null,
+                    delayMinutes: s.delayMinutes || null,
+                    positionX: s.positionX || 0,
+                    positionY: s.positionY || (index * 80),
+                    nodeLabel: s.nodeLabel || null,
+                    branchCondition: null,
+                    nextNodeOnTrue: null,
+                    nextNodeOnFalse: null
+                };
+            });
+
+            var journeyData = {
                 name: name,
-                description: description,
-                triggerType: triggerType,
-                contactGroupId: contactGroupId || null,
+                description: description || null,
+                triggerType: parseInt(triggerType),                   // int enum value
+                triggerCriteria: fullCriteria || null,
                 isActive: isActive,
-                steps: journeySteps.map((s, index) => ({
-                    actionType: s.actionType,
-                    order: index + 1,
-                    configuration: {}
-                }))
+                nodes: nodes                                          // "nodes" matches DTO property name
             };
 
+            // Disable button
+            var btn = document.getElementById('saveJourneyBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Saving...';
+
             try {
-                const response = await fetch('/Journeys/Create', {
+                var response = await fetch('/Journeys/Create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(journeyData)
                 });
 
-                const result = await response.json();
+                var result = await response.json();
 
                 if (result.success) {
-                    showNotification('Journey created successfully!', 'success');
-                    setTimeout(() => {
+                    if (typeof showNotification === 'function') showNotification('Journey created successfully!', 'success');
+                    else alert('Journey created successfully!');
+                    setTimeout(function () {
                         window.location.href = '/Journeys/Index';
                     }, 1000);
                 } else {
-                    showNotification(result.message || 'Failed to create journey', 'danger');
+                    if (typeof showNotification === 'function') showNotification(result.message || 'Failed to create journey', 'danger');
+                    else alert(result.message || 'Failed to create journey');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Save Journey';
                 }
             } catch (error) {
                 console.error('Error creating journey:', error);
-                showNotification('An error occurred while creating the journey', 'danger');
+                if (typeof showNotification === 'function') showNotification('An error occurred while creating the journey', 'danger');
+                else alert('An error occurred while creating the journey');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Save Journey';
             }
         }
 
         function previewJourney() {
-            const name = document.getElementById('journeyName').value || 'Untitled';
-            const trigger = document.getElementById('triggerType').value || 'Not Set';
-            let preview = `Journey: ${name}\nTrigger: ${trigger}\n\nSteps:\n`;
+            var name = document.getElementById('journeyName').value || 'Untitled';
+            var triggerSelect = document.getElementById('triggerType');
+            var triggerText = triggerSelect.options[triggerSelect.selectedIndex]?.text || 'Not Set';
+            var preview = 'Journey: ' + name + '\nTrigger: ' + triggerText + '\n\nSteps:\n';
 
             if (journeySteps.length === 0) {
                 preview += '(No steps added)';
             } else {
-                journeySteps.forEach((step, index) => {
-                    preview += `${index + 1}. ${step.label}\n`;
+                journeySteps.forEach(function (step, index) {
+                    var info = actionInfo[step.actionType];
+                    var detail = step.nodeLabel ? ' - ' + step.nodeLabel : '';
+                    if (step.delayMinutes) detail = ' (' + formatDelay(step.delayMinutes) + ')';
+                    preview += (index + 1) + '. ' + info.label + detail + '\n';
                 });
             }
 

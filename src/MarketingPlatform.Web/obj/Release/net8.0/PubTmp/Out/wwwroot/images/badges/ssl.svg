@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <circle cx="40" cy="40" r="38" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+  <path d="M40 25 L50 30 L50 38 C50 45 45 50 40 55 C35 50 30 45 30 38 L30 30 Z" fill="white"/>
+  <text x="50%" y="72%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white" font-weight="bold">256-bit SSL</text>
+</svg>

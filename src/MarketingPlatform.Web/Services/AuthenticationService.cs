@@ -199,7 +199,7 @@ public class AuthenticationService : IAuthenticationService
         var authProperties = new AuthenticationProperties
         {
             IsPersistent = true, // Remember me
-            ExpiresUtc = authResponse.TokenExpiration,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(8), // Cookie session lasts 8 hours (independent of JWT expiry)
             AllowRefresh = true
         };
 

@@ -88,6 +88,8 @@ namespace MarketingPlatform.Infrastructure.Data
         public DbSet<SecurityBadge> SecurityBadges => Set<SecurityBadge>();
         public DbSet<LandingStat> LandingStats => Set<LandingStat>();
         public DbSet<FooterSettings> FooterSettings => Set<FooterSettings>();
+        public DbSet<PhoneNumber> PhoneNumbers => Set<PhoneNumber>();
+        public DbSet<SuppressionRule> SuppressionRules => Set<SuppressionRule>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -96,6 +98,14 @@ namespace MarketingPlatform.Infrastructure.Data
             // Apply all entity configurations from assembly
             // This includes KeywordConfiguration which defines the Keyword -> Campaign foreign key relationship
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+            // Prevent cascade cycle errors on SQL Server:
+            // Set all FK relationships to NoAction (Restrict) by default
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
 
             // Global query filters for soft delete
             modelBuilder.Entity<Contact>().HasQueryFilter(c => !c.IsDeleted);

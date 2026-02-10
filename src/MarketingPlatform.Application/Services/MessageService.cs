@@ -33,6 +33,7 @@ namespace MarketingPlatform.Application.Services
         private readonly IRepository<CampaignMessage> _messageRepository;
         private readonly IRepository<Contact> _contactRepository;
         private readonly IRepository<Campaign> _campaignRepository;
+        private readonly IRepository<SuppressionList> _suppressionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ISMSProvider _smsProvider;
@@ -45,6 +46,7 @@ namespace MarketingPlatform.Application.Services
             IRepository<CampaignMessage> messageRepository,
             IRepository<Contact> contactRepository,
             IRepository<Campaign> campaignRepository,
+            IRepository<SuppressionList> suppressionRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ISMSProvider smsProvider,
@@ -56,6 +58,7 @@ namespace MarketingPlatform.Application.Services
             _messageRepository = messageRepository;
             _contactRepository = contactRepository;
             _campaignRepository = campaignRepository;
+            _suppressionRepository = suppressionRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _smsProvider = smsProvider;
@@ -236,10 +239,38 @@ namespace MarketingPlatform.Application.Services
 
         public async Task<List<MessageDto>> CreateBulkMessagesAsync(string userId, BulkMessageRequestDto dto)
         {
-            var campaign = await _campaignRepository.GetByIdAsync(dto.CampaignId);
-            if (campaign == null || campaign.UserId != userId)
+            Campaign campaign;
+
+            if (dto.CampaignId <= 0)
             {
-                throw new UnauthorizedAccessException("Campaign not found or access denied");
+                // Auto-create an ad-hoc campaign for quick sends from Compose page
+                var channelType = dto.Channel == ChannelType.Email ? CampaignType.Email
+                    : dto.Channel == ChannelType.MMS ? CampaignType.MMS
+                    : CampaignType.SMS;
+
+                campaign = new Campaign
+                {
+                    UserId = userId,
+                    Name = $"Quick Send - {DateTime.UtcNow:MMM dd, yyyy HH:mm}",
+                    Description = "Auto-created from Compose page",
+                    Type = channelType,
+                    Status = CampaignStatus.Running,
+                    TotalRecipients = dto.ContactIds.Count,
+                    StartedAt = DateTime.UtcNow
+                };
+
+                await _campaignRepository.AddAsync(campaign);
+                await _unitOfWork.SaveChangesAsync();
+
+                dto.CampaignId = campaign.Id;
+            }
+            else
+            {
+                campaign = await _campaignRepository.GetByIdAsync(dto.CampaignId);
+                if (campaign == null || campaign.UserId != userId)
+                {
+                    throw new UnauthorizedAccessException("Campaign not found or access denied");
+                }
             }
 
             var contacts = await _contactRepository.GetQueryable()
@@ -251,16 +282,32 @@ namespace MarketingPlatform.Application.Services
                 throw new ArgumentException("Some contacts were not found or access denied");
             }
 
+            // Load suppression list for this user to filter out suppressed contacts
+            var suppressedRecipients = await _suppressionRepository.GetQueryable()
+                .Where(s => s.UserId == userId)
+                .Select(s => s.PhoneOrEmail)
+                .ToListAsync();
+            var suppressedSet = new HashSet<string>(suppressedRecipients, StringComparer.OrdinalIgnoreCase);
+
             var messages = new List<CampaignMessage>();
-            var mediaUrlsJson = dto.MediaUrls != null && dto.MediaUrls.Any() 
-                ? JsonConvert.SerializeObject(dto.MediaUrls) 
+            var suppressedCount = 0;
+            var mediaUrlsJson = dto.MediaUrls != null && dto.MediaUrls.Any()
+                ? JsonConvert.SerializeObject(dto.MediaUrls)
                 : null;
 
             foreach (var contact in contacts)
             {
-                var recipient = dto.Channel == ChannelType.Email 
-                    ? contact.Email ?? contact.PhoneNumber 
+                var recipient = dto.Channel == ChannelType.Email
+                    ? contact.Email ?? contact.PhoneNumber
                     : contact.PhoneNumber;
+
+                // Skip contacts on the suppression list
+                if (!string.IsNullOrEmpty(recipient) && suppressedSet.Contains(recipient))
+                {
+                    _logger.LogInformation("Contact {ContactId} ({Recipient}) skipped — on suppression list", contact.Id, recipient);
+                    suppressedCount++;
+                    continue;
+                }
 
                 var message = new CampaignMessage
                 {
@@ -278,6 +325,11 @@ namespace MarketingPlatform.Application.Services
                 };
 
                 messages.Add(message);
+            }
+
+            if (suppressedCount > 0)
+            {
+                _logger.LogInformation("{SuppressedCount} contacts were skipped due to suppression list", suppressedCount);
             }
 
             foreach (var message in messages)
@@ -495,6 +547,19 @@ namespace MarketingPlatform.Application.Services
             {
                 try
                 {
+                    // ── Suppression list check ──
+                    // Skip sending if recipient is on the suppression list
+                    var isSuppressed = await _suppressionRepository.GetQueryable()
+                        .AnyAsync(s => s.PhoneOrEmail == msg.Recipient);
+
+                    if (isSuppressed)
+                    {
+                        _logger.LogWarning("Message {MessageId} to {Recipient} skipped — recipient is on suppression list",
+                            msg.Id, msg.Recipient);
+                        await UpdateMessageAfterSendAsync(msg.Id, false, null, "Recipient is on suppression list", null);
+                        continue;
+                    }
+
                     // Update status to Sending in a separate transaction to release locks quickly
                     await UpdateMessageStatusToSendingAsync(msg.Id);
 

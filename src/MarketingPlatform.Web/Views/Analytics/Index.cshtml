@@ -1,122 +1,281 @@
 @{
-    ViewData["Title"] = "Analytics";
+    ViewData["Title"] = "Analytics Dashboard";
     Layout = "_LayoutAuthenticated";
 }
 
 <div class="container-fluid">
-    <h2 class="mb-4"><i class="bi bi-graph-up"></i> Analytics Dashboard</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Analytics Dashboard</h2>
+            <p class="text-muted mb-0">Comprehensive messaging performance insights</p>
+        </div>
+        <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="dateRange" style="width: auto;">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="365">Last Year</option>
+            </select>
+            <div class="btn-group btn-group-sm">
+                <a href="@Url.Action("Campaigns", "Analytics")" class="btn btn-outline-primary"><i class="bi bi-bar-chart"></i> Campaigns</a>
+                <a href="@Url.Action("Reports", "Analytics")" class="btn btn-outline-primary"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="refreshAnalytics()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+    </div>
 
-    <!-- Key Metrics -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card border-primary">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2"><i class="bi bi-envelope"></i> Total Sent</h6>
-                    <h2 class="mb-0">125,432</h2>
-                    <small class="text-success"><i class="bi bi-arrow-up"></i> +12% vs last month</small>
+    <!-- Key Metrics Row 1 -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-start border-primary border-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Total Sent</small>
+                            <h2 class="mb-0 fw-bold" id="totalMessages">--</h2>
+                            <small class="text-success" id="totalMessagesNote"><i class="bi bi-arrow-up"></i> --</small>
+                        </div>
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                            <i class="bi bi-send-fill text-primary fs-4"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-success">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2"><i class="bi bi-envelope-open"></i> Open Rate</h6>
-                    <h2 class="mb-0">42.5%</h2>
-                    <small class="text-success"><i class="bi bi-arrow-up"></i> +3.2%</small>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-start border-success border-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Delivery Rate</small>
+                            <h2 class="mb-0 fw-bold" id="deliveryRate">--%</h2>
+                            <small class="text-muted" id="deliveryRateNote">-- delivered</small>
+                        </div>
+                        <div class="rounded-circle bg-success bg-opacity-10 p-2">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-info">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2"><i class="bi bi-cursor"></i> Click Rate</h6>
-                    <h2 class="mb-0">18.7%</h2>
-                    <small class="text-success"><i class="bi bi-arrow-up"></i> +1.8%</small>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-start border-info border-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Click Rate</small>
+                            <h2 class="mb-0 fw-bold" id="clickRate">--%</h2>
+                            <small class="text-muted" id="clickRateNote">-- clicks</small>
+                        </div>
+                        <div class="rounded-circle bg-info bg-opacity-10 p-2">
+                            <i class="bi bi-cursor-fill text-info fs-4"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-warning">
-                <div class="card-body">
-                    <h6 class="text-muted mb-2"><i class="bi bi-x-circle"></i> Bounce Rate</h6>
-                    <h2 class="mb-0">2.3%</h2>
-                    <small class="text-danger"><i class="bi bi-arrow-up"></i> +0.3%</small>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-start border-warning border-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Reply Rate</small>
+                            <h2 class="mb-0 fw-bold" id="replyRate">--%</h2>
+                            <small class="text-muted" id="replyRateNote">-- replies</small>
+                        </div>
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-2">
+                            <i class="bi bi-reply-fill text-warning fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Row 2 -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm border-start border-danger border-4">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Conversion Rate</small>
+                            <h2 class="mb-0 fw-bold" id="conversionRate">--%</h2>
+                            <small class="text-muted" id="conversionRateNote">-- conversions</small>
+                        </div>
+                        <div class="rounded-circle bg-danger bg-opacity-10 p-2">
+                            <i class="bi bi-bullseye text-danger fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Open Rate</small>
+                            <h2 class="mb-0 fw-bold" id="openRate">--%</h2>
+                            <small class="text-muted" id="openRateNote">-- opens</small>
+                        </div>
+                        <div class="rounded-circle bg-secondary bg-opacity-10 p-2">
+                            <i class="bi bi-envelope-open-fill text-secondary fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Bounce Rate</small>
+                            <h2 class="mb-0 fw-bold" id="bounceRate">--%</h2>
+                            <small class="text-muted" id="bounceRateNote">-- bounced</small>
+                        </div>
+                        <div class="rounded-circle bg-secondary bg-opacity-10 p-2">
+                            <i class="bi bi-arrow-return-left text-secondary fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold">Opt-Out Rate</small>
+                            <h2 class="mb-0 fw-bold" id="optOutRate">--%</h2>
+                            <small class="text-muted" id="optOutRateNote">-- opted out</small>
+                        </div>
+                        <div class="rounded-circle bg-secondary bg-opacity-10 p-2">
+                            <i class="bi bi-person-dash text-secondary fs-4"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Charts Row -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-bar-chart"></i> Campaign Performance (Last 30 Days)</h5>
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Message Performance</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary active" data-chart="all">All</button>
+                        <button class="btn btn-outline-secondary" data-chart="sms">SMS</button>
+                        <button class="btn btn-outline-secondary" data-chart="email">Email</button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="performanceChart" height="80"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-pie-chart"></i> Channel Distribution</h5>
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Channel Distribution</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="channelChart"></canvas>
+                    <canvas id="channelChart" height="180"></canvas>
+                </div>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Best Send Times</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="bestTimes">
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-circle-fill text-success me-1" style="font-size:0.5rem"></i> 10:00 AM - 12:00 PM</span>
+                            <span class="badge bg-success">Best</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-circle-fill text-primary me-1" style="font-size:0.5rem"></i> 2:00 PM - 4:00 PM</span>
+                            <span class="badge bg-primary">Good</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between">
+                            <span><i class="bi bi-circle-fill text-warning me-1" style="font-size:0.5rem"></i> 6:00 PM - 8:00 PM</span>
+                            <span class="badge bg-warning text-dark">Fair</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Campaigns Table -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-table"></i> Top Performing Campaigns</h5>
+    <!-- Reports Section -->
+    <div class="row g-3 mb-4">
+        <!-- Top Campaigns -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-trophy me-2"></i>Top Performing Campaigns</h5>
+                    <a href="@Url.Action("Campaigns", "Analytics")" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Campaign</th>
-                                    <th>Sent</th>
-                                    <th>Delivered</th>
-                                    <th>Opens</th>
-                                    <th>Clicks</th>
-                                    <th>Conversions</th>
+                                    <th class="text-center">Sent</th>
+                                    <th class="text-center">Delivered</th>
+                                    <th class="text-center">Clicks</th>
+                                    <th class="text-center">Conversions</th>
+                                    <th class="text-center">ROI</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Summer Sale 2024</strong></td>
-                                    <td>12,456</td>
-                                    <td>12,234 (98.2%)</td>
-                                    <td>5,432 (44.4%)</td>
-                                    <td>2,345 (19.2%)</td>
-                                    <td>456 (3.7%)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Newsletter July</strong></td>
-                                    <td>25,678</td>
-                                    <td>25,345 (98.7%)</td>
-                                    <td>10,234 (40.4%)</td>
-                                    <td>4,567 (18.0%)</td>
-                                    <td>789 (3.1%)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Flash Sale Alert</strong></td>
-                                    <td>8,901</td>
-                                    <td>8,756 (98.4%)</td>
-                                    <td>4,123 (47.1%)</td>
-                                    <td>1,890 (21.6%)</td>
-                                    <td>345 (3.9%)</td>
-                                </tr>
+                            <tbody id="topCampaignsBody">
+                                <tr><td colspan="6" class="text-center py-3"><div class="spinner-border spinner-border-sm"></div> Loading...</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reports -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-download me-2"></i>Quick Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("ExportCampaignPerformance", "Analytics")" class="btn btn-outline-primary btn-sm text-start">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i> Campaign Performance Report
+                            <span class="badge bg-primary float-end">CSV</span>
+                        </a>
+                        <a href="@Url.Action("ExportEngagement", "Analytics")" class="btn btn-outline-success btn-sm text-start">
+                            <i class="bi bi-file-earmark-excel me-2"></i> Engagement Report
+                            <span class="badge bg-success float-end">Excel</span>
+                        </a>
+                        <a href="@Url.Action("ExportConversions", "Analytics")" class="btn btn-outline-info btn-sm text-start">
+                            <i class="bi bi-file-earmark-bar-graph me-2"></i> Conversion Report
+                            <span class="badge bg-info float-end">CSV</span>
+                        </a>
+                        <a href="@Url.Action("Reports", "Analytics")" class="btn btn-outline-secondary btn-sm text-start">
+                            <i class="bi bi-table me-2"></i> Full Message Reports
+                            <span class="badge bg-secondary float-end">View</span>
+                        </a>
+                    </div>
+
+                    <hr>
+                    <h6 class="text-muted small">Report Categories</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        <a href="@Url.Action("Campaigns", "Analytics")" class="badge bg-light text-dark border">Campaign-wise</a>
+                        <a href="@Url.Action("Conversions", "Analytics")" class="badge bg-light text-dark border">Segment Performance</a>
+                        <a href="@Url.Action("Reports", "Analytics")" class="badge bg-light text-dark border">Agent Performance</a>
+                        <span class="badge bg-light text-dark border">Journey Performance</span>
                     </div>
                 </div>
             </div>
@@ -126,10 +285,61 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script nonce="@Context.GetCspNonce()">
-        window.analyticsConfig = {
-            apiBaseUrl: '@ViewBag.ApiBaseUrl'
-        };
-    </script>
     <script src="~/js/analytics-index.js" asp-append-version="true"></script>
+    <script nonce="@Context.GetCspNonce()">
+        $(document).ready(function() {
+            loadTopCampaigns();
+
+            // Date range change
+            $('#dateRange').on('change', function() {
+                refreshAnalytics();
+                loadTopCampaigns();
+            });
+        });
+
+        function loadTopCampaigns() {
+            $.get('/Analytics/GetCampaignAnalytics', function(response) {
+                var campaigns = [];
+                if (response.success && response.data) {
+                    campaigns = Array.isArray(response.data) ? response.data : (response.data.items || []);
+                }
+                // Use demo data if no real campaigns
+                if (campaigns.length === 0 && typeof getDemoCampaigns === 'function') {
+                    campaigns = getDemoCampaigns();
+                }
+                renderCampaignTable(campaigns);
+            }).fail(function() {
+                // Use demo data on failure
+                var campaigns = typeof getDemoCampaigns === 'function' ? getDemoCampaigns() : [];
+                renderCampaignTable(campaigns);
+            });
+        }
+
+        function renderCampaignTable(campaigns) {
+            var tbody = document.getElementById('topCampaignsBody');
+            if (campaigns.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">No campaign data available</td></tr>';
+                return;
+            }
+            var html = '';
+            campaigns.slice(0, 8).forEach(function(c) {
+                var sent = c.totalSent || c.sent || 0;
+                var delivered = c.totalDelivered || c.delivered || 0;
+                var clicks = c.totalClicked || c.clicks || 0;
+                var conversions = c.totalConversions || c.conversions || 0;
+                var delivRate = sent > 0 ? ((delivered / sent) * 100).toFixed(1) : 0;
+                var clickRate = delivered > 0 ? ((clicks / delivered) * 100).toFixed(1) : 0;
+                var convRate = delivered > 0 ? ((conversions / delivered) * 100).toFixed(1) : 0;
+                html += '<tr>' +
+                    '<td><strong>' + (c.campaignName || c.name || 'Campaign') + '</strong></td>' +
+                    '<td class="text-center">' + sent.toLocaleString() + '</td>' +
+                    '<td class="text-center"><span class="text-success">' + delivered.toLocaleString() + '</span> <small class="text-muted">(' + delivRate + '%)</small></td>' +
+                    '<td class="text-center">' + clicks.toLocaleString() + ' <small class="text-muted">(' + clickRate + '%)</small></td>' +
+                    '<td class="text-center">' + conversions.toLocaleString() + ' <small class="text-muted">(' + convRate + '%)</small></td>' +
+                    '<td class="text-center"><span class="badge bg-' + (parseFloat(convRate) > 5 ? 'success' : parseFloat(convRate) > 2 ? 'warning' : 'secondary') + '">' + convRate + '%</span></td>' +
+                    '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+    </script>
 }

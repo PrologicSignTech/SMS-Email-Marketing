@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MarketingPlatform.Web.Services;
 using MarketingPlatform.Application.DTOs.Common;
 using MarketingPlatform.Web.Models;
+using System.Text.Json;
 
 namespace MarketingPlatform.Web.Controllers;
 
@@ -38,22 +39,62 @@ public class CampaignsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetCampaigns([FromBody] DataTablesRequest request)
+    public async Task<IActionResult> GetCampaigns([FromBody] DataTablesRequest? request)
     {
+        // Defensive: if model binding fails, use defaults
+        request ??= new DataTablesRequest { Draw = 1, Start = 0, Length = 25 };
+        var pageSize = request.Length > 0 ? request.Length : 25;
+
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>(
-                "/api/campaigns",
-                new
+            // API endpoint is [HttpGet] with [FromQuery] PagedRequest
+            var pageNumber = (request.Start / pageSize) + 1;
+            var searchTerm = request.Search?.Value ?? "";
+            var sortBy = request.Order?.FirstOrDefault()?.Column ?? "createdAt";
+            var sortDescending = (request.Order?.FirstOrDefault()?.Dir ?? "desc") == "desc";
+
+            // Check if status filter is applied
+            if (request.Status.HasValue)
+            {
+                // Use the status-specific API endpoint
+                var statusResult = await _apiClient.GetAsync<ApiResponse<object>>($"/api/campaigns/status/{request.Status.Value}");
+                if (statusResult?.Success == true)
                 {
-                    pageNumber = (request.Start / request.Length) + 1,
-                    pageSize = request.Length,
-                    searchTerm = request.Search?.Value,
-                    sortColumn = request.Order?[0]?.Column ?? "createdAt",
-                    sortDirection = request.Order?[0]?.Dir ?? "desc",
-                    status = request.Status
+                    var statusData = statusResult.Data as System.Text.Json.JsonElement?;
+                    // This endpoint returns a flat list, not paginated
+                    var allItems = statusData?.EnumerateArray().ToList() ?? new List<System.Text.Json.JsonElement>();
+                    var totalCount = allItems.Count;
+
+                    // Apply client-side search if needed
+                    if (!string.IsNullOrEmpty(searchTerm))
+                    {
+                        allItems = allItems.Where(item =>
+                        {
+                            var name = item.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
+                            return name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+                        }).ToList();
+                    }
+
+                    // Apply client-side pagination
+                    var pagedItems = allItems.Skip(request.Start).Take(pageSize).ToList();
+
+                    return Json(new
+                    {
+                        draw = request.Draw,
+                        recordsTotal = totalCount,
+                        recordsFiltered = allItems.Count,
+                        data = pagedItems
+                    });
                 }
-            );
+
+                return Json(new { draw = request.Draw, recordsTotal = 0, recordsFiltered = 0, data = new object[] { } });
+            }
+
+            var queryString = $"/api/campaigns?pageNumber={pageNumber}&pageSize={pageSize}&sortBy={sortBy}&sortDescending={sortDescending}";
+            if (!string.IsNullOrEmpty(searchTerm))
+                queryString += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+
+            var result = await _apiClient.GetAsync<ApiResponse<object>>(queryString);
 
             if (result?.Success == true)
             {
@@ -222,5 +263,112 @@ public class CampaignsController : Controller
     {
         ViewBag.CampaignId = id;
         return View();
+    }
+
+    /// <summary>
+    /// Get templates for campaign content dropdown (SERVER-SIDE proxy)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetTemplates()
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/templates?pageNumber=1&pageSize=200");
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, data = itemsElement });
+                }
+                return Json(new { success = true, data = result.Data });
+            }
+            return Json(new { success = false, data = new object[] { } });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching templates for campaign");
+            return Json(new { success = false, data = new object[] { } });
+        }
+    }
+
+    /// <summary>
+    /// Get contact groups for audience selection (SERVER-SIDE proxy)
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetContactGroups()
+    {
+        try
+        {
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/contactgroups?pageNumber=1&pageSize=200");
+            if (result?.Success == true)
+            {
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, data = itemsElement });
+                }
+                return Json(new { success = true, data = result.Data });
+            }
+            return Json(new { success = false, data = new object[] { } });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching contact groups for campaign");
+            return Json(new { success = false, data = new object[] { } });
+        }
+    }
+
+    /// <summary>
+    /// Create campaign (SERVER-SIDE proxy)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CreateCampaign([FromBody] object campaignData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/campaigns", campaignData);
+            if (result?.Success == true)
+            {
+                return Json(new { success = true, data = result.Data, message = result.Message ?? "Campaign created successfully!" });
+            }
+            return Json(new { success = false, message = result?.Message ?? "Failed to create campaign" });
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "API error creating campaign");
+            // Pass through the actual API error message
+            var msg = ex.Message.StartsWith("API Error:") ? ex.Message.Replace("API Error: ", "") : ex.Message;
+            return Json(new { success = false, message = msg });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating campaign");
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Calculate audience size (SERVER-SIDE proxy)
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> CalculateAudience([FromBody] object audienceData)
+    {
+        try
+        {
+            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/campaigns/calculate-audience", audienceData);
+            if (result?.Success == true)
+            {
+                return Json(new { success = true, data = result.Data });
+            }
+            return Json(new { success = false, data = 0 });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error calculating audience");
+            return Json(new { success = false, data = 0 });
+        }
     }
 }

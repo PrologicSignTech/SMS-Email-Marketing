@@ -850,6 +850,58 @@
     ]
   },
   {
+    "ContainingType": "MarketingPlatform.API.Controllers.AuthController",
+    "Method": "ResendOtp",
+    "RelativePath": "api/Auth/resend-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "MarketingPlatform.Application.DTOs.Auth.ResendOtpRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.AuthController",
+    "Method": "VerifyEmail",
+    "RelativePath": "api/Auth/verify-email",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "MarketingPlatform.Application.DTOs.Auth.VerifyEmailRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "MarketingPlatform.API.Controllers.BillingController",
     "Method": "Cancel",
     "RelativePath": "api/billing/cancel",
@@ -3160,6 +3212,11 @@
       {
         "Name": "SortDescending",
         "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "groupId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
@@ -6364,6 +6421,336 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "GetAll",
+    "RelativePath": "api/PhoneNumbers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "SearchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortBy",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortDescending",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Common.PaginatedResult\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Create",
+    "RelativePath": "api/PhoneNumbers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.PhoneNumber.CreatePhoneNumberDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "GetById",
+    "RelativePath": "api/PhoneNumbers/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Update",
+    "RelativePath": "api/PhoneNumbers/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.PhoneNumber.UpdatePhoneNumberDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Delete",
+    "RelativePath": "api/PhoneNumbers/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Assign",
+    "RelativePath": "api/PhoneNumbers/{id}/assign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.PhoneNumber.AssignPhoneNumberDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Release",
+    "RelativePath": "api/PhoneNumbers/{id}/release",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Unassign",
+    "RelativePath": "api/PhoneNumbers/{id}/unassign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "GetAvailable",
+    "RelativePath": "api/PhoneNumbers/available",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Collections.Generic.List\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "GetMyNumbers",
+    "RelativePath": "api/PhoneNumbers/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Collections.Generic.List\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "Purchase",
+    "RelativePath": "api/PhoneNumbers/purchase",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.PhoneNumber.PurchasePhoneNumberDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.PhoneNumbersController",
+    "Method": "GetByUser",
+    "RelativePath": "api/PhoneNumbers/user/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Collections.Generic.List\u00601[[MarketingPlatform.Application.DTOs.PhoneNumber.PhoneNumberDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "MarketingPlatform.API.Controllers.PlatformSettingsController",
     "Method": "GetSettings",
     "RelativePath": "api/PlatformSettings",
@@ -7276,6 +7663,207 @@
     "ReturnTypes": [
       {
         "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "GetProviders",
+    "RelativePath": "api/Providers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "SearchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortBy",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortDescending",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Common.PaginatedResult\u00601[[MarketingPlatform.Application.DTOs.Provider.ProviderDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "CreateProvider",
+    "RelativePath": "api/Providers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.Provider.CreateProviderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Provider.ProviderDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "GetProvider",
+    "RelativePath": "api/Providers/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Provider.ProviderDetailDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "UpdateProvider",
+    "RelativePath": "api/Providers/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.Provider.UpdateProviderDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "DeleteProvider",
+    "RelativePath": "api/Providers/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "TestProvider",
+    "RelativePath": "api/Providers/{id}/test",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.ProvidersController",
+    "Method": "GetChannelTypes",
+    "RelativePath": "api/Providers/channeltypes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Collections.Generic.List\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -8992,6 +9580,11 @@
         "Name": "SortDescending",
         "Type": "System.Boolean",
         "IsRequired": false
+      },
+      {
+        "Name": "type",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -9124,6 +9717,227 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "GetAll",
+    "RelativePath": "api/SuppressionRules",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "SearchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortBy",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortDescending",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Common.PaginatedResult\u00601[[MarketingPlatform.Application.DTOs.SuppressionRule.SuppressionRuleDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "Create",
+    "RelativePath": "api/SuppressionRules",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.SuppressionRule.CreateSuppressionRuleDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.SuppressionRule.SuppressionRuleDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "GetById",
+    "RelativePath": "api/SuppressionRules/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.SuppressionRule.SuppressionRuleDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "Update",
+    "RelativePath": "api/SuppressionRules/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.SuppressionRule.UpdateSuppressionRuleDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.SuppressionRule.SuppressionRuleDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "Delete",
+    "RelativePath": "api/SuppressionRules/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "Toggle",
+    "RelativePath": "api/SuppressionRules/{id}/toggle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "GetActive",
+    "RelativePath": "api/SuppressionRules/active",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Collections.Generic.List\u00601[[MarketingPlatform.Application.DTOs.SuppressionRule.SuppressionRuleDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.SuppressionRulesController",
+    "Method": "SeedDefaults",
+    "RelativePath": "api/SuppressionRules/seed-defaults",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
@@ -10490,19 +11304,65 @@
     "ContainingType": "MarketingPlatform.API.Controllers.WorkflowsController",
     "Method": "GetWorkflows",
     "RelativePath": "api/Workflows",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "PageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "SearchTerm",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortBy",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SortDescending",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Common.PaginatedResult\u00601[[MarketingPlatform.Application.DTOs.Journey.JourneyDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MarketingPlatform.API.Controllers.WorkflowsController",
+    "Method": "CreateWorkflow",
+    "RelativePath": "api/Workflows",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "request",
-        "Type": "System.Object",
+        "Name": "dto",
+        "Type": "MarketingPlatform.Application.DTOs.Journey.CreateJourneyDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Journey.JourneyDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10528,7 +11388,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Journey.JourneyDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10553,13 +11413,13 @@
       },
       {
         "Name": "dto",
-        "Type": "System.Object",
+        "Type": "MarketingPlatform.Application.DTOs.Journey.UpdateJourneyDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10611,7 +11471,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10637,7 +11497,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Journey.JourneyDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10659,11 +11519,16 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "MarketingPlatform.API.Controllers.ExecuteWorkflowRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10689,7 +11554,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -10715,33 +11580,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MarketingPlatform.API.Controllers.WorkflowsController",
-    "Method": "CreateWorkflow",
-    "RelativePath": "api/Workflows/create",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "dto",
-        "Type": "System.Object",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "MarketingPlatform.Application.DTOs.Common.ApiResponse\u00601[[MarketingPlatform.Application.DTOs.Journey.JourneyStatsDto, MarketingPlatform.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

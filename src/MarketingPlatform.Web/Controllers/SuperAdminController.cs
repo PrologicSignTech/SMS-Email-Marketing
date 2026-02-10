@@ -35,7 +35,7 @@ public class SuperAdminController : Controller
         try
         {
             // Load dashboard statistics
-            var stats = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/stats");
+            var stats = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/analytics/platform");
             ViewBag.Stats = stats?.Data;
 
             return View();
@@ -97,7 +97,7 @@ public class SuperAdminController : Controller
     {
         try
         {
-            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/stats");
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/analytics/platform");
             if (result?.Success == true)
             {
                 return Json(new { success = true, data = result.Data });
@@ -119,12 +119,19 @@ public class SuperAdminController : Controller
     {
         try
         {
-            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/auditlogs");
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/superadmin/logs");
             if (result?.Success == true)
             {
+                // Extract logs array from the paged response
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("logs", out var logsElement))
+                {
+                    return Json(new { success = true, data = logsElement });
+                }
                 return Json(new { success = true, data = result.Data });
             }
-            return Json(new { success = false, message = result?.Message ?? "Failed to load audit logs" });
+            return Json(new { success = false, data = new object[] { }, message = result?.Message ?? "Failed to load audit logs" });
         }
         catch (Exception ex)
         {
@@ -163,7 +170,7 @@ public class SuperAdminController : Controller
     {
         try
         {
-            var result = await _apiClient.PostAsync<object, ApiResponse<object>>("/api/superadmin/config", configData);
+            var result = await _apiClient.PutAsync<object, ApiResponse<object>>("/api/superadmin/config", configData);
             if (result?.Success == true)
             {
                 return Json(new { success = true, data = result.Data, message = "Configuration updated successfully" });
@@ -185,9 +192,16 @@ public class SuperAdminController : Controller
     {
         try
         {
-            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/users");
+            var result = await _apiClient.GetAsync<ApiResponse<object>>("/api/users?pageNumber=1&pageSize=200");
             if (result?.Success == true)
             {
+                // Extract items from paginated result
+                var dataObj = result.Data as System.Text.Json.JsonElement?;
+                if (dataObj.HasValue && dataObj.Value.ValueKind == System.Text.Json.JsonValueKind.Object
+                    && dataObj.Value.TryGetProperty("items", out var itemsElement))
+                {
+                    return Json(new { success = true, data = itemsElement });
+                }
                 return Json(new { success = true, data = result.Data });
             }
             return Json(new { success = false, data = new object[] { }, message = result?.Message ?? "No users found" });
